@@ -103,6 +103,22 @@ class PropertyMonitorTest {
 	}
 
 	@Test
+	void testAddNullListener() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			monitor.addListener(null);
+		});
+		assertEquals("PropertyMonitor: listener was null", exc.getMessage());
+	}
+
+	@Test
+	void testRemoveNullListener() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			monitor.removeListener(null);
+		});
+		assertEquals("PropertyMonitor: listener was null", exc.getMessage());
+	}
+
+	@Test
 	void testAddNullProperty() {
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			monitor.addProperty(null);

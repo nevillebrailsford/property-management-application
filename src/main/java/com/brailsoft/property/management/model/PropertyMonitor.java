@@ -25,10 +25,16 @@ public class PropertyMonitor {
 	}
 
 	public synchronized void addListener(ListChangeListener<? super Property> listener) {
+		if (listener == null) {
+			throw new IllegalArgumentException("PropertyMonitor: listener was null");
+		}
 		properties.addListener(listener);
 	}
 
 	public synchronized void removeListener(ListChangeListener<? super Property> listener) {
+		if (listener == null) {
+			throw new IllegalArgumentException("PropertyMonitor: listener was null");
+		}
 		properties.removeListener(listener);
 	}
 
