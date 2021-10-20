@@ -30,6 +30,7 @@ public class Address implements Comparable<Address> {
 			throw new IllegalArgumentException("Address: address must be specified");
 		}
 		this.postCode = new PostCode(that.postCode);
+		this.linesOfAddress = new ArrayList<>();
 		that.linesOfAddress.stream().forEach(line -> {
 			this.linesOfAddress.add(line);
 		});
