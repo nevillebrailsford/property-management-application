@@ -15,12 +15,12 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 	private Period periodForNextNotice;
 	private int advanceNotice;
 
-	public MonitoredItem(String description, Period period, int noticeEvery, LocalDateTime lastActioned,
+	public MonitoredItem(String description, Period periodForNextAction, int noticeEvery, LocalDateTime lastActioned,
 			int advanceNotice, Period periodForNextNotice) {
 		if (description == null || description.isBlank() || description.isEmpty()) {
 			throw new IllegalArgumentException("MonitoredItem: description not specified");
 		}
-		if (period == null) {
+		if (periodForNextAction == null) {
 			throw new IllegalArgumentException("MonitoredItem: period was null");
 		}
 		if (noticeEvery < 1) {
@@ -36,12 +36,12 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 			throw new IllegalArgumentException("MonitoredItem: periodForNextNotice was null");
 		}
 		this.description = description;
-		this.periodForNextAction = period;
+		this.periodForNextAction = periodForNextAction;
 		this.noticeEvery = noticeEvery;
 		this.advanceNotice = advanceNotice;
 		this.periodForNextNotice = periodForNextNotice;
 		this.lastActionPerformed = convertDateToMilleseconds(lastActioned);
-		this.timeForNextAction = calculateTimeForNextAction(period, noticeEvery, lastActioned);
+		this.timeForNextAction = calculateTimeForNextAction(periodForNextAction, noticeEvery, lastActioned);
 		this.timeForNextNotice = calculateTimeForNextNotice(this.timeForNextAction, advanceNotice, periodForNextNotice);
 	}
 
