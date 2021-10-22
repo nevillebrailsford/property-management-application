@@ -15,10 +15,11 @@ import javafx.stage.WindowEvent;
 
 public class PropertyManager extends Application {
 	private static PropertyManagerController appCtrl;
-	
+
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		Scene scene = new Scene(loadFXML("PropertyManager"));
+		appCtrl.setPropertyManager(this);
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Property Management");
 		primaryStage.setResizable(false);
@@ -30,12 +31,22 @@ public class PropertyManager extends Application {
 				if (!appCtrl.shutdown()) {
 					event.consume();
 				} else {
-					appCtrl.saveIniFile();
-					Platform.exit();
+					performShutdown();
 				}
 
 			}
 		});
+	}
+
+	public void shutdown() {
+		if (appCtrl.shutdown()) {
+			performShutdown();
+		}
+	}
+
+	private void performShutdown() {
+		appCtrl.saveIniFile();
+		Platform.exit();
 	}
 
 	private static Parent loadFXML(String fxml) throws IOException {
