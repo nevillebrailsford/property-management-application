@@ -6,9 +6,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+
 public class Property implements Comparable<Property> {
 	private Address address;
-	private List<MonitoredItem> items = new ArrayList<>();
+	private ObservableList<MonitoredItem> items = FXCollections.observableArrayList();
 
 	public Property(Address address) {
 		if (address == null) {
@@ -22,10 +26,24 @@ public class Property implements Comparable<Property> {
 			throw new IllegalArgumentException("Property: property was null");
 		}
 		this.address = new Address(that.address);
-		this.items = new ArrayList<>();
+		this.items = FXCollections.observableArrayList();
 		that.items.stream().forEach(item -> {
 			this.items.add(new MonitoredItem(item));
 		});
+	}
+
+	public synchronized void addListener(ListChangeListener<? super MonitoredItem> listener) {
+		if (listener == null) {
+			throw new IllegalArgumentException("Property: listener was null");
+		}
+		items.addListener(listener);
+	}
+
+	public synchronized void removeListener(ListChangeListener<? super MonitoredItem> listener) {
+		if (listener == null) {
+			throw new IllegalArgumentException("PropertyMonitor: listener was null");
+		}
+		items.removeListener(listener);
 	}
 
 	public void addItem(MonitoredItem item) {

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import com.brailsoft.property.management.launcher.PropertyManager;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 
 class ControllerTest {
@@ -17,7 +18,6 @@ class ControllerTest {
 	@BeforeEach
 	void setUp() throws Exception {
 	}
-	
 
 	@AfterEach
 	void tearDown() throws Exception {
@@ -25,9 +25,15 @@ class ControllerTest {
 
 	@Test
 	void test() throws IOException {
-		FXMLLoader loader = new FXMLLoader(PropertyManager.class.getResource("PropertyManager.fxml"));
-		loader.load();
-		assertNotNull(loader.getController());
+		Platform.startup(() -> {
+			FXMLLoader loader = new FXMLLoader(PropertyManager.class.getResource("PropertyManager.fxml"));
+			try {
+				loader.load();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			assertNotNull(loader.getController());
+		});
 	}
 
 }

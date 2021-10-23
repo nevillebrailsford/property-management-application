@@ -38,6 +38,20 @@ public class PropertyMonitor {
 		properties.removeListener(listener);
 	}
 
+	public synchronized void addListener(ListChangeListener<? super MonitoredItem> listener, Property property) {
+		if (listener == null) {
+			throw new IllegalArgumentException("PropertyMonitor: listener was null");
+		}
+		findProperty(property).addListener(listener);
+	}
+
+	public synchronized void removeListener(ListChangeListener<? super MonitoredItem> listener, Property property) {
+		if (listener == null) {
+			throw new IllegalArgumentException("PropertyMonitor: listener was null");
+		}
+		findProperty(property).removeListener(listener);
+	}
+
 	public synchronized void clear() {
 		properties.clear();
 	}
@@ -76,6 +90,19 @@ public class PropertyMonitor {
 		properties.remove(oldProperty);
 	}
 
+	public synchronized void addItem(Property property, MonitoredItem monitoredItem) {
+		if (property == null) {
+			throw new IllegalArgumentException("PropertyMonitor: property was null");
+		}
+		if (monitoredItem == null) {
+			throw new IllegalArgumentException("PropertyMonitor: monitoredItem was null");
+		}
+		if (!properties.contains(property)) {
+			throw new IllegalArgumentException("PropertyMonitor: property " + property + " was not known");
+		}
+		findProperty(property).addItem(monitoredItem);
+	}
+
 	public synchronized List<Property> getProperties() {
 		List<Property> copyList = new ArrayList<>();
 		properties.stream().forEach(property -> {
@@ -105,6 +132,17 @@ public class PropertyMonitor {
 		});
 		Collections.sort(copyList);
 		return copyList;
+	}
+
+	private synchronized Property findProperty(Property property) {
+		Property found = null;
+		for (Property p : properties) {
+			if (p.equals(property)) {
+				found = p;
+				break;
+			}
+		}
+		return found;
 	}
 
 }
