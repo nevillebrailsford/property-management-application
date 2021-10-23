@@ -12,14 +12,12 @@ import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Property;
 import com.brailsoft.property.management.model.PropertyMonitor;
 import com.brailsoft.property.management.persistence.LocalStorage;
+import com.brailsoft.property.management.userinterface.PropertyTab;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.VBox;
 
 public class PropertyManagerController implements Initializable {
 
@@ -36,7 +34,7 @@ public class PropertyManagerController implements Initializable {
 			change.next();
 			if (change.wasAdded()) {
 				for (Property p : change.getAddedSubList()) {
-					Tab tab = new Tab(p.getAddress().getPostCode().toString(), new VBox(new Label(p.toString())));
+					PropertyTab tab = new PropertyTab(p);
 					tabPane.getTabs().add(tab);
 				}
 			}
@@ -45,7 +43,6 @@ public class PropertyManagerController implements Initializable {
 			localStorage.loadArchivedData();
 		} catch (IOException e) {
 			if (e.getMessage().startsWith("LocalStorage: archiveFile") && e.getMessage().endsWith("not found")) {
-
 			} else {
 				System.out.println(e.getMessage());
 			}
@@ -84,23 +81,9 @@ public class PropertyManagerController implements Initializable {
 		Optional<MonitoredItem> result = new EventDialog().showAndWait();
 		if (result.isPresent()) {
 			MonitoredItem item = result.get();
-			System.out.println(item);
-			Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
-			System.out.println(selectedTab.getText());
-			Property found = null;
-			for (Property p : propertyMonitor.getProperties()) {
-				if (p.getAddress().getPostCode().toString()
-						.equals(tabPane.getSelectionModel().getSelectedItem().getText())) {
-					found = p;
-				}
-			}
-			found.addItem(item);
-			VBox selectedPane = (VBox) selectedTab.getContent();
-			selectedPane.getChildren().add(new Label(item.getDescription()));
-			selectedPane.getChildren().add(new Label("last action: " + item.getLastActionPerformed().toString()));
-			selectedPane.getChildren().add(new Label("next action:" + item.getTimeForNextAction().toString()));
-			selectedPane.getChildren().add(new Label("next notice: " + item.getTimeForNextNotice().toString()));
-
+			PropertyTab selectedTab = (PropertyTab) tabPane.getSelectionModel().getSelectedItem();
+			Property property = selectedTab.getProperty();
+			propertyMonitor.addItem(property, item);
 		}
 	}
 

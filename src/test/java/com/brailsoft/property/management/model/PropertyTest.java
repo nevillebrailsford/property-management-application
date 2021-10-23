@@ -12,6 +12,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javafx.collections.ListChangeListener;
+
 class PropertyTest {
 
 	private Address address;
@@ -23,6 +25,17 @@ class PropertyTest {
 	private String[] higherLinesOfAddress = new String[] { "99 the street", "the town", "the county" };
 	private Property testProperty;
 	private MonitoredItem testItem;
+
+	private ListChangeListener<? super MonitoredItem> listener = new ListChangeListener<>() {
+
+		@Override
+		public void onChanged(Change<? extends MonitoredItem> change) {
+			change.next();
+			assertTrue(change.wasAdded());
+			assertEquals(1, change.getAddedSize());
+			assertEquals(testItem, change.getAddedSubList().get(0));
+		}
+	};
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -36,6 +49,7 @@ class PropertyTest {
 
 	@AfterEach
 	void tearDown() throws Exception {
+		testProperty.removeListener(listener);
 		testProperty.clear();
 	}
 
@@ -130,6 +144,14 @@ class PropertyTest {
 				LocalDateTime.now().minusYears(1).minusWeeks(1).minusMinutes(1), 1, Period.WEEKLY));
 		assertEquals(1, testProperty.getOverdueNotices().size());
 		assertEquals("item2", testProperty.getOverdueNotices().get(0).getDescription());
+	}
+
+	@Test
+	void testAddListener() {
+		testProperty.addListener(listener);
+		assertEquals(0, testProperty.getItems().size());
+		testProperty.addItem(testItem);
+		assertEquals(1, testProperty.getItems().size());
 	}
 
 	@Test
