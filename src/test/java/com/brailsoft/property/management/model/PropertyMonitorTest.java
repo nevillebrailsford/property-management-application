@@ -19,8 +19,7 @@ class PropertyMonitorTest {
 	private static final String LINE1 = "99 The Street";
 	private static final String LINE2 = "The Town";
 	private static final String LINE3 = "The County";
-	private static final String LINE4 = "Country";
-	private static final String[] linesOfAddress = new String[] { LINE1, LINE2, LINE3, LINE4 };
+	private static final String[] linesOfAddress = new String[] { LINE1, LINE2, LINE3 };
 	private static final Address address1 = new Address(postCode1, linesOfAddress);
 	private static final Property property1 = new Property(address1);
 	private static final Address address2 = new Address(postCode2, linesOfAddress);
@@ -132,7 +131,7 @@ class PropertyMonitorTest {
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			monitor.addProperty(property1);
 		});
-		assertEquals("PropertyMonitor: property 99 The Street, The Town, The County, Country CW3 9ST already exists",
+		assertEquals("PropertyMonitor: property 99 The Street, The Town, The County CW3 9ST already exists",
 				exc.getMessage());
 	}
 
@@ -150,7 +149,7 @@ class PropertyMonitorTest {
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			monitor.removeProperty(property2);
 		});
-		assertEquals("PropertyMonitor: property 99 The Street, The Town, The County, Country CW3 9SU was not known",
+		assertEquals("PropertyMonitor: property 99 The Street, The Town, The County CW3 9SU was not known",
 				exc.getMessage());
 	}
 
@@ -175,7 +174,7 @@ class PropertyMonitorTest {
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			monitor.replaceProperty(property1, property2);
 		});
-		assertEquals("PropertyMonitor: property 99 The Street, The Town, The County, Country CW3 9ST was not known",
+		assertEquals("PropertyMonitor: property 99 The Street, The Town, The County CW3 9ST was not known",
 				exc.getMessage());
 	}
 
@@ -186,7 +185,7 @@ class PropertyMonitorTest {
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			monitor.replaceProperty(property1, property2);
 		});
-		assertEquals("PropertyMonitor: property 99 The Street, The Town, The County, Country CW3 9SU already exists",
+		assertEquals("PropertyMonitor: property 99 The Street, The Town, The County CW3 9SU already exists",
 				exc.getMessage());
 	}
 

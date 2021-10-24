@@ -83,7 +83,8 @@ public class PropertyManagerController implements Initializable {
 			MonitoredItem item = result.get();
 			PropertyTab selectedTab = (PropertyTab) tabPane.getSelectionModel().getSelectedItem();
 			Property property = selectedTab.getProperty();
-			propertyMonitor.addItem(property, item);
+			item.setOwner(property);
+			propertyMonitor.addItem(item);
 		}
 	}
 
