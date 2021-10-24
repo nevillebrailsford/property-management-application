@@ -30,12 +30,22 @@ public class PropertyTab extends Tab {
 
 		@Override
 		public void onChanged(Change<? extends MonitoredItem> change) {
-			change.next();
-			if (change.wasAdded()) {
-				for (MonitoredItem monitoredItem : change.getAddedSubList()) {
-					ItemHBox itemHBox = new ItemHBox(monitoredItem);
-					VBox vBox = (VBox) getContent();
-					vBox.getChildren().add(itemHBox);
+			while (change.next()) {
+				if (change.wasReplaced()) {
+					for (MonitoredItem monitoredItem : change.getAddedSubList()) {
+						for (int index = 1; index < ((VBox) getContent()).getChildren().size(); index++) {
+							ItemHBox itemHBox = (ItemHBox) ((VBox) getContent()).getChildren().get(index);
+							if (itemHBox.getMonitoredItem().equals(monitoredItem)) {
+								itemHBox.refresh(monitoredItem);
+							}
+						}
+					}
+				} else if (change.wasAdded()) {
+					for (MonitoredItem monitoredItem : change.getAddedSubList()) {
+						ItemHBox itemHBox = new ItemHBox(monitoredItem);
+						VBox vBox = (VBox) getContent();
+						vBox.getChildren().add(itemHBox);
+					}
 				}
 			}
 		}

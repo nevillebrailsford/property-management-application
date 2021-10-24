@@ -50,7 +50,7 @@ public class PropertyDialog extends Dialog<Property> {
 					String line1 = street.getText();
 					String line2 = town.getText();
 					String line3 = county.getText();
-					String pc = postcode.getText();
+					String pc = postcode.getText().toUpperCase();
 					PostCode thePostCode = new PostCode(pc);
 					String[] linesOfAddress = new String[] { line1, line2, line3 };
 					Address address = new Address(thePostCode, linesOfAddress);

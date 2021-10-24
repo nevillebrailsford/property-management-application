@@ -21,10 +21,12 @@ public class AddressHBox extends HBox {
 		getChildren().add(pane);
 		for (int index = 0; index < linesOfAddress.length; index++) {
 			Label lineLabel = new Label(linesOfAddress[index]);
-			lineLabel.setFont(new Font(15.0));
+			lineLabel.setFont(new Font(25.0));
 			getChildren().add(lineLabel);
 		}
-		getChildren().add(new Label(address.getPostCode().toString()));
+		Label postCodeLabel = new Label(address.getPostCode().toString());
+		postCodeLabel.setFont(new Font(25.0));
+		getChildren().add(postCodeLabel);
 		pane = new Pane();
 		HBox.setHgrow(pane, Priority.ALWAYS);
 		getChildren().add(pane);

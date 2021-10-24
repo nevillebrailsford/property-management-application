@@ -104,6 +104,20 @@ public class PropertyMonitor {
 		findProperty(property).addItem(monitoredItem);
 	}
 
+	public synchronized void replaceItem(MonitoredItem monitoredItem) {
+		if (monitoredItem == null) {
+			throw new IllegalArgumentException("PropertyMonitor: monitoredItem was null");
+		}
+		Property property = monitoredItem.getOwner();
+		if (property == null) {
+			throw new IllegalArgumentException("PropertyMonitor: property was null");
+		}
+		if (!properties.contains(property)) {
+			throw new IllegalArgumentException("PropertyMonitor: property " + property + " was not known");
+		}
+		findProperty(property).replaceItem(monitoredItem);
+	}
+
 	public synchronized List<Property> getProperties() {
 		List<Property> copyList = new ArrayList<>();
 		properties.stream().forEach(property -> {
