@@ -33,8 +33,7 @@ class LocalStorageTest {
 	private String line1 = "99 The Street";
 	private String line2 = "The Town";
 	private String line3 = "The County";
-	private String line4 = "Country";
-	private String[] lines = new String[] { line1, line2, line3, line4 };
+	private String[] lines = new String[] { line1, line2, line3 };
 	private PostCode postcode = new PostCode(POST_CODE);
 	private Address address = new Address(postcode, lines);
 	private Property property = new Property(address);
@@ -71,7 +70,7 @@ class LocalStorageTest {
 		assertNotNull(address);
 		PostCode postcode = address.getPostCode();
 		assertNotNull(postcode);
-		assertEquals(4, address.getLinesOfAddress().length);
+		assertEquals(3, address.getLinesOfAddress().length);
 		assertEquals(POST_CODE, postcode.toString());
 		assertEquals(1, property.getItems().size());
 	}
@@ -81,7 +80,7 @@ class LocalStorageTest {
 		property.addItem(testItem);
 		PropertyMonitor.getInstance().addProperty(property);
 		LocalStorage.getInstance().saveArchiveData();
-		assertTrue(fileExistsAndIsValid(new File(directory, PROPERTY_DAT), 20));
+		assertTrue(fileExistsAndIsValid(new File(directory, PROPERTY_DAT), 19));
 	}
 
 	@Test

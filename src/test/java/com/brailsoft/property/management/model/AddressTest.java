@@ -13,10 +13,9 @@ class AddressTest {
 	private static final String LINE1 = "99 The Street";
 	private static final String LINE2 = "The Town";
 	private static final String LINE3 = "The County";
-	private static final String LINE4 = "Country";
-	private static final int NUMBER_OF_LINES = 4;
-	private String[] lines = new String[] { LINE1, LINE2, LINE3, LINE4 };
-	private static final String PRINTED_ADDRESS = "99 The Street, The Town, The County, Country CW3 9ST";
+	private static final int NUMBER_OF_LINES = 3;
+	private String[] lines = new String[] { LINE1, LINE2, LINE3 };
+	private static final String PRINTED_ADDRESS = "99 The Street, The Town, The County CW3 9ST";
 
 	Address address = new Address(POST_CODE, lines);
 
@@ -54,7 +53,6 @@ class AddressTest {
 		assertEquals(LINE1, address.getLinesOfAddress()[0]);
 		assertEquals(LINE2, address.getLinesOfAddress()[1]);
 		assertEquals(LINE3, address.getLinesOfAddress()[2]);
-		assertEquals(LINE4, address.getLinesOfAddress()[3]);
 	}
 
 	@Test

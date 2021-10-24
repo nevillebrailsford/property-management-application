@@ -3,15 +3,26 @@ package com.brailsoft.property.management.model;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 public class MonitoredItem implements Comparable<MonitoredItem> {
-	private String description;
-	private LocalDateTime lastActionPerformed;
-	private LocalDateTime timeForNextAction;
-	private LocalDateTime timeForNextNotice;
-	private Period periodForNextAction;
-	private int noticeEvery;
-	private Period periodForNextNotice;
-	private int advanceNotice;
+	private StringProperty description = new SimpleStringProperty(this, "description", "");
+	private ObjectProperty<LocalDateTime> lastActionPerformed = new SimpleObjectProperty<>(this, "lastActionPerformed",
+			null);
+	private ObjectProperty<LocalDateTime> timeForNextAction = new SimpleObjectProperty<>(this, "timeForNextAction",
+			null);
+	private ObjectProperty<LocalDateTime> timeForNextNotice = new SimpleObjectProperty<>(this, "timeForNextNotice",
+			null);
+	private ObjectProperty<Period> periodForNextAction = new SimpleObjectProperty<>(this, "periodForNextAction", null);;
+	private IntegerProperty noticeEvery = new SimpleIntegerProperty(this, "noticeEvery", 0);;
+	private ObjectProperty<Period> periodForNextNotice = new SimpleObjectProperty<>(this, "periodForNextAction", null);;
+	private IntegerProperty advanceNotice = new SimpleIntegerProperty(this, "advanceNotice", 0);
+	private ObjectProperty<Property> owner = new SimpleObjectProperty<>(this, "owner", null);
 
 	public MonitoredItem(String description, Period periodForNextAction, int noticeEvery, LocalDateTime lastActioned,
 			int advanceNotice, Period periodForNextNotice) {
@@ -33,89 +44,132 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		if (periodForNextNotice == null) {
 			throw new IllegalArgumentException("MonitoredItem: periodForNextNotice was null");
 		}
-		this.description = description;
-		this.periodForNextAction = periodForNextAction;
-		this.noticeEvery = noticeEvery;
-		this.advanceNotice = advanceNotice;
-		this.periodForNextNotice = periodForNextNotice;
-		this.lastActionPerformed = lastActioned;
-		this.timeForNextAction = calculateTimeForNextAction(periodForNextAction, noticeEvery, lastActioned);
-		this.timeForNextNotice = calculateTimeForNextNotice(this.timeForNextAction, advanceNotice, periodForNextNotice);
+		this.description.set(description);
+		this.periodForNextAction.set(periodForNextAction);
+		this.noticeEvery.set(noticeEvery);
+		this.advanceNotice.set(advanceNotice);
+		this.periodForNextNotice.set(periodForNextNotice);
+		this.lastActionPerformed.set(lastActioned);
+		this.timeForNextAction.set(calculateTimeForNextAction(periodForNextAction, noticeEvery, lastActioned));
+		this.timeForNextNotice
+				.set(calculateTimeForNextNotice(periodForNextNotice, advanceNotice, this.timeForNextAction.get()));
+		this.owner.set(null);
 	}
 
 	public MonitoredItem(MonitoredItem that) {
 		if (that == null) {
 			throw new IllegalArgumentException("MonitoredItem: item was null");
 		}
-		this.description = that.description;
-		this.periodForNextAction = that.periodForNextAction;
-		this.noticeEvery = that.noticeEvery;
-		this.advanceNotice = that.advanceNotice;
-		this.periodForNextNotice = that.periodForNextNotice;
-		this.lastActionPerformed = that.lastActionPerformed;
-		this.timeForNextAction = that.timeForNextAction;
-		this.timeForNextNotice = that.timeForNextNotice;
+		this.description.set(that.description.get());
+		this.periodForNextAction.set(that.periodForNextAction.get());
+		this.noticeEvery.set(that.noticeEvery.get());
+		this.advanceNotice.set(that.advanceNotice.get());
+		this.periodForNextNotice.set(that.periodForNextNotice.get());
+		this.lastActionPerformed.set(that.lastActionPerformed.get());
+		this.timeForNextAction.set(that.timeForNextAction.get());
+		this.timeForNextNotice.set(that.timeForNextNotice.get());
+		if (that.owner.get() != null) {
+			this.owner.set(new Property(that.owner.get()));
+		} else {
+			this.owner.set(null);
+		}
+	}
+
+	public Property getOwner() {
+		return new Property(owner.get());
+	}
+
+	public void setOwner(Property owner) {
+		this.owner.set(new Property(owner));
+	}
+
+	public ObjectProperty<Property> ownerProperty() {
+		return owner;
 	}
 
 	public String getDescription() {
-		return description;
+		return description.get();
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+		this.description.set(description);
+	}
+
+	public StringProperty descriptionProperty() {
+		return description;
 	}
 
 	public Period getPeriodForNextAction() {
-		return periodForNextAction;
+		return periodForNextAction.get();
 	}
 
 	public void setPeriodForNextAction(Period periodForNextAction) {
-		this.periodForNextAction = periodForNextAction;
+		this.periodForNextAction.set(periodForNextAction);
 		recalculateTimes();
+	}
+
+	public ObjectProperty<Period> periodForNextActionProperty() {
+		return periodForNextAction;
 	}
 
 	public int getNoticeEvery() {
-		return noticeEvery;
+		return noticeEvery.get();
 	}
 
 	public void setNoticeEvery(int noticeEvery) {
-		this.noticeEvery = noticeEvery;
+		this.noticeEvery.set(noticeEvery);
 		recalculateTimes();
+	}
+
+	public IntegerProperty noticeEveryProperty() {
+		return noticeEvery;
 	}
 
 	public int getAdvanceNotice() {
-		return advanceNotice;
+		return advanceNotice.get();
 	}
 
 	public void setAdvanceNotice(int advanceNotice) {
-		this.advanceNotice = advanceNotice;
+		this.advanceNotice.set(advanceNotice);
 		recalculateNextNotice();
+	}
+
+	public IntegerProperty advanceNoticeProperty() {
+		return advanceNotice;
 	}
 
 	public LocalDateTime getLastActionPerformed() {
-		return lastActionPerformed;
+		return lastActionPerformed.get();
 	}
 
 	public LocalDateTime getTimeForNextAction() {
-		return timeForNextAction;
+		return timeForNextAction.get();
 	}
 
 	public LocalDateTime getTimeForNextNotice() {
-		return timeForNextNotice;
+		return timeForNextNotice.get();
 	}
 
 	public Period getPeriodForNextNotice() {
-		return periodForNextNotice;
+		return periodForNextNotice.get();
 	}
 
 	public void setPeriodForNextNotice(Period periodForNextNotice) {
-		this.periodForNextNotice = periodForNextNotice;
+		this.periodForNextNotice.set(periodForNextNotice);
 		recalculateNextNotice();
 	}
 
+	public ObjectProperty<Period> periodForNextNoticeProperty() {
+		return periodForNextNotice;
+	}
+
 	public void actionPerformed(LocalDateTime when) {
-		this.lastActionPerformed = when;
+		this.lastActionPerformed.set(when);
 		recalculateTimes();
+	}
+
+	public ObjectProperty<LocalDateTime> lastActionPerformedProperty() {
+		return lastActionPerformed;
 	}
 
 	public boolean overdue() {
@@ -123,7 +177,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 	}
 
 	public boolean overdue(LocalDateTime today) {
-		if (today.isAfter(timeForNextAction)) {
+		if (today.isAfter(timeForNextAction.get())) {
 			return true;
 		} else {
 			return false;
@@ -135,15 +189,15 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 	}
 
 	public boolean noticeDue(LocalDateTime today) {
-		if (today.isAfter(timeForNextNotice)) {
+		if (today.isAfter(timeForNextNotice.get())) {
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	private LocalDateTime calculateTimeForNextNotice(LocalDateTime timeForNextAction, int advanceNotice,
-			Period periodForNextNotice) {
+	private LocalDateTime calculateTimeForNextNotice(Period periodForNextNotice, int advanceNotice,
+			LocalDateTime timeForNextAction) {
 		var result = switch (periodForNextNotice) {
 			case WEEKLY -> reduceTimeStampByWeeks(advanceNotice, timeForNextAction);
 			case MONTHLY -> reduceTimeStampByMonths(advanceNotice, timeForNextAction);
@@ -167,11 +221,13 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 	}
 
 	private void recalculateNextAction() {
-		timeForNextAction = calculateTimeForNextAction(periodForNextAction, noticeEvery, lastActionPerformed);
+		timeForNextAction.set(
+				calculateTimeForNextAction(periodForNextAction.get(), noticeEvery.get(), lastActionPerformed.get()));
 	}
 
 	private void recalculateNextNotice() {
-		timeForNextNotice = calculateTimeForNextNotice(timeForNextAction, advanceNotice, periodForNextNotice);
+		timeForNextNotice.set(
+				calculateTimeForNextNotice(periodForNextNotice.get(), advanceNotice.get(), timeForNextAction.get()));
 	}
 
 	private LocalDateTime increaesTimeStampByWeeks(int noticeEvery, LocalDateTime lastActioned) {
@@ -200,12 +256,12 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 
 	@Override
 	public int compareTo(MonitoredItem that) {
-		return this.description.compareTo(that.description);
+		return this.description.get().compareTo(that.description.get());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(description);
+		return Objects.hash(description.get());
 	}
 
 	@Override
@@ -217,14 +273,14 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		if (getClass() != obj.getClass())
 			return false;
 		MonitoredItem other = (MonitoredItem) obj;
-		return Objects.equals(description, other.description);
+		return Objects.equals(description.get(), other.description.get());
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		if (description != null) {
-			builder.append(description);
+		if (description.get() != null) {
+			builder.append(description.get());
 		}
 		return builder.toString();
 	}

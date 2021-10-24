@@ -1,13 +1,42 @@
 package com.brailsoft.property.management.model;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
+import javafx.beans.binding.StringBinding;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 public class Address implements Comparable<Address> {
-	private List<String> linesOfAddress = new ArrayList<>();
-	private PostCode postCode = null;
-	private String comma = "";
+	private StringProperty street = new SimpleStringProperty(this, "street", "");
+	private StringProperty town = new SimpleStringProperty(this, "town", "");
+	private StringProperty county = new SimpleStringProperty(this, "county", "");
+	private ObjectProperty<PostCode> postcode = new SimpleObjectProperty<>(this, "postcode", null);
+
+	private final StringBinding fulladdressBinding = new StringBinding() {
+		{
+			super.bind(street, town, county, postcode);
+		}
+
+		@Override
+		protected String computeValue() {
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append(street.get());
+			stringBuilder.append(", ").append(town.get());
+			stringBuilder.append(", ").append(county.get());
+			stringBuilder.append(" ").append(postcode.get().toString());
+			return stringBuilder.toString();
+		}
+	};
+
+	private final ReadOnlyStringWrapper fulladdress = new ReadOnlyStringWrapper(this, "fulladdress");
+
+	public final ReadOnlyStringProperty fulladdressProperty() {
+		return fulladdress.getReadOnlyProperty();
+	}
 
 	public Address(PostCode postCode, String[] linesOfAddress) {
 		if (postCode == null) {
@@ -19,34 +48,53 @@ public class Address implements Comparable<Address> {
 		if (linesOfAddress.length == 0) {
 			throw new IllegalArgumentException("Address: lines of address must have contents");
 		}
-		this.postCode = postCode;
-		for (int i = 0; i < linesOfAddress.length; i++) {
-			this.linesOfAddress.add(linesOfAddress[i]);
+		if (linesOfAddress.length > 3) {
+			throw new IllegalArgumentException("Address: too many lines of address");
 		}
+		this.postcode.set(postCode);
+		this.street.set(linesOfAddress[0]);
+		this.town.set(linesOfAddress[1]);
+		this.county.set(linesOfAddress[2]);
+		this.fulladdress.bind(fulladdressBinding);
 	}
 
 	public Address(Address that) {
 		if (that == null) {
 			throw new IllegalArgumentException("Address: address must be specified");
 		}
-		this.postCode = new PostCode(that.postCode);
-		this.linesOfAddress = new ArrayList<>();
-		that.linesOfAddress.stream().forEach(line -> {
-			this.linesOfAddress.add(line);
-		});
+		this.postcode.set(new PostCode(that.postcode.get()));
+		this.street.set(that.street.get());
+		this.town.set(that.town.get());
+		this.county.set(that.county.get());
+		this.fulladdress.bind(fulladdressBinding);
 	}
 
 	public String[] getLinesOfAddress() {
-		String[] lines = new String[linesOfAddress.size()];
-		int index = 0;
-		for (String line : linesOfAddress) {
-			lines[index++] = line;
-		}
+		String[] lines = new String[3];
+		lines[0] = street.get();
+		lines[1] = town.get();
+		lines[2] = county.get();
 		return lines;
 	}
 
 	public PostCode getPostCode() {
-		return new PostCode(postCode);
+		return new PostCode(postcode.get());
+	}
+
+	public ObjectProperty<PostCode> postCodeProperty() {
+		return postcode;
+	}
+
+	public StringProperty streetProperty() {
+		return street;
+	}
+
+	public StringProperty townProperty() {
+		return town;
+	}
+
+	public StringProperty countyProperty() {
+		return county;
 	}
 
 	@Override
@@ -56,7 +104,7 @@ public class Address implements Comparable<Address> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(linesOfAddress, postCode);
+		return Objects.hash(street.get(), town.get(), county.get(), postcode.get());
 	}
 
 	@Override
@@ -68,19 +116,14 @@ public class Address implements Comparable<Address> {
 		if (getClass() != obj.getClass())
 			return false;
 		Address that = (Address) obj;
-		return Objects.equals(linesOfAddress, that.linesOfAddress) && Objects.equals(postCode, that.postCode);
+		return Objects.equals(street.get(), that.street.get()) && Objects.equals(this.town.get(), that.town.get())
+				&& Objects.equals(this.county.get(), that.county.get())
+				&& Objects.equals(postcode.get(), that.postcode.get());
 	}
 
 	@Override
 	public String toString() {
-		comma = "";
-		StringBuilder builder = new StringBuilder();
-		linesOfAddress.stream().forEach(line -> {
-			builder.append(comma).append(line);
-			comma = ", ";
-		});
-		builder.append(" ").append(postCode);
-		return builder.toString();
+		return fulladdress.get();
 	}
 
 }

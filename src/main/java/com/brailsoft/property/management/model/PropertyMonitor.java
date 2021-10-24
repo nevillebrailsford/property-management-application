@@ -90,12 +90,13 @@ public class PropertyMonitor {
 		properties.remove(oldProperty);
 	}
 
-	public synchronized void addItem(Property property, MonitoredItem monitoredItem) {
-		if (property == null) {
-			throw new IllegalArgumentException("PropertyMonitor: property was null");
-		}
+	public synchronized void addItem(MonitoredItem monitoredItem) {
 		if (monitoredItem == null) {
 			throw new IllegalArgumentException("PropertyMonitor: monitoredItem was null");
+		}
+		Property property = monitoredItem.getOwner();
+		if (property == null) {
+			throw new IllegalArgumentException("PropertyMonitor: property was null");
 		}
 		if (!properties.contains(property)) {
 			throw new IllegalArgumentException("PropertyMonitor: property " + property + " was not known");
