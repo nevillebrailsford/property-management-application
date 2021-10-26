@@ -1,8 +1,10 @@
 package com.brailsoft.property.management.userinterface;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
+import com.brailsoft.property.management.dialog.DateDialog;
 import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.PropertyMonitor;
 
@@ -71,13 +73,16 @@ public class ItemHBox extends HBox {
 		ImageView imageView = new ImageView(tick);
 		Button actionComplete = new Button("Done", imageView);
 		actionComplete.setOnAction(event -> {
-			actionCompleted();
+			recordActionComplete();
 		});
 		getChildren().add(actionComplete);
 	}
 
-	private void actionCompleted() {
-		monitoredItem.actionPerformed(LocalDateTime.now());
-		PropertyMonitor.getInstance().replaceItem(monitoredItem);
+	private void recordActionComplete() {
+		Optional<LocalDate> result = new DateDialog().showAndWait();
+		if (result.isPresent()) {
+			monitoredItem.actionPerformed(result.get().atStartOfDay());
+			PropertyMonitor.getInstance().replaceItem(monitoredItem);
+		}
 	}
 }

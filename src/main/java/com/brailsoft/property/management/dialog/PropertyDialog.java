@@ -4,6 +4,8 @@ import com.brailsoft.property.management.model.Address;
 import com.brailsoft.property.management.model.PostCode;
 import com.brailsoft.property.management.model.Property;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanExpression;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -14,21 +16,25 @@ import javafx.util.Callback;
 
 public class PropertyDialog extends Dialog<Property> {
 
+	private BooleanExpression invalidInput;
+
+	private Label label1 = new Label("Street address:");
+	private Label label2 = new Label("Town:");
+	private Label label3 = new Label("County:");
+	private Label label4 = new Label("Post Code:");
+	private TextField street = new TextField();
+	private TextField town = new TextField();
+	private TextField county = new TextField();
+	private TextField postcode = new TextField();
+
 	public PropertyDialog() {
 		setTitle("Add a Property");
-		setHeaderText("Enter the details below to create a new property.");
+		setHeaderText("Enter the details below to add a new property.");
 		setResizable(true);
 
-		Label label1 = new Label("Street address:");
-		Label label2 = new Label("Town:");
-		Label label3 = new Label("County:");
-		Label label4 = new Label("Post Code:");
-		TextField street = new TextField();
-		TextField town = new TextField();
-		TextField county = new TextField();
-		TextField postcode = new TextField();
-
 		GridPane grid = new GridPane();
+		grid.setHgap(10.0);
+		grid.setVgap(10.0);
 		grid.add(label1, 1, 1);
 		grid.add(street, 2, 1);
 		grid.add(label2, 1, 2);
@@ -41,6 +47,7 @@ public class PropertyDialog extends Dialog<Property> {
 
 		ButtonType buttonTypeOk = new ButtonType("Add Property", ButtonData.OK_DONE);
 		getDialogPane().getButtonTypes().add(buttonTypeOk);
+		getDialogPane().lookupButton(buttonTypeOk).disableProperty().bind(invalidInputProperty());
 
 		setResultConverter(new Callback<ButtonType, Property>() {
 
@@ -50,8 +57,8 @@ public class PropertyDialog extends Dialog<Property> {
 					String line1 = street.getText();
 					String line2 = town.getText();
 					String line3 = county.getText();
-					String pc = postcode.getText().toUpperCase();
-					PostCode thePostCode = new PostCode(pc);
+					String pc = postcode.getText();
+					PostCode thePostCode = new PostCode(pc.toUpperCase());
 					String[] linesOfAddress = new String[] { line1, line2, line3 };
 					Address address = new Address(thePostCode, linesOfAddress);
 					return new Property(address);
@@ -59,5 +66,23 @@ public class PropertyDialog extends Dialog<Property> {
 				return null;
 			}
 		});
+
+	}
+
+	private BooleanExpression invalidInputProperty() {
+		if (invalidInput == null) {
+			invalidInput = Bindings.createBooleanBinding(
+					() -> isEmpty(street) || isEmpty(town) || isEmpty(county) || !isValidPostCode(),
+					street.textProperty(), town.textProperty(), county.textProperty(), postcode.textProperty());
+		}
+		return invalidInput;
+	}
+
+	private boolean isEmpty(TextField textField) {
+		return textField.textProperty().get().isBlank() || textField.textProperty().get().isEmpty();
+	}
+
+	private boolean isValidPostCode() {
+		return postcode.textProperty().get().toUpperCase().matches(PostCode.postCodeRegularExpression);
 	}
 }
