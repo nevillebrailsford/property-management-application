@@ -15,18 +15,13 @@ public class AddressHBox extends HBox {
 		super();
 		this.address = new Address(address);
 		this.setSpacing(5);
-		String[] linesOfAddress = address.getLinesOfAddress();
 		Pane pane = new Pane();
 		HBox.setHgrow(pane, Priority.ALWAYS);
 		getChildren().add(pane);
-		for (int index = 0; index < linesOfAddress.length; index++) {
-			Label lineLabel = new Label(linesOfAddress[index]);
-			lineLabel.setFont(new Font(25.0));
-			getChildren().add(lineLabel);
-		}
-		Label postCodeLabel = new Label(address.getPostCode().toString());
-		postCodeLabel.setFont(new Font(25.0));
-		getChildren().add(postCodeLabel);
+		Label addressLabel = new Label();
+		addressLabel.textProperty().bind(address.fulladdressProperty());
+		addressLabel.setFont(new Font(25.0));
+		getChildren().add(addressLabel);
 		pane = new Pane();
 		HBox.setHgrow(pane, Priority.ALWAYS);
 		getChildren().add(pane);
