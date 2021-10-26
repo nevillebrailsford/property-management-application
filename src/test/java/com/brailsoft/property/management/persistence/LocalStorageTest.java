@@ -42,6 +42,7 @@ class LocalStorageTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
+		PropertyMonitor.getInstance().clear();
 		startTest = LocalDateTime.now();
 		testItem = new MonitoredItem("item1", Period.YEARLY, 1, startTest, 1, Period.WEEKLY);
 	}

@@ -1,7 +1,6 @@
 package com.brailsoft.property.management.userinterface;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import com.brailsoft.property.management.dialog.DateDialog;
@@ -19,8 +18,10 @@ import javafx.scene.text.Font;
 
 public class ItemHBox extends HBox {
 	private MonitoredItem monitoredItem;
-	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	Image tick = new Image(getClass().getResourceAsStream("tick-16.png"));
+	Label lastActionLabel;
+	Label nextActionLabel;
+	Label nextNoticeLabel;
 
 	public ItemHBox(MonitoredItem monitoredtem) {
 		super();
@@ -34,48 +35,113 @@ public class ItemHBox extends HBox {
 	}
 
 	public void refresh(MonitoredItem monitoredItem) {
-		this.getChildren().clear();
-		createGUI();
+		unbind();
+		this.monitoredItem = monitoredItem;
+		bind();
+		setStyles();
+	}
+
+	private void setStyles() {
+		setNextActionStyle();
+		setNextNoticeStyle();
+	}
+
+	private void bind() {
+		lastActionLabel.textProperty().bind(monitoredItem.lastActionProperty());
+		nextActionLabel.textProperty().bind(monitoredItem.nextActionProperty());
+		nextNoticeLabel.textProperty().bind(monitoredItem.nextNoticeProperty());
+	}
+
+	private void unbind() {
+		lastActionLabel.textProperty().unbind();
+		nextActionLabel.textProperty().unbind();
+		nextNoticeLabel.textProperty().unbind();
 	}
 
 	private void createGUI() {
+		makeSpace();
+		makeLabels();
+		makeSpace();
+		makeActionCompleteButton();
+		bind();
+		setStyles();
+	}
+
+	private void makeLabels() {
+		makeDescriptionLabel();
+		makeLastActionLabels();
+		makeNextActionLabels();
+		makeNextNoticeLabels();
+	}
+
+	private void makeSpace() {
 		Pane pane = new Pane();
 		HBox.setHgrow(pane, Priority.ALWAYS);
 		getChildren().add(pane);
-		Label label = new Label(monitoredItem.getDescription());
-		label.setFont(new Font(15.0));
-		getChildren().add(label);
-		label = new Label("last action: " + monitoredItem.getLastActionPerformed().format(dateFormatter));
-		label.setFont(new Font(15.0));
-		label.setStyle("-fx-background-color: lightgreen;");
-		getChildren().add(label);
-		label = new Label("next action: " + monitoredItem.getTimeForNextAction().format(dateFormatter));
-		label.setFont(new Font(15.0));
-		if (this.monitoredItem.overdue()) {
-			label.setStyle("-fx-background-color: red;");
-		} else if (this.monitoredItem.noticeDue()) {
-			label.setStyle("-fx-background-color: orange;");
-		} else {
-			label.setStyle("-fx-background-color: lightgreen;");
-		}
-		getChildren().add(label);
-		label = new Label("next notice: " + monitoredItem.getTimeForNextNotice().format(dateFormatter));
-		label.setFont(new Font(15.0));
-		if (this.monitoredItem.noticeDue()) {
-			label.setStyle("-fx-background-color: orange;");
-		} else {
-			label.setStyle("-fx-background-color: lightgreen;");
-		}
-		getChildren().add(label);
-		pane = new Pane();
-		HBox.setHgrow(pane, Priority.ALWAYS);
-		getChildren().add(pane);
+	}
+
+	private void makeActionCompleteButton() {
 		ImageView imageView = new ImageView(tick);
 		Button actionComplete = new Button("Done", imageView);
 		actionComplete.setOnAction(event -> {
 			recordActionComplete();
 		});
 		getChildren().add(actionComplete);
+	}
+
+	private void makeDescriptionLabel() {
+		Label label = new Label(monitoredItem.getDescription());
+		label.setFont(new Font(15.0));
+		getChildren().add(label);
+	}
+
+	private void makeNextNoticeLabels() {
+		Label label;
+		label = new Label("next notice: ");
+		label.setFont(new Font(15.0));
+		getChildren().add(label);
+		nextNoticeLabel = new Label();
+		nextNoticeLabel.setFont(new Font(15.0));
+		getChildren().add(nextNoticeLabel);
+	}
+
+	private void makeNextActionLabels() {
+		Label label;
+		label = new Label("next action: ");
+		label.setFont(new Font(15.0));
+		getChildren().add(label);
+		nextActionLabel = new Label();
+		nextActionLabel.setFont(new Font(15.0));
+		getChildren().add(nextActionLabel);
+	}
+
+	private void makeLastActionLabels() {
+		Label label;
+		label = new Label("last action: ");
+		label.setFont(new Font(15.0));
+		getChildren().add(label);
+		lastActionLabel = new Label();
+		lastActionLabel.setFont(new Font(15.0));
+		lastActionLabel.setStyle("-fx-background-color: lightgreen;");
+		getChildren().add(lastActionLabel);
+	}
+
+	private void setNextNoticeStyle() {
+		if (this.monitoredItem.noticeDue()) {
+			nextNoticeLabel.setStyle("-fx-background-color: orange;");
+		} else {
+			nextNoticeLabel.setStyle("-fx-background-color: lightgreen;");
+		}
+	}
+
+	private void setNextActionStyle() {
+		if (this.monitoredItem.overdue()) {
+			nextActionLabel.setStyle("-fx-background-color: red;");
+		} else if (this.monitoredItem.noticeDue()) {
+			nextActionLabel.setStyle("-fx-background-color: orange;");
+		} else {
+			nextActionLabel.setStyle("-fx-background-color: lightgreen;");
+		}
 	}
 
 	private void recordActionComplete() {

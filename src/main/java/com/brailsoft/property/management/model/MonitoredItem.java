@@ -1,16 +1,22 @@
 package com.brailsoft.property.management.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
+import javafx.beans.binding.StringBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class MonitoredItem implements Comparable<MonitoredItem> {
+	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
 	private StringProperty description = new SimpleStringProperty(this, "description", "");
 	private ObjectProperty<LocalDateTime> lastActionPerformed = new SimpleObjectProperty<>(this, "lastActionPerformed",
 			null);
@@ -23,6 +29,54 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 	private ObjectProperty<Period> periodForNextNotice = new SimpleObjectProperty<>(this, "periodForNextAction", null);;
 	private IntegerProperty advanceNotice = new SimpleIntegerProperty(this, "advanceNotice", 0);
 	private ObjectProperty<Property> owner = new SimpleObjectProperty<>(this, "owner", null);
+
+	private final StringBinding lastActionBinding = new StringBinding() {
+		{
+			super.bind(lastActionPerformed);
+		}
+
+		@Override
+		protected String computeValue() {
+			return lastActionPerformed.get().format(dateFormatter);
+		}
+	};
+	private final StringBinding nextActionBinding = new StringBinding() {
+		{
+			super.bind(timeForNextAction);
+		}
+
+		@Override
+		protected String computeValue() {
+			return timeForNextAction.get().format(dateFormatter);
+		}
+	};
+
+	private final StringBinding nextNoticeBinding = new StringBinding() {
+		{
+			super.bind(timeForNextNotice);
+		}
+
+		@Override
+		protected String computeValue() {
+			return timeForNextNotice.get().format(dateFormatter);
+		}
+	};
+
+	private final ReadOnlyStringWrapper lastAction = new ReadOnlyStringWrapper(this, "lastAction");
+	private final ReadOnlyStringWrapper nextAction = new ReadOnlyStringWrapper(this, "nextAction");
+	private final ReadOnlyStringWrapper nextNotice = new ReadOnlyStringWrapper(this, "nextnotice");
+
+	public ReadOnlyStringProperty lastActionProperty() {
+		return lastAction.getReadOnlyProperty();
+	}
+
+	public ReadOnlyStringProperty nextActionProperty() {
+		return nextAction.getReadOnlyProperty();
+	}
+
+	public ReadOnlyStringProperty nextNoticeProperty() {
+		return nextNotice.getReadOnlyProperty();
+	}
 
 	public MonitoredItem(String description, Period periodForNextAction, int noticeEvery, LocalDateTime lastActioned,
 			int advanceNotice, Period periodForNextNotice) {
@@ -54,6 +108,9 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		this.timeForNextNotice
 				.set(calculateTimeForNextNotice(periodForNextNotice, advanceNotice, this.timeForNextAction.get()));
 		this.owner.set(null);
+		this.lastAction.bind(lastActionBinding);
+		this.nextAction.bind(nextActionBinding);
+		this.nextNotice.bind(nextNoticeBinding);
 	}
 
 	public MonitoredItem(MonitoredItem that) {
@@ -73,6 +130,9 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		} else {
 			this.owner.set(null);
 		}
+		this.lastAction.bind(lastActionBinding);
+		this.nextAction.bind(nextActionBinding);
+		this.nextNotice.bind(nextNoticeBinding);
 	}
 
 	public Property getOwner() {
