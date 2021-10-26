@@ -58,6 +58,27 @@ public class Property implements Comparable<Property> {
 		items.add(new MonitoredItem(item));
 	}
 
+	public void replaceItem(MonitoredItem item) {
+		if (item == null) {
+			throw new IllegalArgumentException("Property: item was null");
+		}
+		if (!items.contains(item)) {
+			throw new IllegalArgumentException("Property: item " + item + " not found");
+		}
+		int found = -1;
+		for (int index = 0; index < items.size(); index++) {
+			if (items.get(index).equals(item)) {
+				found = index;
+				break;
+			}
+		}
+		if (found >= 0) {
+			items.set(found, new MonitoredItem(item));
+		} else {
+			throw new IllegalArgumentException("Property: item " + item + " not found");
+		}
+	}
+
 	public List<MonitoredItem> getItems() {
 		List<MonitoredItem> copyList = new ArrayList<>();
 		items.stream().forEach(item -> {

@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Period;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanExpression;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
@@ -17,9 +19,18 @@ import javafx.util.Callback;
 
 public class EventDialog extends Dialog<MonitoredItem> {
 
+	private BooleanExpression invalidInput;
+
+	private TextField description = new TextField();
+	private ChoiceBox<Period> actionPeriod = new ChoiceBox<>();
+	private TextField howMany = new TextField();
+	private DatePicker lastAction = new DatePicker();
+	private ChoiceBox<Period> noticePeriod = new ChoiceBox<>();
+	private TextField noticeHowMany = new TextField();
+
 	public EventDialog() {
 		setTitle("Add an Event");
-		setHeaderText("Enter the details below to create a new event to be monitored.");
+		setHeaderText("Enter the details below to add a new event to be monitored.");
 		setResizable(true);
 
 		Label label1 = new Label("Description:");
@@ -28,20 +39,16 @@ public class EventDialog extends Dialog<MonitoredItem> {
 		Label label4 = new Label("Date last actioned:");
 		Label label5 = new Label("Notice period:");
 		Label label6 = new Label("How many:");
-		TextField description = new TextField();
-		ChoiceBox<Period> actionPeriod = new ChoiceBox<>();
 		actionPeriod.getItems().add(Period.YEARLY);
 		actionPeriod.getItems().add(Period.MONTHLY);
 		actionPeriod.getItems().add(Period.WEEKLY);
-		TextField howMany = new TextField();
-		DatePicker lastAction = new DatePicker();
-		ChoiceBox<Period> noticePeriod = new ChoiceBox<>();
 		noticePeriod.getItems().add(Period.YEARLY);
 		noticePeriod.getItems().add(Period.MONTHLY);
 		noticePeriod.getItems().add(Period.WEEKLY);
-		TextField noticeHowMany = new TextField();
 
 		GridPane grid = new GridPane();
+		grid.setHgap(10.0);
+		grid.setVgap(10.0);
 		grid.add(label1, 1, 1);
 		grid.add(description, 2, 1);
 		grid.add(label2, 1, 2);
@@ -58,6 +65,11 @@ public class EventDialog extends Dialog<MonitoredItem> {
 
 		ButtonType buttonTypeOk = new ButtonType("Add Event", ButtonData.OK_DONE);
 		getDialogPane().getButtonTypes().add(buttonTypeOk);
+		getDialogPane().lookupButton(buttonTypeOk).disableProperty().bind(invalidInputProperty());
+
+		lastAction.setValue(LocalDate.now());
+		actionPeriod.setValue(Period.YEARLY);
+		noticePeriod.setValue(Period.WEEKLY);
 
 		setResultConverter(new Callback<ButtonType, MonitoredItem>() {
 
@@ -76,5 +88,32 @@ public class EventDialog extends Dialog<MonitoredItem> {
 				return null;
 			}
 		});
+	}
+
+	private BooleanExpression invalidInputProperty() {
+		if (invalidInput == null) {
+			invalidInput = Bindings.createBooleanBinding(
+					() -> isEmpty(description) || !isNumeric(howMany) || !isNumeric(noticeHowMany)
+							|| !hasValue(actionPeriod) || !hasValue(noticePeriod) || !hasValue(lastAction),
+					description.textProperty(), howMany.textProperty(), noticeHowMany.textProperty(),
+					actionPeriod.valueProperty(), noticePeriod.valueProperty(), lastAction.valueProperty());
+		}
+		return invalidInput;
+	}
+
+	private boolean isEmpty(TextField textField) {
+		return textField.textProperty().get().isBlank() || textField.textProperty().get().isEmpty();
+	}
+
+	private boolean isNumeric(TextField textField) {
+		return textField.textProperty().get().matches("[0-9]*");
+	}
+
+	private boolean hasValue(ChoiceBox<Period> choiceBox) {
+		return choiceBox.valueProperty().get() != null;
+	}
+
+	private boolean hasValue(DatePicker datePicker) {
+		return datePicker.valueProperty().get() != null;
 	}
 }
