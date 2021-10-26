@@ -26,15 +26,11 @@
 						<Menu mnemonicParsing="false" text="Add">
 							<items>
 								<MenuItem mnemonicParsing="false"
-									onAction="#addProperty" text="Add a Property" />
+									onAction="#addProperty" text="A Property" />
 								<MenuItem mnemonicParsing="false" onAction="#addEvent"
-									text="Add an  event" />
+									text="An event" />
 							</items>
 						</Menu>
-						<MenuItem mnemonicParsing="false" onAction="#change"
-							text="Change..." />
-						<MenuItem mnemonicParsing="false" onAction="#delete"
-							text="Delete..." />
 					</items>
 				</Menu>
 				<Menu mnemonicParsing="false" text="Help">

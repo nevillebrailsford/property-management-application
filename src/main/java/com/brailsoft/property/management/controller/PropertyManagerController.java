@@ -17,6 +17,8 @@ import com.brailsoft.property.management.userinterface.PropertyTab;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TabPane;
 
 public class PropertyManagerController implements Initializable {
@@ -64,7 +66,11 @@ public class PropertyManagerController implements Initializable {
 
 	@FXML
 	void about(ActionEvent event) {
-		System.out.println("about");
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setContentText("Property Management \nVersion 1.0.0\nBuild date: 26/10/2021");
+		alert.setTitle("About Property Management");
+		alert.setHeaderText("Property Management");
+		alert.showAndWait();
 	}
 
 	@FXML
@@ -86,16 +92,6 @@ public class PropertyManagerController implements Initializable {
 			item.setOwner(property);
 			propertyMonitor.addItem(item);
 		}
-	}
-
-	@FXML
-	void change(ActionEvent event) {
-		System.out.println("change");
-	}
-
-	@FXML
-	void delete(ActionEvent event) {
-		System.out.println("delete");
 	}
 
 	@FXML
