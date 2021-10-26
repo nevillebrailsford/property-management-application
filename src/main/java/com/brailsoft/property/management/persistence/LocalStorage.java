@@ -200,6 +200,7 @@ public class LocalStorage {
 				Element propertyElement = (Element) node;
 				Property property = readDataFrom(propertyElement);
 				PropertyMonitor.getInstance().addProperty(property);
+				updatePropertyWithMonitoredItems(property, propertyElement);
 			}
 		}
 	}
@@ -207,7 +208,6 @@ public class LocalStorage {
 	private Property readDataFrom(Element propertyElement) {
 		Address address = buildAddressFrom((Element) propertyElement.getElementsByTagName(ADDRESS).item(0));
 		Property property = new Property(address);
-		updatePropertyWithMonitoredItems(property, propertyElement);
 		return property;
 	}
 
@@ -231,7 +231,8 @@ public class LocalStorage {
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				Element itemElement = (Element) node;
 				MonitoredItem monitoredItem = buildMonitoredItemFrom(itemElement);
-				property.addItem(monitoredItem);
+				monitoredItem.setOwner(property);
+				PropertyMonitor.getInstance().addItem(monitoredItem);
 			}
 		}
 	}

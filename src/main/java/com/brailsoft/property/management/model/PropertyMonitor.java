@@ -1,8 +1,11 @@
 package com.brailsoft.property.management.model;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import com.brailsoft.property.management.persistence.LocalStorage;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -64,6 +67,7 @@ public class PropertyMonitor {
 			throw new IllegalArgumentException("PropertyMonitor: property " + newProperty + " already exists");
 		}
 		properties.add(new Property(newProperty));
+		updateStorage();
 	}
 
 	public synchronized void replaceProperty(Property oldProperty, Property newProperty) {
@@ -78,6 +82,7 @@ public class PropertyMonitor {
 		}
 		properties.remove(oldProperty);
 		properties.add(newProperty);
+		updateStorage();
 	}
 
 	public synchronized void removeProperty(Property oldProperty) {
@@ -88,6 +93,7 @@ public class PropertyMonitor {
 			throw new IllegalArgumentException("PropertyMonitor: property " + oldProperty + " was not known");
 		}
 		properties.remove(oldProperty);
+		updateStorage();
 	}
 
 	public synchronized void addItem(MonitoredItem monitoredItem) {
@@ -102,6 +108,7 @@ public class PropertyMonitor {
 			throw new IllegalArgumentException("PropertyMonitor: property " + property + " was not known");
 		}
 		findProperty(property).addItem(monitoredItem);
+		updateStorage();
 	}
 
 	public synchronized void replaceItem(MonitoredItem monitoredItem) {
@@ -116,6 +123,15 @@ public class PropertyMonitor {
 			throw new IllegalArgumentException("PropertyMonitor: property " + property + " was not known");
 		}
 		findProperty(property).replaceItem(monitoredItem);
+		updateStorage();
+	}
+
+	private void updateStorage() {
+		try {
+			LocalStorage.getInstance().saveArchiveData();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public synchronized List<Property> getProperties() {
