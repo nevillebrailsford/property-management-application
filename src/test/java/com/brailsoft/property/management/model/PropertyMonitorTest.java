@@ -8,6 +8,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.brailsoft.property.management.persistence.LocalStorage;
+import com.brailsoft.property.management.persistence.LocalStorageTest;
+
 import javafx.collections.ListChangeListener;
 
 class PropertyMonitorTest {
@@ -27,6 +30,7 @@ class PropertyMonitorTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
+		LocalStorage.getInstance(LocalStorageTest.directory);
 		monitor = PropertyMonitor.getInstance();
 		listener = new ListChangeListener<>() {
 

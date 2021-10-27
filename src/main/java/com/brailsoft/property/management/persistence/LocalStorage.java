@@ -88,7 +88,7 @@ public class LocalStorage {
 		try (InputStream archive = new BufferedInputStream(new FileInputStream(archiveFile))) {
 			readDataFrom(archive);
 		} catch (Exception e) {
-			throw new IOException("LocalSotrage: Excecption occurred - " + e.getMessage());
+			throw new IOException("LocalStorage: Exception occurred - " + e.getMessage());
 		}
 	}
 
@@ -97,7 +97,7 @@ public class LocalStorage {
 		try (OutputStream archive = new BufferedOutputStream(new FileOutputStream(archiveFile))) {
 			writeDataTo(archive);
 		} catch (Exception e) {
-			throw new IOException("LocalSotrage: Excecption occurred - " + e.getMessage());
+			throw new IOException("LocalStorage: Exception occurred - " + e.getMessage());
 		}
 	}
 
