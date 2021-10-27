@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.time.LocalDateTime;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import javafx.collections.ListChangeListener;
 class PropertyMonitorTest {
 
 	PropertyMonitor monitor;
+	private LocalDateTime startTest;
 	private ListChangeListener<? super Property> listener;
 	private static final PostCode postCode1 = new PostCode("CW3 9ST");
 	private static final PostCode postCode2 = new PostCode("CW3 9SU");
@@ -27,9 +30,13 @@ class PropertyMonitorTest {
 	private static final Property property1 = new Property(address1);
 	private static final Address address2 = new Address(postCode2, linesOfAddress);
 	private static final Property property2 = new Property(address2);
+	private MonitoredItem testItem;
 
 	@BeforeEach
 	void setUp() throws Exception {
+		startTest = LocalDateTime.now();
+		testItem = new MonitoredItem("item1", Period.YEARLY, 1, startTest, 1, Period.WEEKLY);
+		testItem.setOwner(property1);
 		LocalStorage.getInstance(LocalStorageTest.directory);
 		monitor = PropertyMonitor.getInstance();
 		listener = new ListChangeListener<>() {
@@ -106,6 +113,28 @@ class PropertyMonitorTest {
 	}
 
 	@Test
+	void testGetItems() {
+		assertEquals(0, monitor.getProperties().size());
+		monitor.addProperty(property1);
+		assertEquals(1, monitor.getProperties().size());
+		assertEquals(0, monitor.getItemsFor(property1).size());
+		monitor.addItem(testItem);
+		assertEquals(1, monitor.getItemsFor(property1).size());
+	}
+
+	@Test
+	void testRemoveItem() {
+		assertEquals(0, monitor.getProperties().size());
+		monitor.addProperty(property1);
+		assertEquals(1, monitor.getProperties().size());
+		assertEquals(0, monitor.getItemsFor(property1).size());
+		monitor.addItem(testItem);
+		assertEquals(1, monitor.getItemsFor(property1).size());
+		monitor.removeItem(testItem);
+		assertEquals(0, monitor.getItemsFor(property1).size());
+	}
+
+	@Test
 	void testAddNullListener() {
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			monitor.addListener(null);
@@ -145,6 +174,32 @@ class PropertyMonitorTest {
 			monitor.removeProperty(null);
 		});
 		assertEquals("PropertyMonitor: property was null", exc.getMessage());
+	}
+
+	@Test
+	void testRemoveNullItem() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			monitor.removeItem(null);
+		});
+		assertEquals("PropertyMonitor: monitoredItem was null", exc.getMessage());
+	}
+
+	@Test
+	void testRemoveItemWithUnknownProperty() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			monitor.removeItem(testItem);
+		});
+		assertEquals("PropertyMonitor: property 99 The Street, The Town, The County CW3 9ST was not known",
+				exc.getMessage());
+	}
+
+	@Test
+	void testRemoveUnknownItem() {
+		monitor.addProperty(property1);
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			monitor.removeItem(testItem);
+		});
+		assertEquals("Property: item item1 not found", exc.getMessage());
 	}
 
 	@Test

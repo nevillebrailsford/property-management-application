@@ -46,6 +46,16 @@ public class PropertyTab extends Tab {
 						VBox vBox = (VBox) getContent();
 						vBox.getChildren().add(itemHBox);
 					}
+				} else if (change.wasRemoved()) {
+					for (MonitoredItem monitoredItem : change.getRemoved()) {
+						for (int index = 1; index < ((VBox) getContent()).getChildren().size(); index++) {
+							ItemHBox itemHBox = (ItemHBox) ((VBox) getContent()).getChildren().get(index);
+							if (itemHBox.getMonitoredItem().equals(monitoredItem)) {
+								((VBox) getContent()).getChildren().remove(index);
+								break;
+							}
+						}
+					}
 				}
 			}
 		}
