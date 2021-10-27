@@ -5,6 +5,8 @@ import com.brailsoft.property.management.model.Property;
 import com.brailsoft.property.management.model.PropertyMonitor;
 
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -39,12 +41,15 @@ public class PropertyTab extends Tab {
 		@Override
 		public void onChanged(Change<? extends MonitoredItem> change) {
 			while (change.next()) {
+				ObservableList<Node> nodes = ((VBox) getContent()).getChildren();
 				if (change.wasReplaced()) {
 					for (MonitoredItem monitoredItem : change.getAddedSubList()) {
-						for (int index = 1; index < ((VBox) getContent()).getChildren().size(); index++) {
-							ItemHBox itemHBox = (ItemHBox) ((VBox) getContent()).getChildren().get(index);
-							if (itemHBox.getMonitoredItem().equals(monitoredItem)) {
-								itemHBox.refresh(monitoredItem);
+						for (int index = 1; index < nodes.size(); index++) {
+							if (nodes.get(index) instanceof ItemHBox) {
+								ItemHBox itemHBox = (ItemHBox) nodes.get(index);
+								if (itemHBox.getMonitoredItem().equals(monitoredItem)) {
+									itemHBox.refresh(monitoredItem);
+								}
 							}
 						}
 					}
@@ -52,15 +57,17 @@ public class PropertyTab extends Tab {
 					for (MonitoredItem monitoredItem : change.getAddedSubList()) {
 						ItemHBox itemHBox = new ItemHBox(monitoredItem);
 						VBox vBox = (VBox) getContent();
-						vBox.getChildren().add(vBox.getChildren().size() - 1, itemHBox);
+						vBox.getChildren().add(nodes.size() - 1, itemHBox);
 					}
 				} else if (change.wasRemoved()) {
 					for (MonitoredItem monitoredItem : change.getRemoved()) {
-						for (int index = 1; index < ((VBox) getContent()).getChildren().size(); index++) {
-							ItemHBox itemHBox = (ItemHBox) ((VBox) getContent()).getChildren().get(index);
-							if (itemHBox.getMonitoredItem().equals(monitoredItem)) {
-								((VBox) getContent()).getChildren().remove(index);
-								break;
+						for (int index = 1; index < nodes.size(); index++) {
+							if (nodes.get(index) instanceof ItemHBox) {
+								ItemHBox itemHBox = (ItemHBox) nodes.get(index);
+								if (itemHBox.getMonitoredItem().equals(monitoredItem)) {
+									((VBox) getContent()).getChildren().remove(index);
+									break;
+								}
 							}
 						}
 					}

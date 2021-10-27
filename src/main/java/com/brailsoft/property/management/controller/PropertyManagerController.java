@@ -2,6 +2,7 @@ package com.brailsoft.property.management.controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -18,10 +19,17 @@ import com.brailsoft.property.management.userinterface.PropertyTab;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class PropertyManagerController implements Initializable {
 
@@ -130,6 +138,33 @@ public class PropertyManagerController implements Initializable {
 		propertyManager.shutdown();
 	}
 
+	@FXML
+	void viewOverdueItems(ActionEvent event) {
+		Stage stage = new Stage();
+		stage.setTitle("Overdue Items");
+		Scene scene;
+		try {
+			scene = new Scene(PropertyManager.loadFXMLAndSetMainController("OverdueItems"));
+		} catch (Exception e) {
+			throw new IllegalArgumentException("PropertyManagerController: " + e.getMessage());
+		}
+		scene.getStylesheets().add(PropertyManager.class.getResource("PropertyManager.css").toExternalForm());
+		stage.initModality(Modality.NONE);
+		stage.setScene(scene);
+		constructOverdueItems(scene);
+		stage.show();
+	}
+
+	@FXML
+	void viewNotifiedItems(ActionEvent event) {
+
+	}
+
+	@FXML
+	void viewAllItems(ActionEvent event) {
+
+	}
+
 	private ButtonType userWantsToDeleteProperty(Property property) {
 		Alert alert = new Alert(AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO);
 		alert.setTitle("Delete Property");
@@ -145,4 +180,27 @@ public class PropertyManagerController implements Initializable {
 		return property;
 	}
 
+	private void constructOverdueItems(Scene scene) {
+		List<Property> overdueProperties = PropertyMonitor.getInstance().getPropertiesWithOverdueItems();
+		Parent parent = scene.getRoot();
+		if (parent instanceof BorderPane) {
+			BorderPane pane = (BorderPane) parent;
+			VBox vBox = (VBox) pane.getCenter();
+			if (overdueProperties.size() == 0) {
+				Label label = new Label("No overdue items");
+				vBox.getChildren().add(label);
+			} else {
+				for (Property property : overdueProperties) {
+					List<MonitoredItem> allItems = PropertyMonitor.getInstance().getItemsFor(property);
+					for (MonitoredItem item : allItems) {
+						if (item.overdue()) {
+							Label label = new Label(item.toString() + " for property " + property.toString()
+									+ " overdue on " + item.getTimeForNextAction());
+							vBox.getChildren().add(label);
+						}
+					}
+				}
+			}
+		}
+	}
 }

@@ -41,6 +41,16 @@
 						</Menu>
 					</items>
 				</Menu>
+				<Menu mnemonicParsing="false" text="View">
+					<items>
+						<MenuItem mnemonicParsing="false"
+							onAction="#viewAllItems" text="All Items" />
+						<MenuItem mnemonicParsing="false"
+							onAction="#viewOverdueItems" text="Overdue Items" />
+						<MenuItem mnemonicParsing="false"
+							onAction="#viewNotifiedItems" text="Notified Items" />
+					</items>
+				</Menu>
 				<Menu mnemonicParsing="false" text="Help">
 					<items>
 						<MenuItem mnemonicParsing="false" onAction="#about"
