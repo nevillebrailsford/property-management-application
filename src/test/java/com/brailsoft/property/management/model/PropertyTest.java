@@ -85,6 +85,17 @@ class PropertyTest {
 	}
 
 	@Test
+	void testRemoveItem() {
+		assertNotNull(testProperty.getItems());
+		assertEquals(0, testProperty.getItems().size());
+		testProperty.addItem(testItem);
+		assertEquals(1, testProperty.getItems().size());
+		assertEquals(testItem, testProperty.getItems().get(0));
+		testProperty.removeItem(testItem);
+		assertEquals(0, testProperty.getItems().size());
+	}
+
+	@Test
 	void testCompareTo() {
 		assertTrue(testProperty.compareTo(testProperty) == 0);
 		assertTrue(testProperty.compareTo(new Property(new Address(postCode, linesOfAddress))) == 0);
@@ -181,7 +192,23 @@ class PropertyTest {
 	}
 
 	@Test
+	void testRemoveNullItem() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			testProperty.removeItem(null);
+		});
+		assertEquals("Property: item was null", exc.getMessage());
+	}
 
+	@Test
+	void testRemoveMissingItem() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			testProperty.removeItem(new MonitoredItem("item2", Period.YEARLY, 1,
+					LocalDateTime.now().minusYears(1).minusWeeks(1).minusMinutes(1), 1, Period.WEEKLY));
+		});
+		assertEquals("Property: item item2 not found", exc.getMessage());
+	}
+
+	@Test
 	void testAddDuplicateItem() {
 		testProperty.addItem(testItem);
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {

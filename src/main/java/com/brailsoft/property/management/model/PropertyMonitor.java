@@ -126,6 +126,21 @@ public class PropertyMonitor {
 		updateStorage();
 	}
 
+	public synchronized void removeItem(MonitoredItem monitoredItem) {
+		if (monitoredItem == null) {
+			throw new IllegalArgumentException("PropertyMonitor: monitoredItem was null");
+		}
+		Property property = monitoredItem.getOwner();
+		if (property == null) {
+			throw new IllegalArgumentException("PropertyMonitor: property was null");
+		}
+		if (!properties.contains(property)) {
+			throw new IllegalArgumentException("PropertyMonitor: property " + property + " was not known");
+		}
+		findProperty(property).removeItem(monitoredItem);
+		updateStorage();
+	}
+
 	private void updateStorage() {
 		try {
 			LocalStorage.getInstance().saveArchiveData();
@@ -162,6 +177,17 @@ public class PropertyMonitor {
 			}
 		});
 		Collections.sort(copyList);
+		return copyList;
+	}
+
+	public synchronized List<MonitoredItem> getItemsFor(Property property) {
+		if (findProperty(property) == null) {
+			throw new IllegalArgumentException("PropertyMonitor: property " + property + " not found");
+		}
+		List<MonitoredItem> copyList = new ArrayList<>();
+		findProperty(property).getItems().stream().forEach(i -> {
+			copyList.add(new MonitoredItem(i));
+		});
 		return copyList;
 	}
 

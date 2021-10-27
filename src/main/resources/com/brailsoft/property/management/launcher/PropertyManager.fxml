@@ -27,8 +27,16 @@
 							<items>
 								<MenuItem mnemonicParsing="false"
 									onAction="#addProperty" text="A Property" />
-								<MenuItem mnemonicParsing="false" onAction="#addEvent"
-									text="An event" />
+								<MenuItem mnemonicParsing="false" onAction="#addItem"
+									text="An item" />
+							</items>
+						</Menu>
+						<Menu mnemonicParsing="false" text="Delete">
+							<items>
+								<MenuItem mnemonicParsing="false"
+									onAction="#deleteProperty" text="A Property" />
+								<MenuItem mnemonicParsing="false" onAction="#deleteItem"
+									text="An item" />
 							</items>
 						</Menu>
 					</items>
