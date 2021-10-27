@@ -122,25 +122,25 @@ public class ItemHBox extends HBox {
 		getChildren().add(label);
 		lastActionLabel = new Label();
 		lastActionLabel.setFont(new Font(15.0));
-		lastActionLabel.setStyle("-fx-background-color: lightgreen;");
+		lastActionLabel.getStyleClass().add("within-date-style");
 		getChildren().add(lastActionLabel);
 	}
 
 	private void setNextNoticeStyle() {
 		if (this.monitoredItem.noticeDue()) {
-			nextNoticeLabel.setStyle("-fx-background-color: orange;");
+			nextNoticeLabel.getStyleClass().add("overdue-notice-style");
 		} else {
-			nextNoticeLabel.setStyle("-fx-background-color: lightgreen;");
+			nextNoticeLabel.getStyleClass().add("within-date-style");
 		}
 	}
 
 	private void setNextActionStyle() {
 		if (this.monitoredItem.overdue()) {
-			nextActionLabel.setStyle("-fx-background-color: red;");
+			nextActionLabel.getStyleClass().add("overdue-item-style");
 		} else if (this.monitoredItem.noticeDue()) {
-			nextActionLabel.setStyle("-fx-background-color: orange;");
+			nextActionLabel.getStyleClass().add("overdue-notice-style");
 		} else {
-			nextActionLabel.setStyle("-fx-background-color: lightgreen;");
+			nextActionLabel.getStyleClass().add("within-date-style");
 		}
 	}
 

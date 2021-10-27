@@ -1,0 +1,30 @@
+.root {
+	-fx-background-color: linear-gradient(lightblue, aqua);
+	-fx-padding: 10px;
+}
+
+.button {
+	-fx-background-color: white;
+	-fx-opacity: 0.75;
+}
+
+.within-date-style {
+	-fx-background-color: lightgreen;
+	-fx-opacity: 0.75;
+}
+
+.overdue-notice-style {
+	-fx-background-color: orange;
+	-fx-opacity: 0.75;
+}
+
+.overdue-item-style {
+	-fx-background-color: red;
+	-fx-opacity: 0.85;
+}
+
+.address-label {
+	-fx-font-size: 25.0; 
+	-fx-text-fill: grey;
+}
+
