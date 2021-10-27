@@ -6,6 +6,8 @@ import com.brailsoft.property.management.model.PropertyMonitor;
 
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.Tab;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class PropertyTab extends Tab {
@@ -19,6 +21,12 @@ public class PropertyTab extends Tab {
 		this.setContent(content);
 		AddressHBox addressHBox = new AddressHBox(property.getAddress());
 		content.getChildren().add(addressHBox);
+		Pane pane = new Pane();
+		VBox.setVgrow(pane, Priority.ALWAYS);
+		content.getChildren().add(pane);
+		pane = new Pane();
+		VBox.setVgrow(pane, Priority.ALWAYS);
+		content.getChildren().add(pane);
 		PropertyMonitor.getInstance().addListener(listener, property);
 	}
 
@@ -44,7 +52,7 @@ public class PropertyTab extends Tab {
 					for (MonitoredItem monitoredItem : change.getAddedSubList()) {
 						ItemHBox itemHBox = new ItemHBox(monitoredItem);
 						VBox vBox = (VBox) getContent();
-						vBox.getChildren().add(itemHBox);
+						vBox.getChildren().add(vBox.getChildren().size() - 1, itemHBox);
 					}
 				} else if (change.wasRemoved()) {
 					for (MonitoredItem monitoredItem : change.getRemoved()) {

@@ -19,6 +19,7 @@ public class PropertyManager extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		Scene scene = new Scene(loadFXML("PropertyManager"));
+		scene.getStylesheets().add(getClass().getResource("PropertyManager.css").toExternalForm());
 		appCtrl.setPropertyManager(this);
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Property Management");

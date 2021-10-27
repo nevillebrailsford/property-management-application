@@ -6,7 +6,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import javafx.scene.text.Font;
 
 public class AddressHBox extends HBox {
 	private Address address;
@@ -20,7 +19,7 @@ public class AddressHBox extends HBox {
 		getChildren().add(pane);
 		Label addressLabel = new Label();
 		addressLabel.textProperty().bind(address.fulladdressProperty());
-		addressLabel.setFont(new Font(25.0));
+		addressLabel.getStyleClass().add("address-label");
 		getChildren().add(addressLabel);
 		pane = new Pane();
 		HBox.setHgrow(pane, Priority.ALWAYS);
