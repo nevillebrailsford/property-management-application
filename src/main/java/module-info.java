@@ -1,6 +1,6 @@
 module com.brailsoft.property.manager {
 	requires transitive javafx.controls;
-	requires javafx.fxml;
+	requires transitive javafx.fxml;
 	requires javafx.base;
 	requires javafx.graphics;
 	requires java.xml;
