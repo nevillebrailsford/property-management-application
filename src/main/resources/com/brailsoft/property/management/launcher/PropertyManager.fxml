@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
 
@@ -17,6 +18,9 @@
 			<menus>
 				<Menu mnemonicParsing="false" text="File">
 					<items>
+						<MenuItem mnemonicParsing="false" onAction="#printReport"
+							text="Print" />
+						<SeparatorMenuItem mnemonicParsing="false" />
 						<MenuItem mnemonicParsing="false"
 							onAction="#exitApplication" text="Exit Application" />
 					</items>
@@ -35,8 +39,8 @@
 							<items>
 								<MenuItem mnemonicParsing="false"
 									onAction="#deleteProperty" text="A Property" />
-								<MenuItem mnemonicParsing="false" onAction="#deleteItem"
-									text="An item" />
+								<MenuItem mnemonicParsing="false"
+									onAction="#deleteItem" text="An item" />
 							</items>
 						</Menu>
 					</items>

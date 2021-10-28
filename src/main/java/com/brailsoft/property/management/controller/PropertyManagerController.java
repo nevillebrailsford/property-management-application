@@ -14,6 +14,7 @@ import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Property;
 import com.brailsoft.property.management.model.PropertyMonitor;
 import com.brailsoft.property.management.persistence.LocalStorage;
+import com.brailsoft.property.management.print.PrintReport;
 import com.brailsoft.property.management.userinterface.PropertyTab;
 
 import javafx.event.ActionEvent;
@@ -183,6 +184,11 @@ public class PropertyManagerController implements Initializable {
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.setScene(scene);
 		stage.show();
+	}
+
+	@FXML
+	void printReport() {
+		PrintReport.printReport((Stage) tabPane.getScene().getWindow());
 	}
 
 	private ButtonType userWantsToDeleteProperty(Property property) {

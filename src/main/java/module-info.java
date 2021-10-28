@@ -9,6 +9,7 @@ module com.brailsoft.property.manager {
 	opens com.brailsoft.property.management.controller;
 	opens com.brailsoft.property.management.model;
 	opens com.brailsoft.property.management.persistence;
+	opens com.brailsoft.property.management.print;
 
 	exports com.brailsoft.property.management.launcher;
 }
