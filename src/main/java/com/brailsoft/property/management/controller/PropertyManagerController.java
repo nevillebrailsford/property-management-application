@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import com.brailsoft.property.management.dialog.DeleteItemDialog;
 import com.brailsoft.property.management.dialog.EventDialog;
 import com.brailsoft.property.management.dialog.PropertyDialog;
+import com.brailsoft.property.management.launcher.LoadProperty;
 import com.brailsoft.property.management.launcher.PropertyManager;
 import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Property;
@@ -18,10 +19,13 @@ import com.brailsoft.property.management.userinterface.PropertyTab;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TabPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class PropertyManagerController implements Initializable {
 
@@ -128,6 +132,57 @@ public class PropertyManagerController implements Initializable {
 	@FXML
 	void exitApplication(ActionEvent event) {
 		propertyManager.shutdown();
+	}
+
+	@FXML
+	void viewAllItems(ActionEvent event) {
+		Stage stage = new Stage();
+		stage.setTitle("All Items");
+		Scene scene;
+		try {
+			LoadProperty loadProperty = PropertyManager.loadFXML("AllItems");
+			scene = new Scene(loadProperty.getParent());
+		} catch (Exception e) {
+			throw new IllegalArgumentException("PropertyManagerController: " + e.getMessage());
+		}
+		scene.getStylesheets().add(PropertyManager.class.getResource("PropertyManager.css").toExternalForm());
+		stage.initModality(Modality.APPLICATION_MODAL);
+		stage.setScene(scene);
+		stage.show();
+	}
+
+	@FXML
+	void viewOverdueItems(ActionEvent event) {
+		Stage stage = new Stage();
+		stage.setTitle("Overdue Items");
+		Scene scene;
+		try {
+			LoadProperty loadProperty = PropertyManager.loadFXML("OverdueItems");
+			scene = new Scene(loadProperty.getParent());
+		} catch (Exception e) {
+			throw new IllegalArgumentException("PropertyManagerController: " + e.getMessage());
+		}
+		scene.getStylesheets().add(PropertyManager.class.getResource("PropertyManager.css").toExternalForm());
+		stage.initModality(Modality.APPLICATION_MODAL);
+		stage.setScene(scene);
+		stage.show();
+	}
+
+	@FXML
+	void viewNotifiedItems(ActionEvent event) {
+		Stage stage = new Stage();
+		stage.setTitle("Notified Items");
+		Scene scene;
+		try {
+			LoadProperty loadProperty = PropertyManager.loadFXML("NotifiedItems");
+			scene = new Scene(loadProperty.getParent());
+		} catch (Exception e) {
+			throw new IllegalArgumentException("PropertyManagerController: " + e.getMessage());
+		}
+		scene.getStylesheets().add(PropertyManager.class.getResource("PropertyManager.css").toExternalForm());
+		stage.initModality(Modality.APPLICATION_MODAL);
+		stage.setScene(scene);
+		stage.show();
 	}
 
 	private ButtonType userWantsToDeleteProperty(Property property) {
