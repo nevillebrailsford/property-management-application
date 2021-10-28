@@ -11,16 +11,19 @@
 .within-date-style {
 	-fx-background-color: lightgreen;
 	-fx-opacity: 0.75;
+	-fx-font-weight: normal;
 }
 
 .overdue-notice-style {
 	-fx-background-color: orange;
 	-fx-opacity: 0.75;
+	-fx-font-weight: bold;
 }
 
 .overdue-item-style {
 	-fx-background-color: red;
 	-fx-opacity: 0.85;
+	-fx-font-weight: bold;
 }
 
 .address-label {
