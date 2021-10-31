@@ -1,11 +1,14 @@
 package com.brailsoft.property.management.model;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.brailsoft.property.management.constant.Constants;
 import com.brailsoft.property.management.persistence.LocalStorage;
+import com.brailsoft.property.management.preference.ApplicationPreferences;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -13,6 +16,7 @@ import javafx.collections.ObservableList;
 
 public class PropertyMonitor {
 	private static PropertyMonitor instance = null;
+	private ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
 
 	private final ObservableList<Property> properties;
 
@@ -143,7 +147,8 @@ public class PropertyMonitor {
 
 	private void updateStorage() {
 		try {
-			LocalStorage.getInstance().saveArchiveData();
+			File rootDirectory = new File(applicationPreferences.getDirectory());
+			LocalStorage.getInstance(rootDirectory).saveArchiveData();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

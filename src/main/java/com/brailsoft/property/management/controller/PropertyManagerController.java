@@ -1,12 +1,16 @@
 package com.brailsoft.property.management.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.prefs.BackingStoreException;
 
+import com.brailsoft.property.management.constant.Constants;
 import com.brailsoft.property.management.dialog.DeleteItemDialog;
 import com.brailsoft.property.management.dialog.EventDialog;
+import com.brailsoft.property.management.dialog.PreferencesDialog;
 import com.brailsoft.property.management.dialog.PropertyDialog;
 import com.brailsoft.property.management.launcher.LoadProperty;
 import com.brailsoft.property.management.launcher.PropertyManager;
@@ -14,6 +18,8 @@ import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Property;
 import com.brailsoft.property.management.model.PropertyMonitor;
 import com.brailsoft.property.management.persistence.LocalStorage;
+import com.brailsoft.property.management.preference.ApplicationPreferences;
+import com.brailsoft.property.management.preference.PreferencesData;
 import com.brailsoft.property.management.print.PrintReport;
 import com.brailsoft.property.management.userinterface.PropertyTab;
 
@@ -31,7 +37,9 @@ import javafx.stage.Stage;
 public class PropertyManagerController implements Initializable {
 
 	private PropertyManager propertyManager;
-	private LocalStorage localStorage = LocalStorage.getInstance();
+	private ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
+	private File rootDirectory = new File(applicationPreferences.getDirectory());
+	private LocalStorage localStorage = LocalStorage.getInstance(rootDirectory);
 	private PropertyMonitor propertyMonitor = PropertyMonitor.getInstance();
 
 	@FXML
@@ -87,7 +95,7 @@ public class PropertyManagerController implements Initializable {
 	@FXML
 	void about(ActionEvent event) {
 		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setContentText("Property Management \nVersion 1.0.0\nBuild date: 27/10/2021");
+		alert.setContentText("Property Management \nVersion 1.0.0\nBuild date: 31/10/2021");
 		alert.setTitle("About Property Management");
 		alert.setHeaderText("Property Management");
 		alert.showAndWait();
@@ -189,6 +197,19 @@ public class PropertyManagerController implements Initializable {
 	@FXML
 	void printReport() {
 		PrintReport.printReport((Stage) tabPane.getScene().getWindow());
+	}
+
+	@FXML
+	void preferences() {
+		Optional<PreferencesData> result = new PreferencesDialog().showAndWait();
+		if (result.isPresent()) {
+			String newDirectory = result.get().getDirectory();
+			try {
+				ApplicationPreferences.getInstance(Constants.NODE_NAME).setDirectory(newDirectory);
+			} catch (BackingStoreException e) {
+				System.out.println(e.getMessage());
+			}
+		}
 	}
 
 	private ButtonType userWantsToDeleteProperty(Property property) {

@@ -4,12 +4,14 @@ module com.brailsoft.property.manager {
 	requires javafx.base;
 	requires javafx.graphics;
 	requires java.xml;
+	requires java.prefs;
 
 	opens com.brailsoft.property.management.launcher;
 	opens com.brailsoft.property.management.controller;
 	opens com.brailsoft.property.management.model;
 	opens com.brailsoft.property.management.persistence;
 	opens com.brailsoft.property.management.print;
+	opens com.brailsoft.property.management.preference;
 
 	exports com.brailsoft.property.management.launcher;
 }
