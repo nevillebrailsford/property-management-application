@@ -6,6 +6,7 @@ module com.brailsoft.property.manager {
 	requires java.xml;
 	requires java.prefs;
 
+	opens com.brailsoft.property.management.audit;
 	opens com.brailsoft.property.management.launcher;
 	opens com.brailsoft.property.management.controller;
 	opens com.brailsoft.property.management.model;
