@@ -18,6 +18,9 @@
 			<menus>
 				<Menu mnemonicParsing="false" text="File">
 					<items>
+						<MenuItem mnemonicParsing="false" onAction="#preferences"
+							text="Prerferences" />
+						<SeparatorMenuItem mnemonicParsing="false" />
 						<MenuItem mnemonicParsing="false" onAction="#printReport"
 							text="Print" />
 						<SeparatorMenuItem mnemonicParsing="false" />

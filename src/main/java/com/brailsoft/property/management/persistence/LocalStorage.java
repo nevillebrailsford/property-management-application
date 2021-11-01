@@ -34,8 +34,8 @@ import com.brailsoft.property.management.model.Property;
 import com.brailsoft.property.management.model.PropertyMonitor;
 
 public class LocalStorage {
-	private static final String DIRECTORY = "property.management";
-	private static final String FILE_NAME = "property.dat";
+	public static final String DIRECTORY = "property.management";
+	public static final String FILE_NAME = "property.dat";
 	private static final String PROPERTIES = "properties";
 	private static final String PROPERTY = "property";
 	private static final String ADDRESS = "address";
@@ -53,19 +53,15 @@ public class LocalStorage {
 
 	private File directory = null;
 
-	public synchronized static LocalStorage getInstance(File... directory) {
-		if (directory.length > 1) {
-			throw new IllegalArgumentException("LocalStorage: too many parameters");
+	public synchronized static LocalStorage getInstance(File rootDirectory) {
+		if (rootDirectory == null) {
+			throw new IllegalArgumentException("LocalStorage: rootDirectory was null");
 		}
 		if (instance == null) {
 			instance = new LocalStorage();
-			if (directory.length == 0) {
-				instance.updateDirectory(new File(System.getProperty("user.home"), DIRECTORY));
-			} else {
-				instance.updateDirectory(directory[0]);
-			}
-		} else if (directory.length == 1) {
-			instance.updateDirectory(directory[0]);
+			instance.updateDirectory(new File(rootDirectory, DIRECTORY));
+		} else {
+			instance.updateDirectory(new File(rootDirectory, DIRECTORY));
 		}
 		return instance;
 	}

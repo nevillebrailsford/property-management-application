@@ -4,14 +4,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.File;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.brailsoft.property.management.constants.TestConstants;
 import com.brailsoft.property.management.persistence.LocalStorage;
-import com.brailsoft.property.management.persistence.LocalStorageTest;
+import com.brailsoft.property.management.preference.ApplicationPreferences;
 
 import javafx.collections.ListChangeListener;
 
@@ -31,13 +33,16 @@ class PropertyMonitorTest {
 	private static final Address address2 = new Address(postCode2, linesOfAddress);
 	private static final Property property2 = new Property(address2);
 	private MonitoredItem testItem;
+	ApplicationPreferences applicationPreferences;
 
 	@BeforeEach
 	void setUp() throws Exception {
 		startTest = LocalDateTime.now();
 		testItem = new MonitoredItem("item1", Period.YEARLY, 1, startTest, 1, Period.WEEKLY);
 		testItem.setOwner(property1);
-		LocalStorage.getInstance(LocalStorageTest.directory);
+		applicationPreferences = ApplicationPreferences.getInstance(TestConstants.TEST_NODE_NAME);
+		applicationPreferences.setDirectory(TestConstants.TEST_DIRECTORY);
+		LocalStorage.getInstance(new File(applicationPreferences.getDirectory()));
 		monitor = PropertyMonitor.getInstance();
 		listener = new ListChangeListener<>() {
 
@@ -52,6 +57,7 @@ class PropertyMonitorTest {
 	void tearDown() throws Exception {
 		PropertyMonitor.getInstance().clear();
 		PropertyMonitor.getInstance().removeListener(listener);
+		applicationPreferences.clear();
 	}
 
 	@Test
