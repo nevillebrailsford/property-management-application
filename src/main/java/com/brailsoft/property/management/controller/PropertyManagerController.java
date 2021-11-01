@@ -205,8 +205,12 @@ public class PropertyManagerController implements Initializable {
 		if (result.isPresent()) {
 			String newDirectory = result.get().getDirectory();
 			try {
-				ApplicationPreferences.getInstance(Constants.NODE_NAME).setDirectory(newDirectory);
+				ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
+				applicationPreferences.setDirectory(newDirectory);
+				LocalStorage.getInstance(new File(applicationPreferences.getDirectory())).saveArchiveData();
 			} catch (BackingStoreException e) {
+				System.out.println(e.getMessage());
+			} catch (IOException e) {
 				System.out.println(e.getMessage());
 			}
 		}

@@ -1,12 +1,14 @@
 package com.brailsoft.property.management.launcher;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.prefs.BackingStoreException;
 
 import com.brailsoft.property.management.constant.Constants;
 import com.brailsoft.property.management.controller.PropertyManagerController;
+import com.brailsoft.property.management.dialog.PreferencesDialog;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
+import com.brailsoft.property.management.preference.PreferencesData;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -14,7 +16,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -91,15 +92,12 @@ public class PropertyManager extends Application {
 	}
 
 	private String selectDirectory() {
-		String result = "";
-		DirectoryChooser directoryChooser = new DirectoryChooser();
-		directoryChooser.setTitle("Directory Selection");
-		directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-		File selectedDirectory = directoryChooser.showDialog(null);
-		if (selectedDirectory != null) {
-			result = selectedDirectory.getAbsolutePath();
+		String directory = "";
+		Optional<PreferencesData> result = new PreferencesDialog().showAndWait();
+		if (result.isPresent()) {
+			directory = result.get().getDirectory();
 		}
-		return result;
+		return directory;
 	}
 
 	private void tellPreferencesChosenDirectoryIs(String directory) throws BackingStoreException {
