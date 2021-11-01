@@ -51,16 +51,14 @@ public class LocalStorageTest {
 		PropertyMonitor.getInstance().clear();
 		startTest = LocalDateTime.now();
 		testItem = new MonitoredItem("item1", Period.YEARLY, 1, startTest, 1, Period.WEEKLY);
+		deleteFiles();
 	}
 
 	@AfterEach
 	void tearDown() throws Exception {
-		File testDirectory = LocalStorage.getInstance(rootDirectory).getDirectory();
-		Files.deleteIfExists(Paths.get(testDirectory.getAbsolutePath(), LocalStorage.FILE_NAME));
-		Files.deleteIfExists(Paths.get(testDirectory.getAbsolutePath()));
-		Files.deleteIfExists(Paths.get(testDirectory.getParentFile().getAbsolutePath()));
 		PropertyMonitor.getInstance().clear();
 		applicationPreferences.clear();
+		deleteFiles();
 	}
 
 	@Test
@@ -124,6 +122,18 @@ public class LocalStorageTest {
 		File file = new File(fileName);
 		File directory = file.getParentFile();
 		return directory.getAbsolutePath();
+	}
+
+	private void deleteFiles() throws IOException {
+		File testDirectory = LocalStorage.getInstance(rootDirectory).getDirectory();
+		File[] files = testDirectory.listFiles();
+		if (files != null) {
+			for (File f : files) {
+				Files.deleteIfExists(Paths.get(f.getAbsolutePath()));
+			}
+		}
+		Files.deleteIfExists(Paths.get(testDirectory.getAbsolutePath()));
+		Files.deleteIfExists(Paths.get(testDirectory.getParentFile().getAbsolutePath()));
 	}
 
 }

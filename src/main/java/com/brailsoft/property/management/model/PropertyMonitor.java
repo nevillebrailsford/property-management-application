@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.brailsoft.property.management.audit.AuditObject;
+import com.brailsoft.property.management.audit.AuditRecord;
+import com.brailsoft.property.management.audit.AuditType;
+import com.brailsoft.property.management.audit.AuditWriter;
 import com.brailsoft.property.management.constant.Constants;
 import com.brailsoft.property.management.persistence.LocalStorage;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
@@ -60,6 +64,7 @@ public class PropertyMonitor {
 	}
 
 	public synchronized void clear() {
+		auditBeforeClearing();
 		properties.clear();
 	}
 
@@ -71,6 +76,7 @@ public class PropertyMonitor {
 			throw new IllegalArgumentException("PropertyMonitor: property " + newProperty + " already exists");
 		}
 		properties.add(new Property(newProperty));
+		auditAddProperty(newProperty);
 		updateStorage();
 	}
 
@@ -86,6 +92,8 @@ public class PropertyMonitor {
 		}
 		properties.remove(oldProperty);
 		properties.add(newProperty);
+		auditRemoveProperty(oldProperty);
+		auditAddProperty(newProperty);
 		updateStorage();
 	}
 
@@ -97,6 +105,7 @@ public class PropertyMonitor {
 			throw new IllegalArgumentException("PropertyMonitor: property " + oldProperty + " was not known");
 		}
 		properties.remove(oldProperty);
+		auditRemoveProperty(oldProperty);
 		updateStorage();
 	}
 
@@ -112,6 +121,7 @@ public class PropertyMonitor {
 			throw new IllegalArgumentException("PropertyMonitor: property " + property + " was not known");
 		}
 		findProperty(property).addItem(monitoredItem);
+		auditAddItem(property, monitoredItem);
 		updateStorage();
 	}
 
@@ -127,6 +137,7 @@ public class PropertyMonitor {
 			throw new IllegalArgumentException("PropertyMonitor: property " + property + " was not known");
 		}
 		findProperty(property).replaceItem(monitoredItem);
+		auditReplaceItem(property, monitoredItem);
 		updateStorage();
 	}
 
@@ -142,6 +153,7 @@ public class PropertyMonitor {
 			throw new IllegalArgumentException("PropertyMonitor: property " + property + " was not known");
 		}
 		findProperty(property).removeItem(monitoredItem);
+		auditRemoveItem(property, monitoredItem);
 		updateStorage();
 	}
 
@@ -205,6 +217,48 @@ public class PropertyMonitor {
 			}
 		}
 		return found;
+	}
+
+	private void auditBeforeClearing() {
+		for (Property p : properties) {
+			AuditRecord record = new AuditRecord(AuditType.REMOVED, AuditObject.PROPERTY);
+			record.setDescription(p.toString());
+			auditWrite(record);
+		}
+	}
+
+	private void auditAddProperty(Property p) {
+		AuditRecord record = new AuditRecord(AuditType.ADDED, AuditObject.PROPERTY);
+		record.setDescription(p.toString());
+		auditWrite(record);
+	}
+
+	private void auditRemoveProperty(Property p) {
+		AuditRecord record = new AuditRecord(AuditType.REMOVED, AuditObject.PROPERTY);
+		record.setDescription(p.toString());
+		auditWrite(record);
+	}
+
+	private void auditAddItem(Property p, MonitoredItem i) {
+		AuditRecord record = new AuditRecord(AuditType.ADDED, AuditObject.MONITOREDITEM);
+		record.setDescription(i.toString() + " added to " + p.toString());
+		auditWrite(record);
+	}
+
+	private void auditReplaceItem(Property p, MonitoredItem i) {
+		AuditRecord record = new AuditRecord(AuditType.REPLACED, AuditObject.MONITOREDITEM);
+		record.setDescription(i.toString() + " replaced in " + p.toString());
+		auditWrite(record);
+	}
+
+	private void auditRemoveItem(Property p, MonitoredItem i) {
+		AuditRecord record = new AuditRecord(AuditType.REMOVED, AuditObject.MONITOREDITEM);
+		record.setDescription(i.toString() + " removed from " + p.toString());
+		auditWrite(record);
+	}
+
+	private void auditWrite(AuditRecord record) {
+		AuditWriter.write(record);
 	}
 
 }
