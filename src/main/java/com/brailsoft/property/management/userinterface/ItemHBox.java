@@ -35,6 +35,7 @@ public class ItemHBox extends HBox {
 	}
 
 	public void refresh(MonitoredItem monitoredItem) {
+		System.out.println("referesh");
 		unbind();
 		this.monitoredItem = monitoredItem;
 		bind();
@@ -128,18 +129,23 @@ public class ItemHBox extends HBox {
 
 	private void setNextNoticeStyle() {
 		if (this.monitoredItem.noticeDue()) {
+			nextNoticeLabel.getStyleClass().clear();
 			nextNoticeLabel.getStyleClass().add("overdue-notice-style");
 		} else {
+			nextNoticeLabel.getStyleClass().clear();
 			nextNoticeLabel.getStyleClass().add("within-date-style");
 		}
 	}
 
 	private void setNextActionStyle() {
 		if (this.monitoredItem.overdue()) {
+			nextActionLabel.getStyleClass().clear();
 			nextActionLabel.getStyleClass().add("overdue-item-style");
 		} else if (this.monitoredItem.noticeDue()) {
+			nextActionLabel.getStyleClass().clear();
 			nextActionLabel.getStyleClass().add("overdue-notice-style");
 		} else {
+			nextActionLabel.getStyleClass().clear();
 			nextActionLabel.getStyleClass().add("within-date-style");
 		}
 	}

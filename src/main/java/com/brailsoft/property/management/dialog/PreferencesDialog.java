@@ -42,6 +42,9 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 		selectDirectory.setOnAction((event) -> {
 			DirectoryChooser directoryChooser = new DirectoryChooser();
 			String currentDirectory = ApplicationPreferences.getInstance(Constants.NODE_NAME).getDirectory();
+			if (!(currentDirectory == null || currentDirectory.isBlank() || currentDirectory.isEmpty())) {
+				directoryChooser.setInitialDirectory(new File(currentDirectory));
+			}
 			File chosenDirectory = directoryChooser.showDialog(this.getOwner());
 			if (chosenDirectory != null) {
 				directory.textProperty().set(chosenDirectory.getAbsolutePath());

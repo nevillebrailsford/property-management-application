@@ -23,19 +23,17 @@ public class AllItemsController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 
 		List<Property> properties = PropertyMonitor.getInstance().getProperties();
-		if (properties.size() == 0) {
-			Label label = new Label("No items found");
-			content.getChildren().add(label);
-		} else {
-			for (Property property : properties) {
-				List<MonitoredItem> allItems = PropertyMonitor.getInstance().getItemsFor(property);
-				for (MonitoredItem item : allItems) {
-					AllItemHBox itemHBox = new AllItemHBox(item);
-					content.getChildren().add(itemHBox);
-				}
+		for (Property property : properties) {
+			List<MonitoredItem> allItems = PropertyMonitor.getInstance().getItemsFor(property);
+			for (MonitoredItem item : allItems) {
+				AllItemHBox itemHBox = new AllItemHBox(item);
+				content.getChildren().add(itemHBox);
 			}
 		}
-
+		if (content.getChildren().size() == 0) {
+			Label label = new Label("No items found");
+			content.getChildren().add(label);
+		}
 	}
 
 }

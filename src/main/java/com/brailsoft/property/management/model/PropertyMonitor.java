@@ -2,6 +2,7 @@ package com.brailsoft.property.management.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,26 +14,36 @@ import com.brailsoft.property.management.audit.AuditWriter;
 import com.brailsoft.property.management.constant.Constants;
 import com.brailsoft.property.management.persistence.LocalStorage;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
+import com.brailsoft.property.management.timer.Timer;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 public class PropertyMonitor {
 	private static PropertyMonitor instance = null;
 	private ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
+	private Timer timer;
 
 	private final ObservableList<Property> properties;
 
 	public synchronized static PropertyMonitor getInstance() {
 		if (instance == null) {
 			instance = new PropertyMonitor();
+			instance.timer.addListener((event) -> {
+				instance.timerPopped(event);
+			});
 		}
 		return instance;
 	}
 
 	private PropertyMonitor() {
 		properties = FXCollections.observableArrayList();
+		timer = Timer.getInstance();
 	}
 
 	public synchronized void addListener(ListChangeListener<? super Property> listener) {
@@ -257,4 +268,35 @@ public class PropertyMonitor {
 		AuditWriter.write(record);
 	}
 
+	private void timerPopped(ActionEvent event) {
+		System.out.println(LocalDateTime.now() + " timer popped");
+		if (getPropertiesWithOverdueNotices().size() > 0) {
+			final Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("Notified Items");
+			alert.setHeaderText("Notified items have been found");
+			StringBuilder context = new StringBuilder();
+			context.append("The Following properties have overdue items").append("\n");
+			for (Property property : getPropertiesWithOverdueNotices()) {
+				context.append(property.getAddress().toString()).append("\n");
+			}
+			alert.setContentText(context.toString());
+			Platform.runLater(() -> {
+				alert.showAndWait();
+			});
+		}
+		if (getPropertiesWithOverdueItems().size() > 0) {
+			final Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Overdue Items");
+			alert.setHeaderText("Overdue items have been found");
+			StringBuilder context = new StringBuilder();
+			context.append("The Following properties have overdue items").append("\n");
+			for (Property property : getPropertiesWithOverdueItems()) {
+				context.append(property.getAddress().toString()).append("\n");
+			}
+			alert.setContentText(context.toString());
+			Platform.runLater(() -> {
+				alert.showAndWait();
+			});
+		}
+	}
 }

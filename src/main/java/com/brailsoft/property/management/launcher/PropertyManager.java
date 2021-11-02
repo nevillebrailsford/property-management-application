@@ -9,6 +9,7 @@ import com.brailsoft.property.management.controller.PropertyManagerController;
 import com.brailsoft.property.management.dialog.PreferencesDialog;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
 import com.brailsoft.property.management.preference.PreferencesData;
+import com.brailsoft.property.management.timer.Timer;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -23,6 +24,7 @@ public class PropertyManager extends Application {
 	private ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
 
 	private static PropertyManagerController mainController;
+	private Timer timer;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -51,24 +53,19 @@ public class PropertyManager extends Application {
 
 			@Override
 			public void handle(WindowEvent event) {
-				if (!mainController.shutdown()) {
-					event.consume();
-				} else {
-					performShutdown();
-				}
+				performShutdown();
 
 			}
 		});
+		timer = Timer.getInstance();
 	}
 
 	public void shutdown() {
-		if (mainController.shutdown()) {
-			performShutdown();
-		}
+		performShutdown();
 	}
 
 	private void performShutdown() {
-		mainController.saveIniFile();
+		timer.stop();
 		Platform.exit();
 	}
 
