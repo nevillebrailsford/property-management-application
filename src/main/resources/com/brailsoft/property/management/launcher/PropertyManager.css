@@ -31,3 +31,7 @@
 	-fx-text-fill: grey;
 }
 
+.table-column {
+  -fx-alignment: CENTER;
+}
+

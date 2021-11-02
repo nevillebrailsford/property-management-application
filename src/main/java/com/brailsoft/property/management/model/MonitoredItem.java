@@ -64,7 +64,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 
 	private final ReadOnlyStringWrapper lastAction = new ReadOnlyStringWrapper(this, "lastAction");
 	private final ReadOnlyStringWrapper nextAction = new ReadOnlyStringWrapper(this, "nextAction");
-	private final ReadOnlyStringWrapper nextNotice = new ReadOnlyStringWrapper(this, "nextnotice");
+	private final ReadOnlyStringWrapper nextNotice = new ReadOnlyStringWrapper(this, "nextNotice");
 
 	public ReadOnlyStringProperty lastActionProperty() {
 		return lastAction.getReadOnlyProperty();
