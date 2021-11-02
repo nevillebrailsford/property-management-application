@@ -9,6 +9,7 @@ public class AuditRecord implements Comparable<AuditRecord> {
 	private final AuditObject auditObject;
 	private String description;
 	private LocalDateTime timeStamp;
+	private String user;
 	private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
 	public AuditRecord(AuditType auditType, AuditObject auditObject) {
@@ -16,6 +17,7 @@ public class AuditRecord implements Comparable<AuditRecord> {
 		this.auditType = auditType;
 		this.auditObject = auditObject;
 		this.timeStamp = LocalDateTime.now();
+		this.user = System.getProperty("user.name");
 	}
 
 	public String getDescription() {
@@ -43,6 +45,10 @@ public class AuditRecord implements Comparable<AuditRecord> {
 		StringBuilder builder = new StringBuilder();
 		if (timeStamp != null) {
 			builder.append(timeStamp.format(formatter));
+			builder.append(" ");
+		}
+		if (user != null) {
+			builder.append(user);
 			builder.append(" ");
 		}
 		if (auditType != null) {
