@@ -18,7 +18,7 @@ public class AuditWriter {
 			applicationDirectory.mkdirs();
 		}
 		File auditFile = new File(applicationDirectory, AUDIT_FILE);
-		try (PrintStream writer = new PrintStream(new FileOutputStream(auditFile))) {
+		try (PrintStream writer = new PrintStream(new FileOutputStream(auditFile, true))) {
 			writer.println(record);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

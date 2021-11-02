@@ -76,7 +76,6 @@ public class PropertyMonitor {
 			throw new IllegalArgumentException("PropertyMonitor: property " + newProperty + " already exists");
 		}
 		properties.add(new Property(newProperty));
-		auditAddProperty(newProperty);
 		updateStorage();
 	}
 
@@ -92,8 +91,6 @@ public class PropertyMonitor {
 		}
 		properties.remove(oldProperty);
 		properties.add(newProperty);
-		auditRemoveProperty(oldProperty);
-		auditAddProperty(newProperty);
 		updateStorage();
 	}
 
@@ -105,7 +102,6 @@ public class PropertyMonitor {
 			throw new IllegalArgumentException("PropertyMonitor: property " + oldProperty + " was not known");
 		}
 		properties.remove(oldProperty);
-		auditRemoveProperty(oldProperty);
 		updateStorage();
 	}
 
@@ -121,7 +117,6 @@ public class PropertyMonitor {
 			throw new IllegalArgumentException("PropertyMonitor: property " + property + " was not known");
 		}
 		findProperty(property).addItem(monitoredItem);
-		auditAddItem(property, monitoredItem);
 		updateStorage();
 	}
 
@@ -137,7 +132,6 @@ public class PropertyMonitor {
 			throw new IllegalArgumentException("PropertyMonitor: property " + property + " was not known");
 		}
 		findProperty(property).replaceItem(monitoredItem);
-		auditReplaceItem(property, monitoredItem);
 		updateStorage();
 	}
 
@@ -153,7 +147,6 @@ public class PropertyMonitor {
 			throw new IllegalArgumentException("PropertyMonitor: property " + property + " was not known");
 		}
 		findProperty(property).removeItem(monitoredItem);
-		auditRemoveItem(property, monitoredItem);
 		updateStorage();
 	}
 
@@ -227,33 +220,36 @@ public class PropertyMonitor {
 		}
 	}
 
-	private void auditAddProperty(Property p) {
+	public void auditAddProperty(Property property) {
 		AuditRecord record = new AuditRecord(AuditType.ADDED, AuditObject.PROPERTY);
-		record.setDescription(p.toString());
+		record.setDescription(property.toString());
 		auditWrite(record);
 	}
 
-	private void auditRemoveProperty(Property p) {
+	public void auditRemoveProperty(Property property) {
 		AuditRecord record = new AuditRecord(AuditType.REMOVED, AuditObject.PROPERTY);
-		record.setDescription(p.toString());
+		record.setDescription(property.toString());
 		auditWrite(record);
 	}
 
-	private void auditAddItem(Property p, MonitoredItem i) {
+	public void auditAddItem(MonitoredItem monitoredItem) {
+		Property property = monitoredItem.getOwner();
 		AuditRecord record = new AuditRecord(AuditType.ADDED, AuditObject.MONITOREDITEM);
-		record.setDescription(i.toString() + " added to " + p.toString());
+		record.setDescription(monitoredItem.toString() + " added to " + property.toString());
 		auditWrite(record);
 	}
 
-	private void auditReplaceItem(Property p, MonitoredItem i) {
+	public void auditReplaceItem(MonitoredItem monitoredItem) {
+		Property property = monitoredItem.getOwner();
 		AuditRecord record = new AuditRecord(AuditType.REPLACED, AuditObject.MONITOREDITEM);
-		record.setDescription(i.toString() + " replaced in " + p.toString());
+		record.setDescription(monitoredItem.toString() + " replaced in " + property.toString());
 		auditWrite(record);
 	}
 
-	private void auditRemoveItem(Property p, MonitoredItem i) {
+	public void auditRemoveItem(MonitoredItem monitoredItem) {
+		Property property = monitoredItem.getOwner();
 		AuditRecord record = new AuditRecord(AuditType.REMOVED, AuditObject.MONITOREDITEM);
-		record.setDescription(i.toString() + " removed from " + p.toString());
+		record.setDescription(monitoredItem.toString() + " removed from " + property.toString());
 		auditWrite(record);
 	}
 

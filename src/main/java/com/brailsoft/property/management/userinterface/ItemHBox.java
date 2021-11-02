@@ -148,7 +148,9 @@ public class ItemHBox extends HBox {
 		Optional<LocalDate> result = new DateDialog().showAndWait();
 		if (result.isPresent()) {
 			monitoredItem.actionPerformed(result.get().atStartOfDay());
-			PropertyMonitor.getInstance().replaceItem(monitoredItem);
+			PropertyMonitor propertyMonitor = PropertyMonitor.getInstance();
+			propertyMonitor.replaceItem(monitoredItem);
+			propertyMonitor.auditReplaceItem(monitoredItem);
 		}
 	}
 }

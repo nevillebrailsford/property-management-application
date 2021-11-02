@@ -107,6 +107,7 @@ public class PropertyManagerController implements Initializable {
 		if (result.isPresent()) {
 			Property property = result.get();
 			propertyMonitor.addProperty(property);
+			propertyMonitor.auditAddProperty(property);
 		}
 	}
 
@@ -115,6 +116,7 @@ public class PropertyManagerController implements Initializable {
 		Property property = getSelectedProperty();
 		if (userWantsToDeleteProperty(property) == ButtonType.YES) {
 			propertyMonitor.removeProperty(property);
+			propertyMonitor.auditRemoveProperty(property);
 		}
 	}
 
@@ -126,6 +128,7 @@ public class PropertyManagerController implements Initializable {
 			Property property = getSelectedProperty();
 			item.setOwner(property);
 			propertyMonitor.addItem(item);
+			propertyMonitor.auditAddItem(item);
 		}
 	}
 
@@ -134,7 +137,9 @@ public class PropertyManagerController implements Initializable {
 		Property property = getSelectedProperty();
 		Optional<MonitoredItem> result = new DeleteItemDialog(property).showAndWait();
 		if (result.isPresent()) {
-			propertyMonitor.removeItem(result.get());
+			MonitoredItem item = result.get();
+			propertyMonitor.removeItem(item);
+			propertyMonitor.auditRemoveItem(item);
 		}
 	}
 
