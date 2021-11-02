@@ -80,14 +80,6 @@ public class PropertyManagerController implements Initializable {
 
 	}
 
-	public boolean shutdown() {
-		return true;
-	}
-
-	public void saveIniFile() {
-
-	}
-
 	public void setPropertyManager(PropertyManager propertyManager) {
 		this.propertyManager = propertyManager;
 	}

@@ -24,7 +24,7 @@ public class NotifiedItemsController implements Initializable {
 
 		List<Property> notifiedProperties = PropertyMonitor.getInstance().getPropertiesWithOverdueNotices();
 		if (notifiedProperties.size() == 0) {
-			Label label = new Label("No overdue items");
+			Label label = new Label("No notified items");
 			content.getChildren().add(label);
 		} else {
 			for (Property property : notifiedProperties) {
