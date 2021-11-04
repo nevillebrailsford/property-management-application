@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Property;
 import com.brailsoft.property.management.model.PropertyMonitor;
-import com.brailsoft.property.management.userinterface.OverdueItemsTableView;
+import com.brailsoft.property.management.userinterface.MonitoredItemsTableView;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,12 +18,12 @@ public class OverdueItemsController implements Initializable {
 	@FXML
 	VBox content;
 
-	private OverdueItemsTableView tableView;
+	private MonitoredItemsTableView tableView;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		tableView = new OverdueItemsTableView();
+		tableView = new MonitoredItemsTableView();
 		List<Property> overdueProperties = PropertyMonitor.getInstance().getPropertiesWithOverdueItems();
 		for (Property property : overdueProperties) {
 			List<MonitoredItem> allItems = PropertyMonitor.getInstance().getItemsFor(property);

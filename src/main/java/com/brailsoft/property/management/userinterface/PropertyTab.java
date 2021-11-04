@@ -24,7 +24,7 @@ public class PropertyTab extends Tab {
 
 	private ItemTableView tableView;
 
-	Button actionComplete;
+	private Button actionComplete;
 
 	public PropertyTab(Property property) {
 		super();

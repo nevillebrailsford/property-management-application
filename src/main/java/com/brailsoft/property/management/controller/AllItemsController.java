@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Property;
 import com.brailsoft.property.management.model.PropertyMonitor;
-import com.brailsoft.property.management.userinterface.AllItemsTableView;
+import com.brailsoft.property.management.userinterface.MonitoredItemsTableView;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,12 +18,12 @@ public class AllItemsController implements Initializable {
 	@FXML
 	VBox content;
 
-	private AllItemsTableView tableView;
+	private MonitoredItemsTableView tableView;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		tableView = new AllItemsTableView();
+		tableView = new MonitoredItemsTableView();
 		List<Property> properties = PropertyMonitor.getInstance().getProperties();
 		for (Property property : properties) {
 			List<MonitoredItem> allItems = PropertyMonitor.getInstance().getItemsFor(property);
