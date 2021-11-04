@@ -2,16 +2,12 @@ package com.brailsoft.property.management.userinterface;
 
 import com.brailsoft.property.management.model.MonitoredItem;
 
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Callback;
 
-public class ItemTableView extends MonitoredItemsTableBase {
+public class MonitoredItemsTableView extends MonitoredItemsTableBase {
 
-	private static final String OVERDUE_NOTIFICATION = "orange";
-	private static final String OVERDUE_ACTION = "red";
-
+	TableColumn<MonitoredItem, String> postcode = new TableColumn<>("Property");
 	TableColumn<MonitoredItem, String> monitoredItem = new TableColumn<>("Item");
 	TableColumn<MonitoredItem, String> description = new TableColumn<>("Description");
 	TableColumn<MonitoredItem, String> dateOf = new TableColumn<>("Date of");
@@ -19,30 +15,19 @@ public class ItemTableView extends MonitoredItemsTableBase {
 	TableColumn<MonitoredItem, String> nextNotice = new TableColumn<>("Next Notification");
 	TableColumn<MonitoredItem, String> nextAction = new TableColumn<>("Next Action");
 
-	public ItemTableView() {
+	public MonitoredItemsTableView() {
 		super();
+		postcode.setCellValueFactory(
+				cellData -> cellData.getValue().getOwner().getAddress().getPostCode().valueProperty());
 		description.setCellValueFactory(new PropertyValueFactory<>("description"));
 		lastAction.setCellValueFactory(new PropertyValueFactory<>("lastAction"));
-
 		nextNotice.setCellValueFactory(new PropertyValueFactory<>("nextNotice"));
-		nextNotice.setCellFactory(new Callback<TableColumn<MonitoredItem, String>, TableCell<MonitoredItem, String>>() {
-			@Override
-			public TableCell<MonitoredItem, String> call(TableColumn<MonitoredItem, String> param) {
-				return new ActionTableCell(OVERDUE_NOTIFICATION);
-			}
-		});
-
 		nextAction.setCellValueFactory(new PropertyValueFactory<>("nextAction"));
-		nextAction.setCellFactory(new Callback<TableColumn<MonitoredItem, String>, TableCell<MonitoredItem, String>>() {
-			@Override
-			public TableCell<MonitoredItem, String> call(TableColumn<MonitoredItem, String> param) {
-				return new ActionTableCell(OVERDUE_ACTION);
-			}
-		});
 
-		monitoredItem.setMinWidth(900);
-		description.setMinWidth(450);
-		dateOf.setMinWidth(450);
+		postcode.setMinWidth(40);
+		monitoredItem.setMinWidth(730);
+		description.setMinWidth(230);
+		dateOf.setMinWidth(430);
 		lastAction.setMinWidth(150);
 		nextNotice.setMinWidth(150);
 		nextAction.setMinWidth(150);
@@ -51,6 +36,7 @@ public class ItemTableView extends MonitoredItemsTableBase {
 		dateOf.getColumns().add(nextAction);
 		monitoredItem.getColumns().add(description);
 		monitoredItem.getColumns().add(dateOf);
+		getColumns().add(postcode);
 		getColumns().add(monitoredItem);
 	}
 
