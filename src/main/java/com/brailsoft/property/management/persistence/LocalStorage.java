@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,6 +27,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.brailsoft.property.management.constant.Constants;
 import com.brailsoft.property.management.model.Address;
 import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Period;
@@ -34,6 +36,9 @@ import com.brailsoft.property.management.model.Property;
 import com.brailsoft.property.management.model.PropertyMonitor;
 
 public class LocalStorage {
+	private static final String CLASS_NAME = LocalStorage.class.getName();
+	private static final Logger LOGGER = Logger.getLogger(Constants.LOGGER_NAME);
+
 	public static final String DIRECTORY = "property.management";
 	public static final String FILE_NAME = "property.dat";
 	private static final String PROPERTIES = "properties";
@@ -70,31 +75,48 @@ public class LocalStorage {
 	}
 
 	private void updateDirectory(File directory) {
+		LOGGER.entering(CLASS_NAME, "updateDirectory", directory);
 		this.directory = directory;
 		if (!directory.exists()) {
 			directory.mkdirs();
 		}
+		LOGGER.exiting(CLASS_NAME, "updateDirectory");
 	}
 
 	public void loadArchivedData() throws IOException {
+		LOGGER.entering(CLASS_NAME, "loadArchivedData");
 		File archiveFile = new File(directory, FILE_NAME);
 		if (!archiveFile.exists()) {
-			throw new IOException("LocalStorage: archiveFile " + archiveFile.getAbsolutePath() + " not found");
+			IOException exc = new IOException(
+					"LocalStorage: archiveFile " + archiveFile.getAbsolutePath() + " not found");
+			LOGGER.throwing(CLASS_NAME, "loadArchivedData", exc);
+			LOGGER.entering(CLASS_NAME, "loadArchivedData");
+			throw exc;
 		}
 		try (InputStream archive = new BufferedInputStream(new FileInputStream(archiveFile))) {
 			readDataFrom(archive);
 		} catch (Exception e) {
-			throw new IOException("LocalStorage: Exception occurred - " + e.getMessage());
+			LOGGER.warning("caught exception: " + e.getMessage());
+			IOException exc = new IOException("LocalStorage: Exception occurred - " + e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "loadArchivedData", exc);
+			LOGGER.entering(CLASS_NAME, "loadArchivedData");
+			throw exc;
 		}
+		LOGGER.entering(CLASS_NAME, "loadArchivedData");
 	}
 
 	public void saveArchiveData() throws IOException {
+		LOGGER.entering(CLASS_NAME, "saveArchivedData");
 		File archiveFile = new File(directory, FILE_NAME);
 		try (OutputStream archive = new BufferedOutputStream(new FileOutputStream(archiveFile))) {
 			writeDataTo(archive);
 		} catch (Exception e) {
-			throw new IOException("LocalStorage: Exception occurred - " + e.getMessage());
+			IOException exc = new IOException("LocalStorage: Exception occurred - " + e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "saveArchivedData", exc);
+			LOGGER.entering(CLASS_NAME, "saveArchivedData");
+			throw exc;
 		}
+		LOGGER.exiting(CLASS_NAME, "saveArchivedData");
 	}
 
 	public File getDirectory() {
@@ -102,6 +124,7 @@ public class LocalStorage {
 	}
 
 	private void readDataFrom(InputStream archive) throws IOException {
+		LOGGER.entering(CLASS_NAME, "readDataFrom");
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -109,13 +132,23 @@ public class LocalStorage {
 			document.getDocumentElement().normalize();
 			readDataFrom(document);
 		} catch (ParserConfigurationException e) {
-			throw new IOException(e.getMessage());
+			LOGGER.warning("Caught exception: " + e.getMessage());
+			IOException exc = new IOException(e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "readDataFrom", exc);
+			LOGGER.exiting(CLASS_NAME, "readDataFrom");
+			throw exc;
 		} catch (SAXException e) {
-			throw new IOException(e.getMessage());
+			LOGGER.warning("Caught exception: " + e.getMessage());
+			IOException exc = new IOException(e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "readDataFrom", exc);
+			LOGGER.exiting(CLASS_NAME, "readDataFrom");
+			throw exc;
 		}
+		LOGGER.exiting(CLASS_NAME, "readDataFrom");
 	}
 
 	private void writeDataTo(OutputStream archive) throws IOException {
+		LOGGER.entering(CLASS_NAME, "writeDataTo");
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		try {
 			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -123,8 +156,13 @@ public class LocalStorage {
 			writeDataTo(document);
 			writeXML(document, archive);
 		} catch (ParserConfigurationException e) {
-			throw new IOException(e.getMessage());
+			LOGGER.warning("Caught exception: " + e.getMessage());
+			IOException exc = new IOException(e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "readDataFrom", exc);
+			LOGGER.exiting(CLASS_NAME, "readDataFrom");
+			throw exc;
 		}
+		LOGGER.exiting(CLASS_NAME, "writeDataTo");
 	}
 
 	private void writeDataTo(Document document) {

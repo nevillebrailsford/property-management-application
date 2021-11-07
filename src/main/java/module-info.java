@@ -5,6 +5,7 @@ module com.brailsoft.property.manager {
 	requires javafx.graphics;
 	requires java.xml;
 	requires java.prefs;
+	requires java.logging;
 
 	opens com.brailsoft.property.management.audit;
 	opens com.brailsoft.property.management.launcher;
