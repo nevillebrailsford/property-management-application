@@ -19,4 +19,14 @@ public class LoadProperty {
 	public Parent getParent() {
 		return parent;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("LoadProperty[");
+		builder.append(loader.toString()).append(", ");
+		builder.append(parent.toString()).append("]");
+		return builder.toString();
+	}
+
 }

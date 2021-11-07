@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.brailsoft.property.management.audit.AuditObject;
 import com.brailsoft.property.management.audit.AuditRecord;
@@ -25,8 +26,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
 public class PropertyMonitor {
+	private static final String CLASS_NAME = PropertyMonitor.class.getName();
+	private static final Logger LOGGER = Logger.getLogger(Constants.LOGGER_NAME);
+
 	private static PropertyMonitor instance = null;
+
 	private ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
+
 	private Timer timer;
 
 	private final ObservableList<Property> properties;
@@ -75,111 +81,185 @@ public class PropertyMonitor {
 	}
 
 	public synchronized void clear() {
+		LOGGER.entering(CLASS_NAME, "clear");
 		auditBeforeClearing();
 		properties.clear();
+		LOGGER.exiting(CLASS_NAME, "clear");
 	}
 
 	public synchronized void addProperty(Property newProperty) {
+		LOGGER.entering(CLASS_NAME, "addProperty", newProperty);
 		if (newProperty == null) {
-			throw new IllegalArgumentException("PropertyMonitor: property was null");
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
+			LOGGER.throwing(CLASS_NAME, "addProperty", exc);
+			LOGGER.exiting(CLASS_NAME, "addProperty");
+			throw exc;
 		}
 		if (properties.contains(newProperty)) {
-			throw new IllegalArgumentException("PropertyMonitor: property " + newProperty + " already exists");
+			IllegalArgumentException exc = new IllegalArgumentException(
+					"PropertyMonitor: property " + newProperty + " already exists");
+			LOGGER.throwing(CLASS_NAME, "addProperty", exc);
+			LOGGER.exiting(CLASS_NAME, "addProperty");
+			throw exc;
 		}
 		properties.add(new Property(newProperty));
 		updateStorage();
+		LOGGER.exiting(CLASS_NAME, "addProperty");
 	}
 
 	public synchronized void replaceProperty(Property oldProperty, Property newProperty) {
+		LOGGER.entering(CLASS_NAME, "replaceProperty", new Object[] { oldProperty, newProperty });
 		if (oldProperty == null || newProperty == null) {
-			throw new IllegalArgumentException("PropertyMonitor: property was null");
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
+			LOGGER.throwing(CLASS_NAME, "replaceProperty", exc);
+			LOGGER.exiting(CLASS_NAME, "replaceProperty");
+			throw exc;
 		}
 		if (!properties.contains(oldProperty)) {
-			throw new IllegalArgumentException("PropertyMonitor: property " + oldProperty + " was not known");
+			IllegalArgumentException exc = new IllegalArgumentException(
+					"PropertyMonitor: property " + oldProperty + " was not known");
+			LOGGER.throwing(CLASS_NAME, "replaceProperty", exc);
+			LOGGER.exiting(CLASS_NAME, "replaceProperty");
+			throw exc;
 		}
 		if (properties.contains(newProperty)) {
-			throw new IllegalArgumentException("PropertyMonitor: property " + newProperty + " already exists");
+			IllegalArgumentException exc = new IllegalArgumentException(
+					"PropertyMonitor: property " + newProperty + " already exists");
+			LOGGER.throwing(CLASS_NAME, "replaceProperty", exc);
+			LOGGER.exiting(CLASS_NAME, "replaceProperty");
+			throw exc;
 		}
 		properties.remove(oldProperty);
 		properties.add(newProperty);
 		updateStorage();
+		LOGGER.exiting(CLASS_NAME, "replaceProperty");
 	}
 
 	public synchronized void removeProperty(Property oldProperty) {
+		LOGGER.entering(CLASS_NAME, "removeProperty", oldProperty);
 		if (oldProperty == null) {
-			throw new IllegalArgumentException("PropertyMonitor: property was null");
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
+			LOGGER.throwing(CLASS_NAME, "removeProperty", exc);
+			LOGGER.exiting(CLASS_NAME, "removeProperty");
+			throw exc;
 		}
 		if (!properties.contains(oldProperty)) {
-			throw new IllegalArgumentException("PropertyMonitor: property " + oldProperty + " was not known");
+			IllegalArgumentException exc = new IllegalArgumentException(
+					"PropertyMonitor: property " + oldProperty + " was not known");
+			LOGGER.throwing(CLASS_NAME, "removeProperty", exc);
+			LOGGER.exiting(CLASS_NAME, "removeProperty");
+			throw exc;
 		}
 		properties.remove(oldProperty);
 		updateStorage();
+		LOGGER.exiting(CLASS_NAME, "removeProperty");
 	}
 
 	public synchronized void addItem(MonitoredItem monitoredItem) {
+		LOGGER.entering(CLASS_NAME, "addItem", monitoredItem);
 		if (monitoredItem == null) {
-			throw new IllegalArgumentException("PropertyMonitor: monitoredItem was null");
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: monitoredItem was null");
+			LOGGER.throwing(CLASS_NAME, "addItem", exc);
+			LOGGER.exiting(CLASS_NAME, "addItem");
+			throw exc;
 		}
 		Property property = monitoredItem.getOwner();
 		if (property == null) {
-			throw new IllegalArgumentException("PropertyMonitor: property was null");
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
+			LOGGER.throwing(CLASS_NAME, "addItem", exc);
+			LOGGER.exiting(CLASS_NAME, "addItem");
+			throw exc;
 		}
 		if (!properties.contains(property)) {
-			throw new IllegalArgumentException("PropertyMonitor: property " + property + " was not known");
+			IllegalArgumentException exc = new IllegalArgumentException(
+					"PropertyMonitor: property " + property + " was not known");
+			LOGGER.throwing(CLASS_NAME, "addItem", exc);
+			LOGGER.exiting(CLASS_NAME, "addItem");
+			throw exc;
 		}
 		findProperty(property).addItem(monitoredItem);
 		updateStorage();
+		LOGGER.exiting(CLASS_NAME, "addItem");
 	}
 
 	public synchronized void replaceItem(MonitoredItem monitoredItem) {
+		LOGGER.entering(CLASS_NAME, "replaceItem", monitoredItem);
 		if (monitoredItem == null) {
-			throw new IllegalArgumentException("PropertyMonitor: monitoredItem was null");
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: monitoredItem was null");
+			LOGGER.throwing(CLASS_NAME, "replaceItem", exc);
+			LOGGER.exiting(CLASS_NAME, "replaceItem");
+			throw exc;
 		}
 		Property property = monitoredItem.getOwner();
 		if (property == null) {
-			throw new IllegalArgumentException("PropertyMonitor: property was null");
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
+			LOGGER.throwing(CLASS_NAME, "replaceItem", exc);
+			LOGGER.exiting(CLASS_NAME, "replaceItem");
+			throw exc;
 		}
 		if (!properties.contains(property)) {
-			throw new IllegalArgumentException("PropertyMonitor: property " + property + " was not known");
+			IllegalArgumentException exc = new IllegalArgumentException(
+					"PropertyMonitor: property " + property + " was not known");
+			LOGGER.throwing(CLASS_NAME, "replaceItem", exc);
+			LOGGER.exiting(CLASS_NAME, "replaceItem");
+			throw exc;
 		}
 		findProperty(property).replaceItem(monitoredItem);
 		updateStorage();
+		LOGGER.exiting(CLASS_NAME, "replaceItem");
 	}
 
 	public synchronized void removeItem(MonitoredItem monitoredItem) {
+		LOGGER.entering(CLASS_NAME, "removeItem", monitoredItem);
 		if (monitoredItem == null) {
-			throw new IllegalArgumentException("PropertyMonitor: monitoredItem was null");
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: monitoredItem was null");
+			LOGGER.throwing(CLASS_NAME, "removeItem", exc);
+			LOGGER.exiting(CLASS_NAME, "removeItem");
+			throw exc;
 		}
 		Property property = monitoredItem.getOwner();
 		if (property == null) {
-			throw new IllegalArgumentException("PropertyMonitor: property was null");
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
+			LOGGER.throwing(CLASS_NAME, "removeItem", exc);
+			LOGGER.exiting(CLASS_NAME, "removeItem");
+			throw exc;
 		}
 		if (!properties.contains(property)) {
-			throw new IllegalArgumentException("PropertyMonitor: property " + property + " was not known");
+			IllegalArgumentException exc = new IllegalArgumentException(
+					"PropertyMonitor: property " + property + " was not known");
+			LOGGER.throwing(CLASS_NAME, "removeItem", exc);
+			LOGGER.exiting(CLASS_NAME, "removeItem");
+			throw exc;
 		}
 		findProperty(property).removeItem(monitoredItem);
 		updateStorage();
+		LOGGER.exiting(CLASS_NAME, "removeItem");
 	}
 
 	private void updateStorage() {
+		LOGGER.entering(CLASS_NAME, "updateStorage");
 		try {
 			File rootDirectory = new File(applicationPreferences.getDirectory());
 			LocalStorage.getInstance(rootDirectory).saveArchiveData();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.warning("Caught exception: " + e.getMessage());
 		}
+		LOGGER.exiting(CLASS_NAME, "updateStorage");
 	}
 
 	public synchronized List<Property> getProperties() {
+		LOGGER.entering(CLASS_NAME, "getProperties");
 		List<Property> copyList = new ArrayList<>();
 		properties.stream().forEach(property -> {
 			copyList.add(new Property(property));
 		});
 		Collections.sort(copyList);
+		LOGGER.exiting(CLASS_NAME, "getProperties", copyList);
 		return copyList;
 	}
 
 	public synchronized List<Property> getPropertiesWithOverdueItems() {
+		LOGGER.entering(CLASS_NAME, "getPropertiesWithOverdueItems");
 		List<Property> copyList = new ArrayList<>();
 		getProperties().stream().forEach(property -> {
 			if (property.areItemsOverdue()) {
@@ -187,10 +267,12 @@ public class PropertyMonitor {
 			}
 		});
 		Collections.sort(copyList);
+		LOGGER.exiting(CLASS_NAME, "getPropertiesWithOverdueItems", copyList);
 		return copyList;
 	}
 
 	public synchronized List<Property> getPropertiesWithOverdueNotices() {
+		LOGGER.entering(CLASS_NAME, "getPropertiesWithOverdueNotices");
 		List<Property> copyList = new ArrayList<>();
 		getProperties().stream().forEach(property -> {
 			if (property.areNoticesOverdue()) {
@@ -198,21 +280,29 @@ public class PropertyMonitor {
 			}
 		});
 		Collections.sort(copyList);
+		LOGGER.exiting(CLASS_NAME, "getPropertiesWithOverdueNotices", copyList);
 		return copyList;
 	}
 
 	public synchronized List<MonitoredItem> getItemsFor(Property property) {
+		LOGGER.entering(CLASS_NAME, "getItemsFor", property);
 		if (findProperty(property) == null) {
-			throw new IllegalArgumentException("PropertyMonitor: property " + property + " not found");
+			IllegalArgumentException exc = new IllegalArgumentException(
+					"PropertyMonitor: property " + property + " not found");
+			LOGGER.throwing(CLASS_NAME, "getItemsFor", exc);
+			LOGGER.exiting(CLASS_NAME, "getItemsFor");
+			throw exc;
 		}
 		List<MonitoredItem> copyList = new ArrayList<>();
 		findProperty(property).getItems().stream().forEach(i -> {
 			copyList.add(new MonitoredItem(i));
 		});
+		LOGGER.exiting(CLASS_NAME, "getItemsFor", copyList);
 		return copyList;
 	}
 
 	private synchronized Property findProperty(Property property) {
+		LOGGER.entering(CLASS_NAME, "findProperty", property);
 		Property found = null;
 		for (Property p : properties) {
 			if (p.equals(property)) {
@@ -220,6 +310,7 @@ public class PropertyMonitor {
 				break;
 			}
 		}
+		LOGGER.exiting(CLASS_NAME, "findProperty", found);
 		return found;
 	}
 
@@ -269,7 +360,7 @@ public class PropertyMonitor {
 	}
 
 	private void timerPopped(ActionEvent event) {
-		System.out.println(LocalDateTime.now() + " timer popped");
+		LOGGER.entering(CLASS_NAME, "timerPoppped", "timer popped at " + LocalDateTime.now());
 		if (getPropertiesWithOverdueNotices().size() > 0) {
 			final Alert alert = new Alert(AlertType.INFORMATION);
 			alert.setTitle("Notified Items");
@@ -298,5 +389,6 @@ public class PropertyMonitor {
 				alert.showAndWait();
 			});
 		}
+		LOGGER.exiting(CLASS_NAME, "timerPopped");
 	}
 }
