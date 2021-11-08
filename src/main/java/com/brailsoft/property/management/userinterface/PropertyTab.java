@@ -106,4 +106,8 @@ public class PropertyTab extends Tab {
 		}
 	};
 
+	public ListChangeListener<? super MonitoredItem> getListener() {
+		return listener;
+	}
+
 }
