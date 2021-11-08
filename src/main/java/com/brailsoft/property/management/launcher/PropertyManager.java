@@ -36,9 +36,10 @@ public class PropertyManager extends Application {
 		LOGGER.entering(CLASS_NAME, "start");
 		if (firstUse()) {
 			String selectedDirectory = selectDirectory();
-			if (selectedDirectory.isBlank() || selectedDirectory.isBlank()) {
+			if (selectedDirectory.isBlank() || selectedDirectory.isEmpty()) {
 				LOGGER.exiting(CLASS_NAME, "start");
 				Platform.exit();
+				System.exit(0);
 			}
 			try {
 				tellPreferencesChosenDirectoryIs(selectedDirectory);
@@ -46,6 +47,7 @@ public class PropertyManager extends Application {
 				LOGGER.warning("Caught exception: " + e.getMessage());
 				LOGGER.exiting(CLASS_NAME, "start");
 				Platform.exit();
+				System.exit(0);
 			}
 		}
 		LoadProperty loadProperty = loadFXML("PropertyManager");
