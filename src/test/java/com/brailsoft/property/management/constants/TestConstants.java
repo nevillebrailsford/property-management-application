@@ -1,8 +1,10 @@
 package com.brailsoft.property.management.constants;
 
+import java.io.File;
+
 public class TestConstants {
 	public static final String TEST_NODE_NAME = "property.test";
-	// TODO Allow for different structure when running on windows.
-	public static final String TEST_DIRECTORY = "/Users/nevil/test.directory";
+	private static final String ROOT_DIRECTORY = System.getProperty("user.home");
+	public static final String TEST_DIRECTORY = ROOT_DIRECTORY + File.separator + "test.directory";
 
 }
