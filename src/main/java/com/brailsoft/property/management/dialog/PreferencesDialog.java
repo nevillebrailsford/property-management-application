@@ -1,6 +1,7 @@
 package com.brailsoft.property.management.dialog;
 
 import java.io.File;
+import java.util.logging.Logger;
 
 import com.brailsoft.property.management.constant.Constants;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
@@ -19,6 +20,8 @@ import javafx.stage.DirectoryChooser;
 import javafx.util.Callback;
 
 public class PreferencesDialog extends Dialog<PreferencesData> {
+	private static final String CLASS_NAME = PreferencesDialog.class.getName();
+	private static final Logger LOGGER = Logger.getLogger(Constants.LOGGER_NAME);
 
 	private BooleanExpression invalidInput;
 
@@ -27,6 +30,7 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 	private Button selectDirectory = new Button("Select Directory");
 
 	public PreferencesDialog() {
+		LOGGER.entering(CLASS_NAME, "init");
 		setTitle("Preferences");
 		setHeaderText("Complete details below to set preferences.");
 		setResizable(true);
@@ -40,16 +44,30 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 		getDialogPane().setContent(grid);
 
 		selectDirectory.setOnAction((event) -> {
+			LOGGER.entering(CLASS_NAME, "onAction", event);
 			DirectoryChooser directoryChooser = new DirectoryChooser();
 			String currentDirectory = ApplicationPreferences.getInstance(Constants.NODE_NAME).getDirectory();
+			LOGGER.fine("currentDirectory=" + currentDirectory);
 			if (!(currentDirectory == null || currentDirectory.isBlank() || currentDirectory.isEmpty())) {
 				directoryChooser.setInitialDirectory(new File(currentDirectory));
+				directory.textProperty().set(currentDirectory);
+			} else {
+				directoryChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+				directory.textProperty().set(System.getProperty("user.home"));
 			}
 			File chosenDirectory = directoryChooser.showDialog(this.getOwner());
+			LOGGER.fine("chosenDirectory=" + chosenDirectory);
 			if (chosenDirectory != null) {
 				directory.textProperty().set(chosenDirectory.getAbsolutePath());
 			}
+			LOGGER.exiting(currentDirectory, "onAction");
 		});
+		String currentDirectory = ApplicationPreferences.getInstance(Constants.NODE_NAME).getDirectory();
+		if (!(currentDirectory == null || currentDirectory.isBlank() || currentDirectory.isEmpty())) {
+			directory.textProperty().set(currentDirectory);
+		} else {
+			directory.textProperty().set(System.getProperty("user.home"));
+		}
 
 		ButtonType buttonTypeOk = new ButtonType("Set Preferences", ButtonData.OK_DONE);
 		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.NO);
@@ -60,15 +78,18 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 
 			@Override
 			public PreferencesData call(ButtonType param) {
+				LOGGER.entering(CLASS_NAME, "call");
 				if (param == buttonTypeOk) {
 					PreferencesData data = new PreferencesData();
 					data.setDirectory(directory.textProperty().get());
+					LOGGER.exiting(CLASS_NAME, "call", data);
 					return data;
 				}
+				LOGGER.exiting(CLASS_NAME, "call");
 				return null;
 			}
 		});
-
+		LOGGER.exiting(CLASS_NAME, "init");
 	}
 
 	private BooleanExpression invalidInputProperty() {
