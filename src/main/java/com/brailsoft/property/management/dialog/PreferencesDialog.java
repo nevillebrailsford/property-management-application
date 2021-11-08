@@ -60,7 +60,7 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 			if (chosenDirectory != null) {
 				directory.textProperty().set(chosenDirectory.getAbsolutePath());
 			}
-			LOGGER.exiting(currentDirectory, "onAction");
+			LOGGER.exiting(CLASS_NAME, "onAction", chosenDirectory);
 		});
 		String currentDirectory = ApplicationPreferences.getInstance(Constants.NODE_NAME).getDirectory();
 		if (!(currentDirectory == null || currentDirectory.isBlank() || currentDirectory.isEmpty())) {

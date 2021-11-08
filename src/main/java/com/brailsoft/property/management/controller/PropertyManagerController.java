@@ -24,6 +24,7 @@ import com.brailsoft.property.management.preference.PreferencesData;
 import com.brailsoft.property.management.print.PrintReport;
 import com.brailsoft.property.management.userinterface.PropertyTab;
 
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -31,6 +32,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -48,9 +50,9 @@ public class PropertyManagerController implements Initializable {
 	@FXML
 	private TabPane tabPane;
 
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		propertyMonitor.addListener(change -> {
+	private ListChangeListener<? super Property> listener = new ListChangeListener<>() {
+		@Override
+		public void onChanged(Change<? extends Property> change) {
 			while (change.next()) {
 				if (change.wasAdded()) {
 					for (Property p : change.getAddedSubList()) {
@@ -71,7 +73,12 @@ public class PropertyManagerController implements Initializable {
 					});
 				}
 			}
-		});
+		}
+	};
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		propertyMonitor.addListener(listener);
 		try {
 			localStorage.loadArchivedData();
 		} catch (IOException e) {
@@ -240,9 +247,9 @@ public class PropertyManagerController implements Initializable {
 			try {
 				ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
 				applicationPreferences.setDirectory(newDirectory);
-				// TODO Handle a change of directory better than this - load properties if file
-				// exists for instance
-				LocalStorage.getInstance(new File(applicationPreferences.getDirectory())).saveArchiveData();
+				removeTabsFromView();
+				resetModelToEmpty();
+				LocalStorage.getInstance(new File(applicationPreferences.getDirectory())).loadArchivedData();
 			} catch (BackingStoreException e) {
 				LOGGER.warning("Caught exception: " + e.getMessage());
 			} catch (IOException e) {
@@ -250,6 +257,24 @@ public class PropertyManagerController implements Initializable {
 			}
 		}
 		LOGGER.entering(CLASS_NAME, "preferences");
+	}
+
+	private void resetModelToEmpty() {
+		LOGGER.entering(CLASS_NAME, "resetModelToEmpty");
+		PropertyMonitor.getInstance().removeListener(listener);
+		PropertyMonitor.getInstance().clear();
+		PropertyMonitor.getInstance().addListener(listener);
+		LOGGER.exiting(CLASS_NAME, "resetModelToEmpty");
+	}
+
+	private void removeTabsFromView() {
+		LOGGER.entering(CLASS_NAME, "removeTabsFromView");
+		for (Tab t : tabPane.getTabs()) {
+			PropertyTab pt = (PropertyTab) t;
+			PropertyMonitor.getInstance().removeListener(pt.getListener(), pt.getProperty());
+		}
+		tabPane.getTabs().clear();
+		LOGGER.exiting(CLASS_NAME, "removeTabsFromView");
 	}
 
 	private ButtonType userWantsToDeleteProperty(Property property) {
