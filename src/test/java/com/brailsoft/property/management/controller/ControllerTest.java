@@ -17,23 +17,24 @@ class ControllerTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
+		Platform.startup(() -> {
+		});
 	}
 
 	@AfterEach
 	void tearDown() throws Exception {
+		Platform.exit();
 	}
 
 	@Test
 	void test() throws IOException {
-		Platform.startup(() -> {
-			FXMLLoader loader = new FXMLLoader(PropertyManager.class.getResource("PropertyManager.fxml"));
-			try {
-				loader.load();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			assertNotNull(loader.getController());
-		});
+		FXMLLoader loader = new FXMLLoader(PropertyManager.class.getResource("PropertyManager.fxml"));
+		try {
+			loader.load();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		assertNotNull(loader.getController());
 	}
 
 }

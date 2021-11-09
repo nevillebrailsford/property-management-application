@@ -12,7 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,6 +26,8 @@ import com.brailsoft.property.management.model.PostCode;
 import com.brailsoft.property.management.model.Property;
 import com.brailsoft.property.management.model.PropertyMonitor;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
+
+import javafx.application.Platform;
 
 public class LocalStorageTest {
 
@@ -41,6 +45,20 @@ public class LocalStorageTest {
 	private Property property = new Property(address);
 	private MonitoredItem testItem;
 	private LocalDateTime startTest;
+
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
+		try {
+			Platform.startup(() -> {
+			});
+		} catch (IllegalStateException e) {
+		}
+	}
+
+	@AfterAll
+	static void tearDownAfterClass() throws Exception {
+		Platform.exit();
+	}
 
 	@BeforeEach
 	void setUp() throws Exception {
