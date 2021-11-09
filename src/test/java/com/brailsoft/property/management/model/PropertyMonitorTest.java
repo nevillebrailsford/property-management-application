@@ -6,8 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.logging.Level;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +21,8 @@ import com.brailsoft.property.management.preference.ApplicationPreferences;
 import javafx.collections.ListChangeListener;
 
 class PropertyMonitorTest {
+	private static ApplicationPreferences preferences = ApplicationPreferences
+			.getInstance(TestConstants.TEST_NODE_NAME);
 
 	PropertyMonitor monitor;
 	private LocalDateTime startTest;
@@ -34,6 +39,16 @@ class PropertyMonitorTest {
 	private static final Property property2 = new Property(address2);
 	private MonitoredItem testItem;
 	ApplicationPreferences applicationPreferences;
+
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
+		preferences.setLevel(Level.OFF);
+	}
+
+	@AfterAll
+	static void tearDownAfterClass() throws Exception {
+		preferences.clear();
+	}
 
 	@BeforeEach
 	void setUp() throws Exception {

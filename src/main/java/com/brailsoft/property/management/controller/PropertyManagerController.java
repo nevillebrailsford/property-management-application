@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 
@@ -244,12 +245,18 @@ public class PropertyManagerController implements Initializable {
 		Optional<PreferencesData> result = new PreferencesDialog().showAndWait();
 		if (result.isPresent()) {
 			String newDirectory = result.get().getDirectory();
+			Level loggingLevel = result.get().getLevel();
 			try {
 				ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
-				applicationPreferences.setDirectory(newDirectory);
-				removeTabsFromView();
-				resetModelToEmpty();
-				LocalStorage.getInstance(new File(applicationPreferences.getDirectory())).loadArchivedData();
+				if (!applicationPreferences.getLevel().equals(loggingLevel)) {
+					applicationPreferences.setLevel(loggingLevel);
+				}
+				if (!applicationPreferences.getDirectory().equals(newDirectory)) {
+					applicationPreferences.setDirectory(newDirectory);
+					removeTabsFromView();
+					resetModelToEmpty();
+					LocalStorage.getInstance(new File(applicationPreferences.getDirectory())).loadArchivedData();
+				}
 			} catch (BackingStoreException e) {
 				LOGGER.warning("Caught exception: " + e.getMessage());
 			} catch (IOException e) {

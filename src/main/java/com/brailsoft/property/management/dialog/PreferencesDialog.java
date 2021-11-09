@@ -1,6 +1,7 @@
 package com.brailsoft.property.management.dialog;
 
 import java.io.File;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.brailsoft.property.management.constant.Constants;
@@ -12,6 +13,7 @@ import javafx.beans.binding.BooleanExpression;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -22,6 +24,7 @@ import javafx.util.Callback;
 public class PreferencesDialog extends Dialog<PreferencesData> {
 	private static final String CLASS_NAME = PreferencesDialog.class.getName();
 	private static final Logger LOGGER = Logger.getLogger(Constants.LOGGER_NAME);
+	private static final ApplicationPreferences preferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
 
 	private BooleanExpression invalidInput;
 
@@ -29,11 +32,21 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 	private TextField directory = new TextField();
 	private Button selectDirectory = new Button("Select Directory");
 
+	private Label label2 = new Label("Logging Level:");
+	private ChoiceBox<String> loggingChoice = new ChoiceBox<>();
+	private Button resetButton = new Button("Reset to default");
+
+	private static final String[] loggingChoices = new String[] { "ALL", "SEVERE", "WARNING", "INFO", "CONFIG", "FINE",
+			"FINER", "FINEST", "OFF" };
+
 	public PreferencesDialog() {
 		LOGGER.entering(CLASS_NAME, "init");
 		setTitle("Preferences");
 		setHeaderText("Complete details below to set preferences.");
 		setResizable(true);
+
+		loadChoiceBoxWithItems();
+		loggingChoice.getSelectionModel().select(preferences.getLevel().toString());
 
 		GridPane grid = new GridPane();
 		grid.setHgap(10.0);
@@ -41,6 +54,9 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 		grid.add(label1, 1, 1);
 		grid.add(directory, 2, 1);
 		grid.add(selectDirectory, 3, 1);
+		grid.add(label2, 1, 2);
+		grid.add(loggingChoice, 2, 2);
+		grid.add(resetButton, 3, 2);
 		getDialogPane().setContent(grid);
 
 		selectDirectory.setOnAction((event) -> {
@@ -82,6 +98,7 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 				if (param == buttonTypeOk) {
 					PreferencesData data = new PreferencesData();
 					data.setDirectory(directory.textProperty().get());
+					data.setLevel(Level.parse(loggingChoice.getSelectionModel().selectedItemProperty().get()));
 					LOGGER.exiting(CLASS_NAME, "call", data);
 					return data;
 				}
@@ -101,6 +118,12 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 
 	private boolean isEmpty(TextField textField) {
 		return textField.textProperty().get().isBlank() || textField.textProperty().get().isEmpty();
+	}
+
+	private void loadChoiceBoxWithItems() {
+		for (int i = 0; i < loggingChoices.length; i++) {
+			loggingChoice.getItems().add(loggingChoices[i]);
+		}
 	}
 
 }

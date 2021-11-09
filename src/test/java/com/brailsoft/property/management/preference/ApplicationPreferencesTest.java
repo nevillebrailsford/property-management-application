@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.logging.Level;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,6 +58,20 @@ class ApplicationPreferencesTest {
 	}
 
 	@Test
+	void testGetLevel() throws Exception {
+		preferences.setLevel(Level.WARNING);
+		assertEquals(Level.WARNING, preferences.getLevel());
+	}
+
+	@Test
+	void testSetLevel() throws Exception {
+		preferences.setLevel(Level.WARNING);
+		assertEquals(Level.WARNING, preferences.getLevel());
+		preferences.setLevel(Level.SEVERE);
+		assertEquals(Level.SEVERE, preferences.getLevel());
+	}
+
+	@Test
 	void testNullNodeName() {
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			ApplicationPreferences.getInstance(null);
@@ -78,4 +94,18 @@ class ApplicationPreferencesTest {
 		});
 		assertEquals("ApplicationPreferences: nodeName was null", exc.getMessage());
 	}
+
+	@Test
+	void testGetNoLevel() {
+		assertEquals(Level.WARNING, preferences.getLevel());
+	}
+
+	@Test
+	void testSetNoLevel() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			preferences.setLevel(null);
+		});
+		assertEquals("ApplicationPreferences: level was null", exc.getMessage());
+	}
+
 }
