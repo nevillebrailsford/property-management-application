@@ -2,6 +2,7 @@ package com.brailsoft.property.management.logging;
 
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.brailsoft.property.management.constant.Constants;
@@ -12,6 +13,7 @@ public class PropertyManagerLogConfigurer {
 	private static ApplicationPreferences preferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
 
 	public static void setUp() {
+		Level loggerLevel = preferences.getLevel();
 		Logger parent = LOGGER;
 		while (parent != null) {
 			for (Handler handler : parent.getHandlers()) {
@@ -21,11 +23,11 @@ public class PropertyManagerLogConfigurer {
 			}
 			parent = parent.getParent();
 		}
-		LOGGER.setLevel(preferences.getLevel());
+		LOGGER.setLevel(loggerLevel);
 		ConsoleHandler handler = new ConsoleHandler();
-		handler.setLevel(preferences.getLevel());
+		handler.setLevel(loggerLevel);
 		handler.setFormatter(new PropertyManagerFormatter());
 		LOGGER.addHandler(handler);
-		LOGGER.setLevel(preferences.getLevel());
+		LOGGER.setLevel(loggerLevel);
 	}
 }

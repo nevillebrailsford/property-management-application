@@ -62,7 +62,7 @@ public class LocalStorageTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		applicationPreferences = ApplicationPreferences.getInstance(TestConstants.TEST_NODE_NAME);
+		applicationPreferences = ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
 		applicationPreferences.setDirectory(TestConstants.TEST_DIRECTORY);
 		rootDirectory = new File(applicationPreferences.getDirectory());
 		storage = LocalStorage.getInstance(rootDirectory);
