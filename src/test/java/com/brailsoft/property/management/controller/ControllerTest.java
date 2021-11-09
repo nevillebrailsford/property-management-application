@@ -8,7 +8,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.brailsoft.property.management.constants.TestConstants;
 import com.brailsoft.property.management.launcher.PropertyManager;
+import com.brailsoft.property.management.preference.ApplicationPreferences;
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -17,8 +19,12 @@ class ControllerTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		Platform.startup(() -> {
-		});
+		try {
+			Platform.startup(() -> {
+			});
+		} catch (IllegalStateException e) {
+		}
+		ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
 	}
 
 	@AfterEach

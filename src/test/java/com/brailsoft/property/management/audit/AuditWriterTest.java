@@ -29,7 +29,7 @@ class AuditWriterTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		applicationPreferences = ApplicationPreferences.getInstance(TestConstants.TEST_NODE_NAME);
+		applicationPreferences = ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
 		applicationPreferences.setDirectory(TestConstants.TEST_DIRECTORY);
 		rootDirectory = new File(ApplicationPreferences.getInstance(Constants.NODE_NAME).getDirectory());
 		applicationDirectory = new File(rootDirectory, LocalStorage.DIRECTORY);

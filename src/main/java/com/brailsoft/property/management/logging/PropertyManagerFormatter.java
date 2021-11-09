@@ -103,7 +103,11 @@ public class PropertyManagerFormatter extends Formatter {
 		String newLine = "";
 		if (record.getParameters() != null) {
 			for (Object obj : record.getParameters()) {
-				builder.append(newLine).append(obj.toString());
+				if (obj == null) {
+					builder.append(newLine).append("null");
+				} else {
+					builder.append(newLine).append(obj.toString());
+				}
 				newLine = "\n";
 			}
 		}

@@ -15,22 +15,22 @@ import com.brailsoft.property.management.constants.TestConstants;
 
 class ApplicationPreferencesTest {
 
-	private ApplicationPreferences preferences = ApplicationPreferences.getInstance(TestConstants.TEST_NODE_NAME);
+	private ApplicationPreferences preferences = ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
 
 	@BeforeEach
 	void setUp() throws Exception {
-		ApplicationPreferences.getInstance(TestConstants.TEST_NODE_NAME).clear();
+		ApplicationPreferences.getInstance(TestConstants.NODE_NAME).clear();
 	}
 
 	@AfterEach
 	void tearDown() throws Exception {
-		ApplicationPreferences.getInstance(TestConstants.TEST_NODE_NAME).clear();
+		ApplicationPreferences.getInstance(TestConstants.NODE_NAME).clear();
 	}
 
 	@Test
 	void testGetInstance() {
 		assertNotNull(preferences);
-		ApplicationPreferences ap = ApplicationPreferences.getInstance(TestConstants.TEST_NODE_NAME);
+		ApplicationPreferences ap = ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
 		assertNotNull(ap);
 		assertTrue(preferences == ap);
 	}

@@ -21,8 +21,7 @@ import com.brailsoft.property.management.preference.ApplicationPreferences;
 import javafx.collections.ListChangeListener;
 
 class PropertyMonitorTest {
-	private static ApplicationPreferences preferences = ApplicationPreferences
-			.getInstance(TestConstants.TEST_NODE_NAME);
+	private static ApplicationPreferences preferences = ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
 
 	PropertyMonitor monitor;
 	private LocalDateTime startTest;
@@ -55,7 +54,7 @@ class PropertyMonitorTest {
 		startTest = LocalDateTime.now();
 		testItem = new MonitoredItem("item1", Period.YEARLY, 1, startTest, 1, Period.WEEKLY);
 		testItem.setOwner(property1);
-		applicationPreferences = ApplicationPreferences.getInstance(TestConstants.TEST_NODE_NAME);
+		applicationPreferences = ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
 		applicationPreferences.setDirectory(TestConstants.TEST_DIRECTORY);
 		LocalStorage.getInstance(new File(applicationPreferences.getDirectory()));
 		monitor = PropertyMonitor.getInstance();
