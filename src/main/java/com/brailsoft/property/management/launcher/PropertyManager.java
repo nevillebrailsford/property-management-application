@@ -2,6 +2,7 @@ package com.brailsoft.property.management.launcher;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 
@@ -35,13 +36,21 @@ public class PropertyManager extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		LOGGER.entering(CLASS_NAME, "start");
 		if (firstUse()) {
-			String selectedDirectory = selectDirectory();
+			PreferencesData preferencesData = makeInitialChoices();
+			if (preferencesData == null) {
+				LOGGER.exiting(CLASS_NAME, "start");
+				Platform.exit();
+				System.exit(0);
+			}
+			String selectedDirectory = preferencesData.getDirectory();
+			Level selectedLevel = preferencesData.getLevel();
 			if (selectedDirectory.isBlank() || selectedDirectory.isEmpty()) {
 				LOGGER.exiting(CLASS_NAME, "start");
 				Platform.exit();
 				System.exit(0);
 			}
 			try {
+				tellPreferencesChosenLoggingLevelIs(selectedLevel);
 				tellPreferencesChosenDirectoryIs(selectedDirectory);
 			} catch (Exception e) {
 				LOGGER.warning("Caught exception: " + e.getMessage());
@@ -111,15 +120,15 @@ public class PropertyManager extends Application {
 		return result;
 	}
 
-	private String selectDirectory() {
-		LOGGER.entering(CLASS_NAME, "selectDirectory");
-		String directory = "";
+	private PreferencesData makeInitialChoices() {
+		LOGGER.entering(CLASS_NAME, "makeInitialChoices");
+		PreferencesData data = null;
 		Optional<PreferencesData> result = new PreferencesDialog().showAndWait();
 		if (result.isPresent()) {
-			directory = result.get().getDirectory();
+			data = result.get();
 		}
-		LOGGER.exiting(CLASS_NAME, "selectDirectory", directory);
-		return directory;
+		LOGGER.exiting(CLASS_NAME, "makeInitialChoices", data);
+		return data;
 	}
 
 	private void tellPreferencesChosenDirectoryIs(String directory) throws BackingStoreException {
@@ -132,5 +141,17 @@ public class PropertyManager extends Application {
 			throw e;
 		}
 		LOGGER.exiting(CLASS_NAME, "tellPreferencesChosenDirectoryIs");
+	}
+
+	private void tellPreferencesChosenLoggingLevelIs(Level level) throws BackingStoreException {
+		LOGGER.entering(CLASS_NAME, "tellPreferencesChosenLoggingLevelIs", level);
+		try {
+			applicationPreferences.setLevel(level);
+		} catch (BackingStoreException e) {
+			LOGGER.throwing(CLASS_NAME, "tellPreferencesChosenLoggingLevelIs", e);
+			LOGGER.exiting(CLASS_NAME, "tellPreferencesChosenLoggingLevelIs");
+			throw e;
+		}
+		LOGGER.exiting(CLASS_NAME, "tellPreferencesChosenLoggingLevelIs");
 	}
 }
