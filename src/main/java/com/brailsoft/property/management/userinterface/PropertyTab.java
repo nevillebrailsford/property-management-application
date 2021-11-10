@@ -70,9 +70,9 @@ public class PropertyTab extends Tab {
 	}
 
 	private void recordActionComplete() {
-		Optional<LocalDate> result = new DateDialog().showAndWait();
+		MonitoredItem item = tableView.getSelectionModel().getSelectedItem();
+		Optional<LocalDate> result = new DateDialog(item).showAndWait();
 		if (result.isPresent()) {
-			MonitoredItem item = tableView.getSelectionModel().getSelectedItem();
 			item.actionPerformed(result.get().atStartOfDay());
 			PropertyMonitor propertyMonitor = PropertyMonitor.getInstance();
 			propertyMonitor.replaceItem(item);
