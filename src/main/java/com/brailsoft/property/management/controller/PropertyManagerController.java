@@ -23,6 +23,7 @@ import com.brailsoft.property.management.persistence.LocalStorage;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
 import com.brailsoft.property.management.preference.PreferencesData;
 import com.brailsoft.property.management.print.PrintReport;
+import com.brailsoft.property.management.userinterface.CalendarView;
 import com.brailsoft.property.management.userinterface.PropertyTab;
 
 import javafx.collections.ListChangeListener;
@@ -264,6 +265,19 @@ public class PropertyManagerController implements Initializable {
 			}
 		}
 		LOGGER.entering(CLASS_NAME, "preferences");
+	}
+
+	@FXML
+	void viewCalendar() {
+		LOGGER.entering(CLASS_NAME, "viewCalendar");
+		Stage stage = new Stage();
+		stage.setTitle("Calendar");
+		CalendarView mainRoot = new CalendarView();
+		Scene scene = new Scene(mainRoot, 35 + (53 * 14), 125);
+		stage.setScene(scene);
+		stage.show();
+
+		LOGGER.exiting(CLASS_NAME, "viewCalendar");
 	}
 
 	private void resetModelToEmpty() {

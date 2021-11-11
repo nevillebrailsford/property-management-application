@@ -51,6 +51,9 @@
 				<Menu mnemonicParsing="false" text="View">
 					<items>
 						<MenuItem mnemonicParsing="false"
+							onAction="#viewCalendar" text="Calendar" />
+						<SeparatorMenuItem mnemonicParsing="false" />
+						<MenuItem mnemonicParsing="false"
 							onAction="#viewAllItems" text="All Items" />
 						<MenuItem mnemonicParsing="false"
 							onAction="#viewOverdueItems" text="Overdue Items" />
