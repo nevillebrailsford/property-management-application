@@ -18,6 +18,7 @@ import com.brailsoft.property.management.constants.TestConstants;
 import com.brailsoft.property.management.persistence.LocalStorage;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
 
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 
 class PropertyMonitorTest {
@@ -41,12 +42,18 @@ class PropertyMonitorTest {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
+		try {
+			Platform.startup(() -> {
+			});
+		} catch (IllegalStateException e) {
+		}
 		preferences.setLevel(Level.OFF);
 	}
 
 	@AfterAll
 	static void tearDownAfterClass() throws Exception {
 		preferences.clear();
+		Platform.exit();
 	}
 
 	@BeforeEach
@@ -152,6 +159,20 @@ class PropertyMonitorTest {
 		assertEquals(1, monitor.getItemsFor(property1).size());
 		monitor.removeItem(testItem);
 		assertEquals(0, monitor.getItemsFor(property1).size());
+	}
+
+	@Test
+	void testGetOverdueItemsForDate() {
+		monitor.addProperty(property1);
+		monitor.addItem(testItem);
+		assertEquals(1, monitor.getOverdueItemsFor(testItem.getTimeForNextAction()).size());
+	}
+
+	@Test
+	void testGetNotifiedItemsForDate() {
+		monitor.addProperty(property1);
+		monitor.addItem(testItem);
+		assertEquals(1, monitor.getNotifiedItemsFor(testItem.getTimeForNextNotice()).size());
 	}
 
 	@Test

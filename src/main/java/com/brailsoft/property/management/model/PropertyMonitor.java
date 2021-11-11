@@ -3,6 +3,7 @@ package com.brailsoft.property.management.model;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,6 +37,8 @@ public class PropertyMonitor {
 	private Timer timer;
 
 	private final ObservableList<Property> properties;
+
+	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
 	public synchronized static PropertyMonitor getInstance() {
 		if (instance == null) {
@@ -301,6 +304,46 @@ public class PropertyMonitor {
 		return copyList;
 	}
 
+	public synchronized List<MonitoredItem> getOverdueItemsFor(LocalDateTime date) {
+		LOGGER.entering(CLASS_NAME, "getOverdueItemsFor", date);
+		if (date == null) {
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: date was null");
+			LOGGER.throwing(CLASS_NAME, "getOverdueItemsFor", exc);
+			LOGGER.exiting(CLASS_NAME, "getOverdueItemsFor");
+			throw exc;
+		}
+		List<MonitoredItem> overdueList = new ArrayList<>();
+		getAllItems().stream().forEach(item -> {
+			if (datesAreEqual(item.getTimeForNextAction(), date)) {
+				overdueList.add(item);
+			}
+		});
+		LOGGER.exiting(CLASS_NAME, "getOverdueItemsFor", overdueList);
+		return overdueList;
+	}
+
+	public synchronized List<MonitoredItem> getNotifiedItemsFor(LocalDateTime date) {
+		LOGGER.entering(CLASS_NAME, "getNotifiedItemsFor", date);
+		if (date == null) {
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: date was null");
+			LOGGER.throwing(CLASS_NAME, "getNotifiedItemsFor", exc);
+			LOGGER.exiting(CLASS_NAME, "getNotifiedItemsFor");
+			throw exc;
+		}
+		List<MonitoredItem> notifiedList = new ArrayList<>();
+		getAllItems().stream().forEach(item -> {
+			if (datesAreEqual(item.getTimeForNextNotice(), date)) {
+				notifiedList.add(item);
+			}
+		});
+		LOGGER.exiting(CLASS_NAME, "getNotifiedItemsFor", notifiedList);
+		return notifiedList;
+	}
+
+	private boolean datesAreEqual(LocalDateTime itemDate, LocalDateTime compareDate) {
+		return itemDate.format(formatter).equals(compareDate.format(formatter));
+	}
+
 	private synchronized Property findProperty(Property property) {
 		LOGGER.entering(CLASS_NAME, "findProperty", property);
 		Property found = null;
@@ -312,6 +355,16 @@ public class PropertyMonitor {
 		}
 		LOGGER.exiting(CLASS_NAME, "findProperty", found);
 		return found;
+	}
+
+	private List<MonitoredItem> getAllItems() {
+		LOGGER.entering(CLASS_NAME, "getAllItems");
+		List<MonitoredItem> allItems = new ArrayList<>();
+		getProperties().stream().forEach(property -> {
+			allItems.addAll(findProperty(property).getItems());
+		});
+		LOGGER.exiting(CLASS_NAME, "getAllItems", allItems);
+		return allItems;
 	}
 
 	private void auditBeforeClearing() {
