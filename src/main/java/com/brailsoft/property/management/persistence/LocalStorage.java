@@ -8,7 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -278,7 +278,7 @@ public class LocalStorage {
 		String lastActioned = itemElement.getElementsByTagName(LAST_ACTIONED).item(0).getTextContent();
 		String advanceNotice = itemElement.getElementsByTagName(ADVANCE_NOTICE).item(0).getTextContent();
 		String periodForNextNotice = itemElement.getElementsByTagName(PERIOD_FOR_NEXT_NOTICE).item(0).getTextContent();
-		LocalDateTime time = LocalDateTime.parse(lastActioned);
+		LocalDate time = LocalDate.parse(lastActioned);
 		return new MonitoredItem(description, Period.valueOf(periodForNextAction), Integer.parseInt(noticeEvery), time,
 				Integer.parseInt(advanceNotice), Period.valueOf(periodForNextNotice));
 	}

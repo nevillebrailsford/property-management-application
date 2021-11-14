@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import org.junit.jupiter.api.AfterAll;
@@ -18,11 +18,11 @@ import org.junit.jupiter.api.Test;
 class MonitoredItemTest {
 
 	private MonitoredItem testItem;
-	private LocalDateTime startTest;
-	private LocalDateTime lastAction;
-	private LocalDateTime nextAction;
-	private LocalDateTime nextNotice;
-	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	private LocalDate startTest;
+	private LocalDate lastAction;
+	private LocalDate nextAction;
+	private LocalDate nextNotice;
+	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd");
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -34,7 +34,7 @@ class MonitoredItemTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		startTest = LocalDateTime.now();
+		startTest = LocalDate.now();
 		testItem = new MonitoredItem("item1", Period.YEARLY, 1, startTest, 1, Period.WEEKLY);
 	}
 
@@ -43,7 +43,7 @@ class MonitoredItemTest {
 	}
 
 	@Test
-	void testMonitoredItemStringPeriodIntLocalDateTimeIntPeriod() {
+	void testMonitoredItemStringPeriodIntLocalDateIntPeriod() {
 		assertNotNull(testItem);
 	}
 
@@ -149,7 +149,7 @@ class MonitoredItemTest {
 		assertFalse(testItem.overdue());
 		assertFalse(testItem.overdue(startTest));
 		assertFalse(testItem.overdue(startTest.plusYears(1)));
-		assertTrue(testItem.overdue(startTest.plusYears(1).plusMinutes(1)));
+		assertTrue(testItem.overdue(startTest.plusYears(1).plusDays(1)));
 	}
 
 	@Test
@@ -157,41 +157,41 @@ class MonitoredItemTest {
 		assertFalse(testItem.noticeDue());
 		assertFalse(testItem.noticeDue(startTest));
 		assertFalse(testItem.noticeDue(startTest.plusYears(1).minusWeeks(1)));
-		assertTrue(testItem.noticeDue(startTest.plusYears(1).minusWeeks(1).plusMinutes(1)));
+		assertTrue(testItem.noticeDue(startTest.plusYears(1).minusWeeks(1).plusDays(1)));
 	}
 
 	@Test
 	void testNullDescription() {
 		assertThrows(IllegalArgumentException.class, () -> {
-			new MonitoredItem(null, Period.MONTHLY, 1, LocalDateTime.now(), 1, Period.WEEKLY);
+			new MonitoredItem(null, Period.MONTHLY, 1, LocalDate.now(), 1, Period.WEEKLY);
 		});
 	}
 
 	@Test
 	void testEmptyDescription() {
 		assertThrows(IllegalArgumentException.class, () -> {
-			new MonitoredItem("", Period.MONTHLY, 1, LocalDateTime.now(), 1, Period.WEEKLY);
+			new MonitoredItem("", Period.MONTHLY, 1, LocalDate.now(), 1, Period.WEEKLY);
 		});
 	}
 
 	@Test
 	void testBlankDescription() {
 		assertThrows(IllegalArgumentException.class, () -> {
-			new MonitoredItem(" ", Period.MONTHLY, 1, LocalDateTime.now(), 1, Period.WEEKLY);
+			new MonitoredItem(" ", Period.MONTHLY, 1, LocalDate.now(), 1, Period.WEEKLY);
 		});
 	}
 
 	@Test
 	void testInvalidNoticeEvery() {
 		assertThrows(IllegalArgumentException.class, () -> {
-			new MonitoredItem("item", Period.MONTHLY, 0, LocalDateTime.now(), 1, Period.WEEKLY);
+			new MonitoredItem("item", Period.MONTHLY, 0, LocalDate.now(), 1, Period.WEEKLY);
 		});
 	}
 
 	@Test
 	void testInvalidAdvanceAction() {
 		assertThrows(IllegalArgumentException.class, () -> {
-			new MonitoredItem("item", Period.MONTHLY, 1, LocalDateTime.now(), 0, Period.WEEKLY);
+			new MonitoredItem("item", Period.MONTHLY, 1, LocalDate.now(), 0, Period.WEEKLY);
 		});
 	}
 
@@ -212,14 +212,14 @@ class MonitoredItemTest {
 	@Test
 	void testNullPeriod() {
 		assertThrows(IllegalArgumentException.class, () -> {
-			new MonitoredItem("item", null, 1, LocalDateTime.now(), 1, Period.WEEKLY);
+			new MonitoredItem("item", null, 1, LocalDate.now(), 1, Period.WEEKLY);
 		});
 	}
 
 	@Test
 	void testNullPeriodFroNextNotice() {
 		assertThrows(IllegalArgumentException.class, () -> {
-			new MonitoredItem("item", Period.YEARLY, 1, LocalDateTime.now(), 1, null);
+			new MonitoredItem("item", Period.YEARLY, 1, LocalDate.now(), 1, null);
 		});
 	}
 

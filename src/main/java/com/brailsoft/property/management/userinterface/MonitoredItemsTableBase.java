@@ -1,6 +1,6 @@
 package com.brailsoft.property.management.userinterface;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import com.brailsoft.property.management.model.MonitoredItem;
 
@@ -9,10 +9,10 @@ import javafx.scene.control.TableView;
 public abstract class MonitoredItemsTableBase extends TableView<MonitoredItem> {
 
 	public void addItem(MonitoredItem item) {
-		LocalDateTime itemTime = item.getTimeForNextAction();
+		LocalDate itemTime = item.getTimeForNextAction();
 		int positionToInsert = -1;
 		for (int i = getItems().size() - 1; i >= 0; i--) {
-			LocalDateTime listTime = getItems().get(i).getTimeForNextAction();
+			LocalDate listTime = getItems().get(i).getTimeForNextAction();
 			if (itemTime.isBefore(listTime)) {
 				positionToInsert = i;
 				break;

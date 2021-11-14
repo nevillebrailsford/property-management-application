@@ -1,6 +1,6 @@
 package com.brailsoft.property.management.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
@@ -15,15 +15,13 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class MonitoredItem implements Comparable<MonitoredItem> {
-	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
 
 	private StringProperty description = new SimpleStringProperty(this, "description", "");
-	private ObjectProperty<LocalDateTime> lastActionPerformed = new SimpleObjectProperty<>(this, "lastActionPerformed",
+	private ObjectProperty<LocalDate> lastActionPerformed = new SimpleObjectProperty<>(this, "lastActionPerformed",
 			null);
-	private ObjectProperty<LocalDateTime> timeForNextAction = new SimpleObjectProperty<>(this, "timeForNextAction",
-			null);
-	private ObjectProperty<LocalDateTime> timeForNextNotice = new SimpleObjectProperty<>(this, "timeForNextNotice",
-			null);
+	private ObjectProperty<LocalDate> timeForNextAction = new SimpleObjectProperty<>(this, "timeForNextAction", null);
+	private ObjectProperty<LocalDate> timeForNextNotice = new SimpleObjectProperty<>(this, "timeForNextNotice", null);
 	private ObjectProperty<Period> periodForNextAction = new SimpleObjectProperty<>(this, "periodForNextAction", null);;
 	private IntegerProperty noticeEvery = new SimpleIntegerProperty(this, "noticeEvery", 0);;
 	private ObjectProperty<Period> periodForNextNotice = new SimpleObjectProperty<>(this, "periodForNextAction", null);;
@@ -78,7 +76,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		return nextNotice.getReadOnlyProperty();
 	}
 
-	public MonitoredItem(String description, Period periodForNextAction, int noticeEvery, LocalDateTime lastActioned,
+	public MonitoredItem(String description, Period periodForNextAction, int noticeEvery, LocalDate lastActioned,
 			int advanceNotice, Period periodForNextNotice) {
 		if (description == null || description.isBlank() || description.isEmpty()) {
 			throw new IllegalArgumentException("MonitoredItem: description not specified");
@@ -198,15 +196,15 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		return advanceNotice;
 	}
 
-	public LocalDateTime getLastActionPerformed() {
+	public LocalDate getLastActionPerformed() {
 		return lastActionPerformed.get();
 	}
 
-	public LocalDateTime getTimeForNextAction() {
+	public LocalDate getTimeForNextAction() {
 		return timeForNextAction.get();
 	}
 
-	public LocalDateTime getTimeForNextNotice() {
+	public LocalDate getTimeForNextNotice() {
 		return timeForNextNotice.get();
 	}
 
@@ -223,20 +221,20 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		return periodForNextNotice;
 	}
 
-	public void actionPerformed(LocalDateTime when) {
+	public void actionPerformed(LocalDate when) {
 		this.lastActionPerformed.set(when);
 		recalculateTimes();
 	}
 
-	public ObjectProperty<LocalDateTime> lastActionPerformedProperty() {
+	public ObjectProperty<LocalDate> lastActionPerformedProperty() {
 		return lastActionPerformed;
 	}
 
 	public boolean overdue() {
-		return overdue(LocalDateTime.now());
+		return overdue(LocalDate.now());
 	}
 
-	public boolean overdue(LocalDateTime today) {
+	public boolean overdue(LocalDate today) {
 		if (today.isAfter(timeForNextAction.get())) {
 			return true;
 		} else {
@@ -245,10 +243,10 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 	}
 
 	public boolean noticeDue() {
-		return noticeDue(LocalDateTime.now());
+		return noticeDue(LocalDate.now());
 	}
 
-	public boolean noticeDue(LocalDateTime today) {
+	public boolean noticeDue(LocalDate today) {
 		if (today.isAfter(timeForNextNotice.get())) {
 			return true;
 		} else {
@@ -256,8 +254,8 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		}
 	}
 
-	private LocalDateTime calculateTimeForNextNotice(Period periodForNextNotice, int advanceNotice,
-			LocalDateTime timeForNextAction) {
+	private LocalDate calculateTimeForNextNotice(Period periodForNextNotice, int advanceNotice,
+			LocalDate timeForNextAction) {
 		var result = switch (periodForNextNotice) {
 			case WEEKLY -> reduceTimeStampByWeeks(advanceNotice, timeForNextAction);
 			case MONTHLY -> reduceTimeStampByMonths(advanceNotice, timeForNextAction);
@@ -266,7 +264,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		return result;
 	}
 
-	private LocalDateTime calculateTimeForNextAction(Period period, int noticeEvery, LocalDateTime lastActioned) {
+	private LocalDate calculateTimeForNextAction(Period period, int noticeEvery, LocalDate lastActioned) {
 		var result = switch (period) {
 			case WEEKLY -> increaesTimeStampByWeeks(noticeEvery, lastActioned);
 			case MONTHLY -> increaseTimeStampByMonths(noticeEvery, lastActioned);
@@ -290,27 +288,27 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 				calculateTimeForNextNotice(periodForNextNotice.get(), advanceNotice.get(), timeForNextAction.get()));
 	}
 
-	private LocalDateTime increaesTimeStampByWeeks(int noticeEvery, LocalDateTime lastActioned) {
+	private LocalDate increaesTimeStampByWeeks(int noticeEvery, LocalDate lastActioned) {
 		return lastActioned.plusWeeks(noticeEvery);
 	}
 
-	private LocalDateTime increaseTimeStampByMonths(int noticeEvery, LocalDateTime lastActioned) {
+	private LocalDate increaseTimeStampByMonths(int noticeEvery, LocalDate lastActioned) {
 		return lastActioned.plusMonths(noticeEvery);
 	}
 
-	private LocalDateTime increaseTimeStampByYears(int noticeEvery, LocalDateTime lastActioned) {
+	private LocalDate increaseTimeStampByYears(int noticeEvery, LocalDate lastActioned) {
 		return lastActioned.plusYears(noticeEvery);
 	}
 
-	private LocalDateTime reduceTimeStampByWeeks(int advanceNotice, LocalDateTime nextAction) {
+	private LocalDate reduceTimeStampByWeeks(int advanceNotice, LocalDate nextAction) {
 		return nextAction.minusWeeks(advanceNotice);
 	}
 
-	private LocalDateTime reduceTimeStampByMonths(int advanceNotice, LocalDateTime nextAction) {
+	private LocalDate reduceTimeStampByMonths(int advanceNotice, LocalDate nextAction) {
 		return nextAction.minusMonths(advanceNotice);
 	}
 
-	private LocalDateTime reduceTimeStampByYears(int advanceNotice, LocalDateTime nextAction) {
+	private LocalDate reduceTimeStampByYears(int advanceNotice, LocalDate nextAction) {
 		return nextAction.minusYears(advanceNotice);
 	}
 

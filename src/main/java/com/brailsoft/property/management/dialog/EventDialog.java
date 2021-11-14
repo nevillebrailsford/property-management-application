@@ -82,8 +82,7 @@ public class EventDialog extends Dialog<MonitoredItem> {
 					LocalDate date = lastAction.getValue();
 					Period evper = noticePeriod.getValue();
 					String evhowM = noticeHowMany.getText();
-					return new MonitoredItem(desc, per, Integer.parseInt(howM), date.atStartOfDay(),
-							Integer.parseInt(evhowM), evper);
+					return new MonitoredItem(desc, per, Integer.parseInt(howM), date, Integer.parseInt(evhowM), evper);
 				}
 				return null;
 			}

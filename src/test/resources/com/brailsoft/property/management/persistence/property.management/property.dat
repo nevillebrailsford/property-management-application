@@ -11,7 +11,7 @@
             <description>item1</description>
             <periodfornextaction>YEARLY</periodfornextaction>
             <noticeEvery>1</noticeEvery>
-            <lastActioned>2021-10-21T14:44:18.578</lastActioned>
+            <lastActioned>2021-10-21</lastActioned>
             <advanceNotice>1</advanceNotice>
             <periodForNextNotice>WEEKLY</periodForNextNotice>
         </item>

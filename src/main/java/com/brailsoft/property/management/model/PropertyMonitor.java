@@ -2,7 +2,7 @@ package com.brailsoft.property.management.model;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +38,7 @@ public class PropertyMonitor {
 
 	private final ObservableList<Property> properties;
 
-	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu/MM/dd");
 
 	public synchronized static PropertyMonitor getInstance() {
 		if (instance == null) {
@@ -304,7 +304,7 @@ public class PropertyMonitor {
 		return copyList;
 	}
 
-	public synchronized List<MonitoredItem> getOverdueItemsFor(LocalDateTime date) {
+	public synchronized List<MonitoredItem> getOverdueItemsFor(LocalDate date) {
 		LOGGER.entering(CLASS_NAME, "getOverdueItemsFor", date);
 		if (date == null) {
 			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: date was null");
@@ -322,7 +322,7 @@ public class PropertyMonitor {
 		return overdueList;
 	}
 
-	public synchronized List<MonitoredItem> getNotifiedItemsFor(LocalDateTime date) {
+	public synchronized List<MonitoredItem> getNotifiedItemsFor(LocalDate date) {
 		LOGGER.entering(CLASS_NAME, "getNotifiedItemsFor", date);
 		if (date == null) {
 			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: date was null");
@@ -340,7 +340,7 @@ public class PropertyMonitor {
 		return notifiedList;
 	}
 
-	private boolean datesAreEqual(LocalDateTime itemDate, LocalDateTime compareDate) {
+	private boolean datesAreEqual(LocalDate itemDate, LocalDate compareDate) {
 		return itemDate.format(formatter).equals(compareDate.format(formatter));
 	}
 
@@ -413,7 +413,7 @@ public class PropertyMonitor {
 	}
 
 	private void timerPopped(ActionEvent event) {
-		LOGGER.entering(CLASS_NAME, "timerPoppped", "timer popped at " + LocalDateTime.now());
+		LOGGER.entering(CLASS_NAME, "timerPoppped", "timer popped at " + LocalDate.now());
 		if (getPropertiesWithOverdueNotices().size() > 0) {
 			final Alert alert = new Alert(AlertType.INFORMATION);
 			alert.setTitle("Notified Items");

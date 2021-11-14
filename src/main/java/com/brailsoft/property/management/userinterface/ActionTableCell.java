@@ -9,7 +9,7 @@ import javafx.scene.control.TableCell;
 
 public class ActionTableCell extends TableCell<MonitoredItem, String> {
 
-	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
 	private String backgroundColor;
 
 	public ActionTableCell(String backgroundColor) {
