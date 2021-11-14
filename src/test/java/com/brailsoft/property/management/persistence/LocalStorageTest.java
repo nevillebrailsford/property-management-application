@@ -8,8 +8,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.AfterAll;
@@ -17,6 +15,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.brailsoft.property.management.constants.TestConstants;
 import com.brailsoft.property.management.model.Address;
@@ -34,6 +33,7 @@ public class LocalStorageTest {
 	private static final String POST_CODE = "CW3 9ST";
 	private static final String PROPERTY_DAT = "property.dat";
 	ApplicationPreferences applicationPreferences;
+	@TempDir
 	File rootDirectory;
 	LocalStorage storage;
 	private String line1 = "99 The Street";
@@ -63,20 +63,18 @@ public class LocalStorageTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		applicationPreferences = ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
-		applicationPreferences.setDirectory(TestConstants.TEST_DIRECTORY);
+		applicationPreferences.setDirectory(rootDirectory.getAbsolutePath());
 		rootDirectory = new File(applicationPreferences.getDirectory());
 		storage = LocalStorage.getInstance(rootDirectory);
 		PropertyMonitor.getInstance().clear();
 		startTest = LocalDate.now();
 		testItem = new MonitoredItem("item1", Period.YEARLY, 1, startTest, 1, Period.WEEKLY);
-		deleteFiles();
 	}
 
 	@AfterEach
 	void tearDown() throws Exception {
 		PropertyMonitor.getInstance().clear();
 		applicationPreferences.clear();
-		deleteFiles();
 	}
 
 	@Test
@@ -114,11 +112,7 @@ public class LocalStorageTest {
 	void testGetDirectory() {
 		LocalStorage ls = LocalStorage.getInstance(rootDirectory);
 		assertEquals(ls.getDirectory().getAbsolutePath(),
-				TestConstants.TEST_DIRECTORY + File.separator + LocalStorage.DIRECTORY);
-		File parent = new File(getTestDirectory());
-		LocalStorage.getInstance(parent);
-		assertEquals(ls.getDirectory().getAbsolutePath(),
-				parent.getAbsolutePath() + File.separator + LocalStorage.DIRECTORY);
+				rootDirectory.getAbsolutePath() + File.separator + LocalStorage.DIRECTORY);
 	}
 
 	private boolean fileExistsAndIsValid(File file, int expectedCount) {
@@ -141,18 +135,6 @@ public class LocalStorageTest {
 		File file = new File(fileName);
 		File directory = file.getParentFile();
 		return directory.getAbsolutePath();
-	}
-
-	private void deleteFiles() throws IOException {
-		File testDirectory = LocalStorage.getInstance(rootDirectory).getDirectory();
-		File[] files = testDirectory.listFiles();
-		if (files != null) {
-			for (File f : files) {
-				Files.deleteIfExists(Paths.get(f.getAbsolutePath()));
-			}
-		}
-		Files.deleteIfExists(Paths.get(testDirectory.getAbsolutePath()));
-		Files.deleteIfExists(Paths.get(testDirectory.getParentFile().getAbsolutePath()));
 	}
 
 }

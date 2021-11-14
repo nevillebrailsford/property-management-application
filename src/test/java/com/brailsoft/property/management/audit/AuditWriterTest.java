@@ -6,13 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.brailsoft.property.management.constant.Constants;
 import com.brailsoft.property.management.constants.TestConstants;
@@ -23,23 +21,22 @@ class AuditWriterTest {
 
 	AuditRecord record;
 	ApplicationPreferences applicationPreferences;
-	File applicationDirectory;
+	@TempDir
 	File rootDirectory;
+	File applicationDirectory;
 	File auditFile;
 
 	@BeforeEach
 	void setUp() throws Exception {
 		applicationPreferences = ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
-		applicationPreferences.setDirectory(TestConstants.TEST_DIRECTORY);
+		applicationPreferences.setDirectory(rootDirectory.getAbsolutePath());
 		rootDirectory = new File(ApplicationPreferences.getInstance(Constants.NODE_NAME).getDirectory());
 		applicationDirectory = new File(rootDirectory, LocalStorage.DIRECTORY);
 		auditFile = new File(applicationDirectory, AuditWriter.AUDIT_FILE);
-		deleteFiles();
 	}
 
 	@AfterEach
 	void tearDown() throws Exception {
-		deleteFiles();
 	}
 
 	@Test
@@ -64,17 +61,6 @@ class AuditWriterTest {
 			}
 		}
 		return (noOfRecords == expectedCount);
-	}
-
-	private void deleteFiles() throws IOException {
-		File[] files = applicationDirectory.listFiles();
-		if (files != null) {
-			for (File f : files) {
-				Files.deleteIfExists(Paths.get(f.getAbsolutePath()));
-			}
-		}
-		Files.deleteIfExists(Paths.get(applicationDirectory.getAbsolutePath()));
-		Files.deleteIfExists(Paths.get(rootDirectory.getAbsolutePath()));
 	}
 
 }

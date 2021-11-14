@@ -13,6 +13,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.brailsoft.property.management.constants.TestConstants;
 import com.brailsoft.property.management.persistence.LocalStorage;
@@ -22,6 +23,9 @@ import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 
 class PropertyMonitorTest {
+
+	@TempDir
+	File rootDirectory;
 	private static ApplicationPreferences preferences = ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
 
 	PropertyMonitor monitor;
@@ -62,7 +66,7 @@ class PropertyMonitorTest {
 		testItem = new MonitoredItem("item1", Period.YEARLY, 1, startTest, 1, Period.WEEKLY);
 		testItem.setOwner(property1);
 		applicationPreferences = ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
-		applicationPreferences.setDirectory(TestConstants.TEST_DIRECTORY);
+		applicationPreferences.setDirectory(rootDirectory.getAbsolutePath());
 		LocalStorage.getInstance(new File(applicationPreferences.getDirectory()));
 		monitor = PropertyMonitor.getInstance();
 		listener = new ListChangeListener<>() {
