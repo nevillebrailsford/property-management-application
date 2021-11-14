@@ -73,7 +73,7 @@ public class PropertyTab extends Tab {
 		MonitoredItem item = tableView.getSelectionModel().getSelectedItem();
 		Optional<LocalDate> result = new DateDialog(item).showAndWait();
 		if (result.isPresent()) {
-			item.actionPerformed(result.get().atStartOfDay());
+			item.actionPerformed(result.get());
 			PropertyMonitor propertyMonitor = PropertyMonitor.getInstance();
 			propertyMonitor.replaceItem(item);
 			propertyMonitor.auditReplaceItem(item);

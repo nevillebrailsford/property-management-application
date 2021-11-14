@@ -1,6 +1,6 @@
 package com.brailsoft.property.management.userinterface;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -14,7 +14,7 @@ public class WeekDaysColumn extends VBox {
 		setSpacing(10);
 		corner.setPrefHeight(22);
 		getChildren().add(corner);
-		LocalDateTime daysdate = LocalDateTime.now();
+		LocalDate daysdate = LocalDate.now();
 		for (int i = 0; i < 7; i++) {
 			String day = daysdate.getDayOfWeek().name();
 			if (i % 2 == 1) {

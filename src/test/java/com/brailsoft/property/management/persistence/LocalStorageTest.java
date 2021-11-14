@@ -10,7 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -44,7 +44,7 @@ public class LocalStorageTest {
 	private Address address = new Address(postcode, lines);
 	private Property property = new Property(address);
 	private MonitoredItem testItem;
-	private LocalDateTime startTest;
+	private LocalDate startTest;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -67,7 +67,7 @@ public class LocalStorageTest {
 		rootDirectory = new File(applicationPreferences.getDirectory());
 		storage = LocalStorage.getInstance(rootDirectory);
 		PropertyMonitor.getInstance().clear();
-		startTest = LocalDateTime.now();
+		startTest = LocalDate.now();
 		testItem = new MonitoredItem("item1", Period.YEARLY, 1, startTest, 1, Period.WEEKLY);
 		deleteFiles();
 	}
@@ -86,6 +86,7 @@ public class LocalStorageTest {
 
 	@Test
 	void testLoadArchivedData() throws IOException {
+		System.out.println(LocalDate.now().toString());
 		File parent = new File(getTestDirectory());
 		assertEquals(0, PropertyMonitor.getInstance().getProperties().size());
 		LocalStorage.getInstance(parent).loadArchivedData();

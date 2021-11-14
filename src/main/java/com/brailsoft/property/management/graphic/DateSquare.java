@@ -19,12 +19,12 @@ public class DateSquare extends Rectangle {
 
 		if (overdueCount > 0) {
 			red = 250;
-			green = 145 - (20 * overdueCount);
-			blue = 145 - (20 * overdueCount);
+			green = 145 - (20 * overdueCount < 8 ? overdueCount : 7);
+			blue = 145 - (20 * overdueCount < 8 ? overdueCount : 7);
 		} else if (notifiedCount > 0) {
 			red = 250;
-			green = 180 - (5 * notifiedCount);
-			blue = 96 - (20 * notifiedCount);
+			green = 180 - (5 * notifiedCount < 21 ? notifiedCount : 20);
+			blue = 96 - (20 * notifiedCount < 5 ? notifiedCount : 4);
 		}
 		setFill(Color.color(red / 256, green / 256, blue / 256));
 	}

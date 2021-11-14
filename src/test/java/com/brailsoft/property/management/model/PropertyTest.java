@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +44,7 @@ class PropertyTest {
 		higherPostCode = new PostCode("CW3 9ST");
 		address = new Address(postCode, linesOfAddress);
 		testProperty = new Property(address);
-		testItem = new MonitoredItem("item1", Period.YEARLY, 1, LocalDateTime.now(), 1, Period.MONTHLY);
+		testItem = new MonitoredItem("item1", Period.YEARLY, 1, LocalDate.now(), 1, Period.MONTHLY);
 	}
 
 	@AfterEach
@@ -118,20 +118,20 @@ class PropertyTest {
 	@Test
 	void testItemsOverdue() {
 		assertFalse(testProperty.areItemsOverdue());
-		testProperty.addItem(new MonitoredItem("item1", Period.YEARLY, 1, LocalDateTime.now(), 1, Period.WEEKLY));
+		testProperty.addItem(new MonitoredItem("item1", Period.YEARLY, 1, LocalDate.now(), 1, Period.WEEKLY));
 		assertFalse(testProperty.areItemsOverdue());
-		testProperty.addItem(new MonitoredItem("item2", Period.YEARLY, 1,
-				LocalDateTime.now().minusYears(1).minusMinutes(1), 1, Period.WEEKLY));
+		testProperty.addItem(new MonitoredItem("item2", Period.YEARLY, 1, LocalDate.now().minusYears(1).minusDays(1), 1,
+				Period.WEEKLY));
 		assertTrue(testProperty.areItemsOverdue());
 	}
 
 	@Test
 	void testGetOverdueItems() {
 		assertEquals(0, testProperty.getOverdueItems().size());
-		testProperty.addItem(new MonitoredItem("item1", Period.YEARLY, 1, LocalDateTime.now(), 1, Period.WEEKLY));
+		testProperty.addItem(new MonitoredItem("item1", Period.YEARLY, 1, LocalDate.now(), 1, Period.WEEKLY));
 		assertEquals(0, testProperty.getOverdueItems().size());
-		testProperty.addItem(new MonitoredItem("item2", Period.YEARLY, 1,
-				LocalDateTime.now().minusYears(1).minusMinutes(1), 1, Period.WEEKLY));
+		testProperty.addItem(new MonitoredItem("item2", Period.YEARLY, 1, LocalDate.now().minusYears(1).minusDays(1), 1,
+				Period.WEEKLY));
 		assertEquals(1, testProperty.getOverdueItems().size());
 		assertEquals("item2", testProperty.getOverdueItems().get(0).getDescription());
 	}
@@ -139,20 +139,20 @@ class PropertyTest {
 	@Test
 	void testNoticesOverdue() {
 		assertFalse(testProperty.areNoticesOverdue());
-		testProperty.addItem(new MonitoredItem("item1", Period.YEARLY, 1, LocalDateTime.now(), 1, Period.WEEKLY));
+		testProperty.addItem(new MonitoredItem("item1", Period.YEARLY, 1, LocalDate.now(), 1, Period.WEEKLY));
 		assertFalse(testProperty.areNoticesOverdue());
 		testProperty.addItem(new MonitoredItem("item2", Period.YEARLY, 1,
-				LocalDateTime.now().minusYears(1).minusWeeks(1).minusMinutes(1), 1, Period.WEEKLY));
+				LocalDate.now().minusYears(1).minusWeeks(1).minusDays(1), 1, Period.WEEKLY));
 		assertTrue(testProperty.areNoticesOverdue());
 	}
 
 	@Test
 	void testGetOverdueNotices() {
 		assertEquals(0, testProperty.getOverdueNotices().size());
-		testProperty.addItem(new MonitoredItem("item1", Period.YEARLY, 1, LocalDateTime.now(), 1, Period.WEEKLY));
+		testProperty.addItem(new MonitoredItem("item1", Period.YEARLY, 1, LocalDate.now(), 1, Period.WEEKLY));
 		assertEquals(0, testProperty.getOverdueNotices().size());
 		testProperty.addItem(new MonitoredItem("item2", Period.YEARLY, 1,
-				LocalDateTime.now().minusYears(1).minusWeeks(1).minusMinutes(1), 1, Period.WEEKLY));
+				LocalDate.now().minusYears(1).minusWeeks(1).minusDays(1), 1, Period.WEEKLY));
 		assertEquals(1, testProperty.getOverdueNotices().size());
 		assertEquals("item2", testProperty.getOverdueNotices().get(0).getDescription());
 	}
@@ -203,7 +203,7 @@ class PropertyTest {
 	void testRemoveMissingItem() {
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			testProperty.removeItem(new MonitoredItem("item2", Period.YEARLY, 1,
-					LocalDateTime.now().minusYears(1).minusWeeks(1).minusMinutes(1), 1, Period.WEEKLY));
+					LocalDate.now().minusYears(1).minusWeeks(1).minusDays(1), 1, Period.WEEKLY));
 		});
 		assertEquals("Property: item item2 not found", exc.getMessage());
 	}

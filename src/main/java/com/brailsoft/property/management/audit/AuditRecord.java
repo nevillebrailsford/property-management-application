@@ -10,7 +10,7 @@ public class AuditRecord implements Comparable<AuditRecord> {
 	private String description;
 	private LocalDateTime timeStamp;
 	private String user;
-	private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+	private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
 
 	public AuditRecord(AuditType auditType, AuditObject auditObject) {
 		super();

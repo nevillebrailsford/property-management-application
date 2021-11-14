@@ -1,6 +1,6 @@
 package com.brailsoft.property.management.userinterface;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import com.brailsoft.property.management.graphic.DateSquare;
@@ -12,7 +12,7 @@ import javafx.scene.layout.Pane;
 public class YearView extends Pane {
 	public static final int NUMBER_OF_COLUMNS = 53;
 
-	private static final DateTimeFormatter toolTipFormatter = DateTimeFormatter.ofPattern("EEE dd LLL yyyy");
+	private static final DateTimeFormatter toolTipFormatter = DateTimeFormatter.ofPattern("EEE dd LLL uuuu");
 	private static final int GAP = 4;
 
 	public YearView() {
@@ -20,7 +20,7 @@ public class YearView extends Pane {
 		setPrefWidth(NUMBER_OF_COLUMNS * DateSquare.SPACING);
 		int xpos = GAP;
 		int ypos = GAP;
-		LocalDateTime date = LocalDateTime.now();
+		LocalDate date = LocalDate.now();
 		for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
 			for (int j = 0; j < 7; j++) {
 				getChildren().add(createDataSquare(xpos, ypos, date));
@@ -32,7 +32,7 @@ public class YearView extends Pane {
 		}
 	}
 
-	private DateSquare createDataSquare(int xpos, int ypos, LocalDateTime date) {
+	private DateSquare createDataSquare(int xpos, int ypos, LocalDate date) {
 		int numberOfOverdue = PropertyMonitor.getInstance().getOverdueItemsFor(date).size();
 		int numberOfNotified = PropertyMonitor.getInstance().getNotifiedItemsFor(date).size();
 		String toolTip = date.format(toolTipFormatter);

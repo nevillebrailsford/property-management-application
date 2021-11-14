@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.logging.Level;
 
 import org.junit.jupiter.api.AfterAll;
@@ -25,7 +25,7 @@ class PropertyMonitorTest {
 	private static ApplicationPreferences preferences = ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
 
 	PropertyMonitor monitor;
-	private LocalDateTime startTest;
+	private LocalDate startTest;
 	private ListChangeListener<? super Property> listener;
 	private static final PostCode postCode1 = new PostCode("CW3 9ST");
 	private static final PostCode postCode2 = new PostCode("CW3 9SU");
@@ -58,7 +58,7 @@ class PropertyMonitorTest {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		startTest = LocalDateTime.now();
+		startTest = LocalDate.now();
 		testItem = new MonitoredItem("item1", Period.YEARLY, 1, startTest, 1, Period.WEEKLY);
 		testItem.setOwner(property1);
 		applicationPreferences = ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
