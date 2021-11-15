@@ -10,7 +10,7 @@ import java.util.logging.LogRecord;
 
 public class PropertyManagerFormatter extends Formatter {
 
-	private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uu/MM/dd HH:mm:ss");
+	private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uu/MM/dd HH:mm:ss.SSS");
 	private final static String ENTRY = ">";
 	private final static String EXIT = "<";
 	private final static String EXCEPTION = "x";

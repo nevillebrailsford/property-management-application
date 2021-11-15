@@ -39,6 +39,8 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 	private static final String[] loggingChoices = new String[] { "ALL", "SEVERE", "WARNING", "INFO", "CONFIG", "FINE",
 			"FINER", "FINEST", "OFF" };
 
+	private static final String DEFAULT_LEVEL = "WARNING";
+
 	public PreferencesDialog() {
 		LOGGER.entering(CLASS_NAME, "init");
 		setTitle("Preferences");
@@ -78,6 +80,11 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 			}
 			LOGGER.exiting(CLASS_NAME, "onAction", chosenDirectory);
 		});
+
+		resetButton.setOnAction((event) -> {
+			loggingChoice.getSelectionModel().select(DEFAULT_LEVEL);
+		});
+
 		String currentDirectory = ApplicationPreferences.getInstance(Constants.NODE_NAME).getDirectory();
 		if (!(currentDirectory == null || currentDirectory.isBlank() || currentDirectory.isEmpty())) {
 			directory.textProperty().set(currentDirectory);
