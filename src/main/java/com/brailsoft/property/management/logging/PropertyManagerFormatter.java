@@ -10,7 +10,7 @@ import java.util.logging.LogRecord;
 
 public class PropertyManagerFormatter extends Formatter {
 
-	private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uu/MM/dd HH:mm:ss.SSS");
+	private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uu/MM/dd HH:mm:ss:SSS");
 	private final static String ENTRY = ">";
 	private final static String EXIT = "<";
 	private final static String EXCEPTION = "x";
@@ -39,8 +39,8 @@ public class PropertyManagerFormatter extends Formatter {
 	private String process(LogRecord record) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(buildHeader(record));
+		builder.append(buildClass(record));
 		builder.append(convertLevel(record.getLevel())).append(" ");
-		builder.append(buildClassAndMethod(record));
 		builder.append(record.getMessage()).append(" ").append("\n");
 		return builder.toString();
 	}
@@ -48,8 +48,9 @@ public class PropertyManagerFormatter extends Formatter {
 	private String processEntry(LogRecord record) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(buildHeader(record));
+		builder.append(buildClass(record));
 		builder.append(ENTRY).append(" ");
-		builder.append(buildClassAndMethod(record));
+		builder.append(buildMethod(record));
 		builder.append(processParameters(record)).append("\n");
 		return builder.toString();
 	}
@@ -57,8 +58,9 @@ public class PropertyManagerFormatter extends Formatter {
 	private String processExit(LogRecord record) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(buildHeader(record));
+		builder.append(buildClass(record));
 		builder.append(EXIT).append(" ");
-		builder.append(buildClassAndMethod(record));
+		builder.append(buildMethod(record));
 		builder.append(processParameters(record)).append("\n");
 		return builder.toString();
 	}
@@ -66,6 +68,7 @@ public class PropertyManagerFormatter extends Formatter {
 	private String processException(LogRecord record) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(buildHeader(record));
+		builder.append(buildClass(record));
 		builder.append(EXCEPTION).append(" ");
 		builder.append(processThrowable(record)).append("\n");
 		return builder.toString();
@@ -75,7 +78,8 @@ public class PropertyManagerFormatter extends Formatter {
 		StringBuilder builder = new StringBuilder();
 		LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(record.getMillis()),
 				TimeZone.getDefault().toZoneId());
-		builder.append("[").append(dateTime.format(formatter)).append("] ");
+		String timeZone = TimeZone.getDefault().getDisplayName(false, TimeZone.SHORT);
+		builder.append("[").append(dateTime.format(formatter)).append(" ").append(timeZone).append("] ");
 		return builder.toString();
 	}
 
@@ -117,12 +121,22 @@ public class PropertyManagerFormatter extends Formatter {
 	private String processThrowable(LogRecord record) {
 		StringBuilder builder = new StringBuilder();
 		Throwable t = record.getThrown();
+		builder.append(processThrowable(t));
+		return builder.toString();
+	}
+
+	private String processThrowable(Throwable t) {
+		StringBuilder builder = new StringBuilder();
 		builder.append(t.getClass());
 		if (t.getMessage() != null) {
 			builder.append(":").append(t.getMessage());
 		}
 		builder.append("\n");
 		builder.append(processStackTrace(t));
+		if (t.getCause() != null) {
+			builder.append("   caused by:");
+			builder.append(processThrowable(t.getCause()));
+		}
 		return builder.toString();
 	}
 
@@ -143,9 +157,14 @@ public class PropertyManagerFormatter extends Formatter {
 		return builder.toString();
 	}
 
-	private String buildClassAndMethod(LogRecord record) {
+	private String buildClass(LogRecord record) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(makeClassNameSimple(record.getSourceClassName())).append(" ");
+		return builder.toString();
+	}
+
+	private String buildMethod(LogRecord record) {
+		StringBuilder builder = new StringBuilder();
 		builder.append(record.getSourceMethodName()).append(" ");
 		return builder.toString();
 	}
