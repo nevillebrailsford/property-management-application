@@ -16,6 +16,7 @@ import com.brailsoft.property.management.dialog.PreferencesDialog;
 import com.brailsoft.property.management.dialog.PropertyDialog;
 import com.brailsoft.property.management.launcher.LoadProperty;
 import com.brailsoft.property.management.launcher.PropertyManager;
+import com.brailsoft.property.management.logging.PropertyManagerLogConfigurer;
 import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Property;
 import com.brailsoft.property.management.model.PropertyMonitor;
@@ -251,6 +252,7 @@ public class PropertyManagerController implements Initializable {
 				ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
 				if (!applicationPreferences.getLevel().equals(loggingLevel)) {
 					applicationPreferences.setLevel(loggingLevel);
+					PropertyManagerLogConfigurer.changeLevel(loggingLevel);
 				}
 				if (!applicationPreferences.getDirectory().equals(newDirectory)) {
 					applicationPreferences.setDirectory(newDirectory);
