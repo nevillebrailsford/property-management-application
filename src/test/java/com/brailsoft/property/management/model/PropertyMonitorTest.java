@@ -42,6 +42,8 @@ class PropertyMonitorTest {
 	private static final Address address2 = new Address(postCode2, linesOfAddress);
 	private static final Property property2 = new Property(address2);
 	private MonitoredItem testItem;
+	private MonitoredItem overdueItem;
+	private MonitoredItem noticeDueItem;
 	ApplicationPreferences applicationPreferences;
 
 	@BeforeAll
@@ -136,11 +138,27 @@ class PropertyMonitorTest {
 	@Test
 	void testGetPropertiesWithOverdueItems() {
 		assertEquals(0, monitor.getPropertiesWithOverdueItems().size());
+		monitor.addProperty(property1);
+		monitor.addItem(testItem);
+		assertEquals(0, monitor.getPropertiesWithOverdueItems().size());
+		overdueItem = new MonitoredItem("item2", Period.YEARLY, 1, startTest.minusYears(1).minusDays(1), 1,
+				Period.WEEKLY);
+		overdueItem.setOwner(property1);
+		monitor.addItem(overdueItem);
+		assertEquals(1, monitor.getPropertiesWithOverdueItems().size());
 	}
 
 	@Test
 	void testGetPropertiesWithOverdueNotices() {
 		assertEquals(0, monitor.getPropertiesWithOverdueNotices().size());
+		monitor.addProperty(property1);
+		monitor.addItem(testItem);
+		assertEquals(0, monitor.getPropertiesWithOverdueNotices().size());
+		noticeDueItem = new MonitoredItem("item2", Period.YEARLY, 1, startTest.minusYears(1), 1, Period.WEEKLY);
+		noticeDueItem.setOwner(property1);
+		monitor.addItem(noticeDueItem);
+		assertEquals(1, monitor.getPropertiesWithOverdueNotices().size());
+		assertEquals(0, monitor.getPropertiesWithOverdueItems().size());
 	}
 
 	@Test

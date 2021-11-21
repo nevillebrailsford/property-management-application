@@ -3,11 +3,10 @@ package com.brailsoft.property.management.model;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.brailsoft.property.management.audit.AuditObject;
 import com.brailsoft.property.management.audit.AuditRecord;
@@ -37,8 +36,6 @@ public class PropertyMonitor {
 	private Timer timer;
 
 	private final ObservableList<Property> properties;
-
-	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu/MM/dd");
 
 	public synchronized static PropertyMonitor getInstance() {
 		if (instance == null) {
@@ -252,10 +249,8 @@ public class PropertyMonitor {
 
 	public synchronized List<Property> getProperties() {
 		LOGGER.entering(CLASS_NAME, "getProperties");
-		List<Property> copyList = new ArrayList<>();
-		properties.stream().forEach(property -> {
-			copyList.add(new Property(property));
-		});
+		List<Property> copyList = properties.stream().map(property -> new Property(property))
+				.collect(Collectors.toList());
 		Collections.sort(copyList);
 		LOGGER.exiting(CLASS_NAME, "getProperties", copyList);
 		return copyList;
@@ -263,12 +258,8 @@ public class PropertyMonitor {
 
 	public synchronized List<Property> getPropertiesWithOverdueItems() {
 		LOGGER.entering(CLASS_NAME, "getPropertiesWithOverdueItems");
-		List<Property> copyList = new ArrayList<>();
-		getProperties().stream().forEach(property -> {
-			if (property.areItemsOverdue()) {
-				copyList.add(property);
-			}
-		});
+		List<Property> copyList = getProperties().stream().filter(property -> property.areItemsOverdue())
+				.collect(Collectors.toList());
 		Collections.sort(copyList);
 		LOGGER.exiting(CLASS_NAME, "getPropertiesWithOverdueItems", copyList);
 		return copyList;
@@ -276,12 +267,8 @@ public class PropertyMonitor {
 
 	public synchronized List<Property> getPropertiesWithOverdueNotices() {
 		LOGGER.entering(CLASS_NAME, "getPropertiesWithOverdueNotices");
-		List<Property> copyList = new ArrayList<>();
-		getProperties().stream().forEach(property -> {
-			if (property.areNoticesOverdue()) {
-				copyList.add(property);
-			}
-		});
+		List<Property> copyList = getProperties().stream().filter(property -> property.areNoticesOverdue())
+				.collect(Collectors.toList());
 		Collections.sort(copyList);
 		LOGGER.exiting(CLASS_NAME, "getPropertiesWithOverdueNotices", copyList);
 		return copyList;
@@ -296,10 +283,9 @@ public class PropertyMonitor {
 			LOGGER.exiting(CLASS_NAME, "getItemsFor");
 			throw exc;
 		}
-		List<MonitoredItem> copyList = new ArrayList<>();
-		findProperty(property).getItems().stream().forEach(i -> {
-			copyList.add(new MonitoredItem(i));
-		});
+		List<MonitoredItem> copyList = findProperty(property).getItems().stream().map(item -> new MonitoredItem(item))
+				.collect(Collectors.toList());
+		Collections.sort(copyList);
 		LOGGER.exiting(CLASS_NAME, "getItemsFor", copyList);
 		return copyList;
 	}
@@ -312,12 +298,9 @@ public class PropertyMonitor {
 			LOGGER.exiting(CLASS_NAME, "getOverdueItemsFor");
 			throw exc;
 		}
-		List<MonitoredItem> overdueList = new ArrayList<>();
-		getAllItems().stream().forEach(item -> {
-			if (datesAreEqual(item.getTimeForNextAction(), date)) {
-				overdueList.add(item);
-			}
-		});
+		List<MonitoredItem> overdueList = getAllItems().stream()
+				.filter(item -> item.getTimeForNextAction().equals(date)).collect(Collectors.toList());
+		Collections.sort(overdueList);
 		LOGGER.exiting(CLASS_NAME, "getOverdueItemsFor", overdueList);
 		return overdueList;
 	}
@@ -330,18 +313,11 @@ public class PropertyMonitor {
 			LOGGER.exiting(CLASS_NAME, "getNotifiedItemsFor");
 			throw exc;
 		}
-		List<MonitoredItem> notifiedList = new ArrayList<>();
-		getAllItems().stream().forEach(item -> {
-			if (datesAreEqual(item.getTimeForNextNotice(), date)) {
-				notifiedList.add(item);
-			}
-		});
+		List<MonitoredItem> notifiedList = getAllItems().stream()
+				.filter(item -> item.getTimeForNextNotice().equals(date)).collect(Collectors.toList());
+		Collections.sort(notifiedList);
 		LOGGER.exiting(CLASS_NAME, "getNotifiedItemsFor", notifiedList);
 		return notifiedList;
-	}
-
-	private boolean datesAreEqual(LocalDate itemDate, LocalDate compareDate) {
-		return itemDate.format(formatter).equals(compareDate.format(formatter));
 	}
 
 	private synchronized Property findProperty(Property property) {
@@ -359,10 +335,9 @@ public class PropertyMonitor {
 
 	private List<MonitoredItem> getAllItems() {
 		LOGGER.entering(CLASS_NAME, "getAllItems");
-		List<MonitoredItem> allItems = new ArrayList<>();
-		getProperties().stream().forEach(property -> {
-			allItems.addAll(findProperty(property).getItems());
-		});
+		List<MonitoredItem> allItems = getProperties().stream().flatMap(property -> property.getItems().stream())
+				.collect(Collectors.toList());
+		Collections.sort(allItems);
 		LOGGER.exiting(CLASS_NAME, "getAllItems", allItems);
 		return allItems;
 	}
