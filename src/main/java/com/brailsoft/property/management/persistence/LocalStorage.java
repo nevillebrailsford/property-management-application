@@ -57,6 +57,7 @@ public class LocalStorage {
 	private static LocalStorage instance = null;
 
 	private File directory = null;
+	private boolean loadingData = false;
 
 	public synchronized static LocalStorage getInstance(File rootDirectory) {
 		if (rootDirectory == null) {
@@ -90,30 +91,37 @@ public class LocalStorage {
 			IOException exc = new IOException(
 					"LocalStorage: archiveFile " + archiveFile.getAbsolutePath() + " not found");
 			LOGGER.throwing(CLASS_NAME, "loadArchivedData", exc);
-			LOGGER.entering(CLASS_NAME, "loadArchivedData");
+			LOGGER.exiting(CLASS_NAME, "loadArchivedData");
 			throw exc;
 		}
 		try (InputStream archive = new BufferedInputStream(new FileInputStream(archiveFile))) {
+			loadingData = true;
 			readDataFrom(archive);
 		} catch (Exception e) {
 			LOGGER.warning("caught exception: " + e.getMessage());
 			IOException exc = new IOException("LocalStorage: Exception occurred - " + e.getMessage());
 			LOGGER.throwing(CLASS_NAME, "loadArchivedData", exc);
-			LOGGER.entering(CLASS_NAME, "loadArchivedData");
 			throw exc;
+		} finally {
+			loadingData = false;
+			LOGGER.exiting(CLASS_NAME, "loadArchivedData");
+
 		}
-		LOGGER.entering(CLASS_NAME, "loadArchivedData");
 	}
 
 	public void saveArchiveData() throws IOException {
 		LOGGER.entering(CLASS_NAME, "saveArchivedData");
+		if (loadingData) {
+			LOGGER.exiting(CLASS_NAME, "saveArchiveData", loadingData);
+			return;
+		}
 		File archiveFile = new File(directory, FILE_NAME);
 		try (OutputStream archive = new BufferedOutputStream(new FileOutputStream(archiveFile))) {
 			writeDataTo(archive);
 		} catch (Exception e) {
 			IOException exc = new IOException("LocalStorage: Exception occurred - " + e.getMessage());
 			LOGGER.throwing(CLASS_NAME, "saveArchivedData", exc);
-			LOGGER.entering(CLASS_NAME, "saveArchivedData");
+			LOGGER.exiting(CLASS_NAME, "saveArchivedData");
 			throw exc;
 		}
 		LOGGER.exiting(CLASS_NAME, "saveArchivedData");
