@@ -1,21 +1,16 @@
 package com.brailsoft.property.management.logging;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Enumeration;
-import java.util.Properties;
 import java.util.TimeZone;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-import com.brailsoft.property.management.constant.DateFormats;
-
 public class PropertyManagerFormatter extends Formatter {
 
-	private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateFormats.dateFormatForLogRecord);
-	private final static String lineEnd = System.lineSeparator();
+	private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uu/MM/dd HH:mm:ss:SSS");
 	private final static String ENTRY = ">";
 	private final static String EXIT = "<";
 	private final static String EXCEPTION = "x";
@@ -29,34 +24,16 @@ public class PropertyManagerFormatter extends Formatter {
 
 	@Override
 	public String format(LogRecord record) {
-		String formattedRecord = "";
-		if (record.getLevel() == Level.CONFIG) {
-			formattedRecord = processConfig(record);
-		} else {
-			String message = record.getMessage();
-			String messageStart = message.startsWith("ENTRY") ? "ENTRY"
-					: message.startsWith("RETURN") ? "RETURN" : message.startsWith("THROW") ? "THROW" : message;
-			formattedRecord = switch (messageStart) {
-				case "ENTRY" -> processEntry(record);
-				case "RETURN" -> processExit(record);
-				case "THROW" -> processException(record);
-				default -> process(record);
-			};
-		}
+		String message = record.getMessage();
+		String messageStart = message.startsWith("ENTRY") ? "ENTRY"
+				: message.startsWith("RETURN") ? "RETURN" : message.startsWith("THROW") ? "THROW" : message;
+		String formattedRecord = switch (messageStart) {
+			case "ENTRY" -> processEntry(record);
+			case "RETURN" -> processExit(record);
+			case "THROW" -> processException(record);
+			default -> process(record);
+		};
 		return formattedRecord;
-	}
-
-	private String processConfig(LogRecord record) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("************ Start Display Current Environment ************").append(lineEnd);
-		Properties props = System.getProperties();
-		for (Enumeration enumer = props.keys(); enumer.hasMoreElements();) {
-			Object key = enumer.nextElement();
-			Object value = props.get(key);
-			builder.append(key.toString()).append(": ").append(value.toString()).append(lineEnd);
-		}
-		builder.append("************* End Display Current Environment *************").append(lineEnd);
-		return builder.toString();
 	}
 
 	private String process(LogRecord record) {
@@ -64,7 +41,7 @@ public class PropertyManagerFormatter extends Formatter {
 		builder.append(buildHeader(record));
 		builder.append(buildClass(record));
 		builder.append(convertLevel(record.getLevel())).append(" ");
-		builder.append(record.getMessage()).append(" ").append(lineEnd);
+		builder.append(record.getMessage()).append(" ").append("\n");
 		return builder.toString();
 	}
 
@@ -74,7 +51,7 @@ public class PropertyManagerFormatter extends Formatter {
 		builder.append(buildClass(record));
 		builder.append(ENTRY).append(" ");
 		builder.append(buildMethod(record));
-		builder.append(processParameters(record)).append(lineEnd);
+		builder.append(processParameters(record)).append("\n");
 		return builder.toString();
 	}
 
@@ -84,7 +61,7 @@ public class PropertyManagerFormatter extends Formatter {
 		builder.append(buildClass(record));
 		builder.append(EXIT).append(" ");
 		builder.append(buildMethod(record));
-		builder.append(processParameters(record)).append(lineEnd);
+		builder.append(processParameters(record)).append("\n");
 		return builder.toString();
 	}
 
@@ -93,15 +70,16 @@ public class PropertyManagerFormatter extends Formatter {
 		builder.append(buildHeader(record));
 		builder.append(buildClass(record));
 		builder.append(EXCEPTION).append(" ");
-		builder.append(processThrowable(record)).append(lineEnd);
+		builder.append(processThrowable(record)).append("\n");
 		return builder.toString();
 	}
 
 	private String formatDateAndTime(LogRecord record) {
 		StringBuilder builder = new StringBuilder();
-		ZonedDateTime dateTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(record.getMillis()),
+		LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(record.getMillis()),
 				TimeZone.getDefault().toZoneId());
-		builder.append("[").append(dateTime.format(formatter)).append("] ");
+		String timeZone = TimeZone.getDefault().getDisplayName(false, TimeZone.SHORT);
+		builder.append("[").append(dateTime.format(formatter)).append(" ").append(timeZone).append("] ");
 		return builder.toString();
 	}
 
@@ -134,7 +112,7 @@ public class PropertyManagerFormatter extends Formatter {
 				} else {
 					builder.append(newLine).append(obj.toString());
 				}
-				newLine = lineEnd;
+				newLine = "\n";
 			}
 		}
 		return builder.toString();
@@ -153,7 +131,7 @@ public class PropertyManagerFormatter extends Formatter {
 		if (t.getMessage() != null) {
 			builder.append(":").append(t.getMessage());
 		}
-		builder.append(lineEnd);
+		builder.append("\n");
 		builder.append(processStackTrace(t));
 		if (t.getCause() != null) {
 			builder.append("   caused by:");
@@ -167,7 +145,7 @@ public class PropertyManagerFormatter extends Formatter {
 		for (StackTraceElement e : t.getStackTrace()) {
 			builder.append("    at ");
 			builder.append(e);
-			builder.append(lineEnd);
+			builder.append("\n");
 		}
 		return builder.toString();
 	}

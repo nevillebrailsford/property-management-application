@@ -1,8 +1,8 @@
 package com.brailsoft.property.management.dialog;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
-import com.brailsoft.property.management.constant.DateFormats;
 import com.brailsoft.property.management.model.MonitoredItem;
 
 import javafx.beans.binding.Bindings;
@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 
 public class DateDialog extends Dialog<LocalDate> {
 
@@ -26,7 +27,25 @@ public class DateDialog extends Dialog<LocalDate> {
 	private DatePicker eventComplete = new DatePicker();
 
 	public DateDialog(MonitoredItem item) {
-		eventComplete.setConverter(DateFormats.createDateConverter());
+		eventComplete.setConverter(new StringConverter<LocalDate>() {
+			private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+			@Override
+			public String toString(LocalDate localDate) {
+				if (localDate == null) {
+					return "";
+				}
+				return formatter.format(localDate);
+			}
+
+			@Override
+			public LocalDate fromString(String dateString) {
+				if (dateString == null || dateString.trim().isEmpty()) {
+					return null;
+				}
+				return LocalDate.parse(dateString, formatter);
+			}
+		});
 
 		setTitle("Record event complete");
 		setHeaderText("Enter the date below to record when the event was complete");

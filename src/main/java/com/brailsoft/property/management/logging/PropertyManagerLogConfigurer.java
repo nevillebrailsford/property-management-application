@@ -6,7 +6,6 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import com.brailsoft.property.management.constant.Constants;
@@ -19,6 +18,7 @@ public class PropertyManagerLogConfigurer {
 	private static final String LOG_FILE = "property.manager.log";
 
 	public static void setUp() {
+//		Level loggerLevel = preferences.getLevel();
 		Logger parent = LOGGER;
 		while (parent != null) {
 			for (Handler handler : parent.getHandlers()) {
@@ -28,7 +28,9 @@ public class PropertyManagerLogConfigurer {
 			}
 			parent = parent.getParent();
 		}
+//		LOGGER.setLevel(loggerLevel);
 		ConsoleHandler handler = new ConsoleHandler();
+//		handler.setLevel(loggerLevel);
 		handler.setFormatter(new PropertyManagerFormatter());
 		LOGGER.addHandler(handler);
 
@@ -36,6 +38,7 @@ public class PropertyManagerLogConfigurer {
 			String rootDirectory = preferences.getDirectory() + File.separator + LocalStorage.DIRECTORY;
 			String logfileName = rootDirectory + File.separator + LOG_FILE;
 			FileHandler fileHandler = new FileHandler(logfileName, false);
+//			fileHandler.setLevel(loggerLevel);
 			fileHandler.setFormatter(new PropertyManagerFormatter());
 			LOGGER.addHandler(fileHandler);
 		} catch (SecurityException e) {
@@ -44,8 +47,7 @@ public class PropertyManagerLogConfigurer {
 			e.printStackTrace();
 		}
 		changeLevel(preferences.getLevel());
-		LogRecord record = new LogRecord(Level.CONFIG, "message");
-		LOGGER.log(record);
+//		LOGGER.setLevel(loggerLevel);
 	}
 
 	public static void changeLevel(Level level) {
@@ -57,7 +59,5 @@ public class PropertyManagerLogConfigurer {
 			parent.setLevel(level);
 			parent = parent.getParent();
 		}
-		LogRecord record = new LogRecord(Level.CONFIG, "message");
-		LOGGER.log(record);
 	}
 }
