@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
+import com.brailsoft.property.management.constant.DateFormats;
+
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -15,7 +17,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class MonitoredItem implements Comparable<MonitoredItem> {
-	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
+	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(DateFormats.dateFormatForUI);
 
 	private StringProperty description = new SimpleStringProperty(this, "description", "");
 	private ObjectProperty<LocalDate> lastActionPerformed = new SimpleObjectProperty<>(this, "lastActionPerformed",
