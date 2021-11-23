@@ -57,7 +57,7 @@ public class PropertyManagerLogConfigurer {
 			parent.setLevel(level);
 			parent = parent.getParent();
 		}
-		LogRecord record = new LogRecord(Level.CONFIG, "message");
+		LogRecord record = new LogRecord(Level.WARNING, "logging level has been set to " + level);
 		LOGGER.log(record);
 	}
 }
