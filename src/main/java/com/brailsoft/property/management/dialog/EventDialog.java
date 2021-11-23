@@ -1,8 +1,8 @@
 package com.brailsoft.property.management.dialog;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
+import com.brailsoft.property.management.constant.DateFormats;
 import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Period;
 
@@ -17,7 +17,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
 
 public class EventDialog extends Dialog<MonitoredItem> {
 
@@ -31,25 +30,7 @@ public class EventDialog extends Dialog<MonitoredItem> {
 	private TextField noticeHowMany = new TextField();
 
 	public EventDialog() {
-		lastAction.setConverter(new StringConverter<LocalDate>() {
-			private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-			@Override
-			public String toString(LocalDate localDate) {
-				if (localDate == null) {
-					return "";
-				}
-				return formatter.format(localDate);
-			}
-
-			@Override
-			public LocalDate fromString(String dateString) {
-				if (dateString == null || dateString.trim().isEmpty()) {
-					return null;
-				}
-				return LocalDate.parse(dateString, formatter);
-			}
-		});
+		lastAction.setConverter(DateFormats.createDateConverter());
 
 		setTitle("Add an Event");
 		setHeaderText("Enter the details below to add a new event to be monitored.");

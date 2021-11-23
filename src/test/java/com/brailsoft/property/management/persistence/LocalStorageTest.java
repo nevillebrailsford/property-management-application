@@ -17,7 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import com.brailsoft.property.management.constants.TestConstants;
+import com.brailsoft.property.management.constant.TestConstants;
 import com.brailsoft.property.management.model.Address;
 import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Period;
