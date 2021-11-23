@@ -1,22 +1,24 @@
 package com.brailsoft.property.management.audit;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+
+import com.brailsoft.property.management.constant.DateFormats;
 
 public class AuditRecord implements Comparable<AuditRecord> {
 	private final AuditType auditType;
 	private final AuditObject auditObject;
 	private String description;
-	private LocalDateTime timeStamp;
+	private ZonedDateTime timeStamp;
 	private String user;
-	private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
+	private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateFormats.dateFormatForAuditRecord);
 
 	public AuditRecord(AuditType auditType, AuditObject auditObject) {
 		super();
 		this.auditType = auditType;
 		this.auditObject = auditObject;
-		this.timeStamp = LocalDateTime.now();
+		this.timeStamp = ZonedDateTime.now();
 		this.user = System.getProperty("user.name");
 	}
 
@@ -36,7 +38,7 @@ public class AuditRecord implements Comparable<AuditRecord> {
 		return auditObject;
 	}
 
-	public LocalDateTime getTimeStamp() {
+	public ZonedDateTime getTimeStamp() {
 		return timeStamp;
 	}
 

@@ -172,8 +172,8 @@ public class PropertyManagerController implements Initializable {
 		stage.setTitle("All Items");
 		Scene scene;
 		try {
-			LoadProperty loadProperty = PropertyManager.loadFXML("AllItems");
-			scene = new Scene(loadProperty.getParent());
+			LoadProperty LoadProperty = PropertyManager.loadFXML("AllItems");
+			scene = new Scene(LoadProperty.getParent());
 		} catch (Exception e) {
 			LOGGER.warning("Caught exception: " + e.getMessage());
 			IllegalArgumentException exc = new IllegalArgumentException("PropertyManagerController: " + e.getMessage());
@@ -195,8 +195,8 @@ public class PropertyManagerController implements Initializable {
 		stage.setTitle("Overdue Items");
 		Scene scene;
 		try {
-			LoadProperty loadProperty = PropertyManager.loadFXML("OverdueItems");
-			scene = new Scene(loadProperty.getParent());
+			LoadProperty LoadProperty = PropertyManager.loadFXML("OverdueItems");
+			scene = new Scene(LoadProperty.getParent());
 		} catch (Exception e) {
 			LOGGER.warning("Caught exception: " + e.getMessage());
 			IllegalArgumentException exc = new IllegalArgumentException("PropertyManagerController: " + e.getMessage());
@@ -218,8 +218,8 @@ public class PropertyManagerController implements Initializable {
 		stage.setTitle("Notified Items");
 		Scene scene;
 		try {
-			LoadProperty loadProperty = PropertyManager.loadFXML("NotifiedItems");
-			scene = new Scene(loadProperty.getParent());
+			LoadProperty LoadProperty = PropertyManager.loadFXML("NotifiedItems");
+			scene = new Scene(LoadProperty.getParent());
 		} catch (Exception e) {
 			LOGGER.warning("Caught exception: " + e.getMessage());
 			IllegalArgumentException exc = new IllegalArgumentException("PropertyManagerController: " + e.getMessage());

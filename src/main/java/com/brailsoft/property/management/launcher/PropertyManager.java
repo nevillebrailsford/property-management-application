@@ -59,10 +59,10 @@ public class PropertyManager extends Application {
 				System.exit(0);
 			}
 		}
-		LoadProperty loadProperty = loadFXML("PropertyManager");
-		Scene scene = new Scene(loadProperty.getParent());
+		LoadProperty LoadProperty = loadFXML("PropertyManager");
+		Scene scene = new Scene(LoadProperty.getParent());
 		scene.getStylesheets().add(getClass().getResource("PropertyManager.css").toExternalForm());
-		mainController = loadProperty.getLoader().getController();
+		mainController = LoadProperty.getLoader().getController();
 		mainController.setPropertyManager(this);
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Property Management");
@@ -96,12 +96,12 @@ public class PropertyManager extends Application {
 	}
 
 	public static LoadProperty loadFXML(String fxml) throws IOException {
-		LOGGER.entering(CLASS_NAME, "LoadProperty", fxml);
+		LOGGER.entering(CLASS_NAME, "loadFXML", fxml);
 		FXMLLoader loader = new FXMLLoader(PropertyManager.class.getResource(fxml + ".fxml"));
 		Parent root = loader.load();
-		LoadProperty loadProperty = new LoadProperty(loader, root);
-		LOGGER.exiting(CLASS_NAME, "LoadProperty", loadProperty);
-		return loadProperty;
+		LoadProperty LoadProperty = new LoadProperty(loader, root);
+		LOGGER.exiting(CLASS_NAME, "loadFXML", LoadProperty);
+		return LoadProperty;
 	}
 
 	public static void main(String[] args) {
