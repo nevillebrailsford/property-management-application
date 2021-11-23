@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import com.brailsoft.property.management.constant.Constants;
-import com.brailsoft.property.management.constants.TestConstants;
+import com.brailsoft.property.management.constant.TestConstants;
 import com.brailsoft.property.management.persistence.LocalStorage;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
 
