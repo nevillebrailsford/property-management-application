@@ -3,7 +3,6 @@ package com.brailsoft.property.management.userinterface;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import com.brailsoft.property.management.constant.DateFormats;
 import com.brailsoft.property.management.graphic.DateSquare;
 import com.brailsoft.property.management.model.PropertyMonitor;
 
@@ -13,8 +12,7 @@ import javafx.scene.layout.Pane;
 public class YearView extends Pane {
 	public static final int NUMBER_OF_COLUMNS = 53;
 
-	private static final DateTimeFormatter toolTipFormatter = DateTimeFormatter
-			.ofPattern(DateFormats.dateFormatForCalendarView);
+	private static final DateTimeFormatter toolTipFormatter = DateTimeFormatter.ofPattern("EEE dd LLL uuuu");
 	private static final int GAP = 4;
 
 	public YearView() {

@@ -1,4 +1,4 @@
-package com.brailsoft.property.management.constant;
+package com.brailsoft.property.management.constants;
 
 import java.io.File;
 

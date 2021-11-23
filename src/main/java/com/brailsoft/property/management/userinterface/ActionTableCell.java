@@ -3,14 +3,13 @@ package com.brailsoft.property.management.userinterface;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import com.brailsoft.property.management.constant.DateFormats;
 import com.brailsoft.property.management.model.MonitoredItem;
 
 import javafx.scene.control.TableCell;
 
 public class ActionTableCell extends TableCell<MonitoredItem, String> {
 
-	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateFormats.dateFormatForUI);
+	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
 	private String backgroundColor;
 
 	public ActionTableCell(String backgroundColor) {
