@@ -27,6 +27,7 @@ import com.brailsoft.property.management.print.PrintReport;
 import com.brailsoft.property.management.userinterface.CalendarView;
 import com.brailsoft.property.management.userinterface.PropertyTab;
 
+import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,6 +36,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Modality;
@@ -49,6 +51,18 @@ public class PropertyManagerController implements Initializable {
 	private File rootDirectory = new File(applicationPreferences.getDirectory());
 	private LocalStorage localStorage = LocalStorage.getInstance(rootDirectory);
 	private PropertyMonitor propertyMonitor = PropertyMonitor.getInstance();
+
+	@FXML
+	private MenuItem addProperty;
+
+	@FXML
+	private MenuItem addItem;
+
+	@FXML
+	private MenuItem deleteProperty;
+
+	@FXML
+	private MenuItem deleteItem;
 
 	@FXML
 	private TabPane tabPane;
@@ -84,6 +98,12 @@ public class PropertyManagerController implements Initializable {
 		propertyMonitor.addListener(listener);
 		try {
 			localStorage.loadArchivedData();
+			addItem.disableProperty().bind(Bindings.createBooleanBinding(() -> {
+				return tabPane.getSelectionModel().selectedItemProperty().get() == null;
+			}));
+			deleteProperty.disableProperty().bind(Bindings.createBooleanBinding(() -> {
+				return tabPane.getSelectionModel().selectedItemProperty().get() == null;
+			}));
 		} catch (IOException e) {
 			if (e.getMessage().startsWith("LocalStorage: archiveFile") && e.getMessage().endsWith("not found")) {
 			} else {
