@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.brailsoft.property.management.constant.Constants;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -32,6 +37,22 @@ public class Property implements Comparable<Property> {
 		that.items.stream().forEach(item -> {
 			this.items.add(new MonitoredItem(item));
 		});
+	}
+
+	public Property(Element propertyElement) {
+		if (propertyElement == null) {
+			throw new IllegalArgumentException("Property: propertyElement was null");
+		}
+		this.address.set(new Address((Element) propertyElement.getElementsByTagName(Constants.ADDRESS).item(0)));
+	}
+
+	public Element buildElement(Document document) {
+		if (document == null) {
+			throw new IllegalArgumentException("Property: document was null");
+		}
+		Element result = document.createElement(Constants.PROPERTY);
+		result.appendChild(getAddress().buildElement(document));
+		return result;
 	}
 
 	public synchronized void addListener(ListChangeListener<? super MonitoredItem> listener) {

@@ -2,6 +2,12 @@ package com.brailsoft.property.management.model;
 
 import java.util.Objects;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import com.brailsoft.property.management.constant.Constants;
+
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
@@ -67,6 +73,35 @@ public class Address implements Comparable<Address> {
 		this.town.set(that.town.get());
 		this.county.set(that.county.get());
 		this.fulladdress.bind(fulladdressBinding);
+	}
+
+	public Address(Element addressElement) {
+		if (addressElement == null) {
+			throw new IllegalArgumentException("Address: addressElement was null");
+		}
+		NodeList list = addressElement.getElementsByTagName(Constants.LINE);
+		String[] linesOfAddress = new String[list.getLength()];
+		for (int index = 0; index < list.getLength(); index++) {
+			linesOfAddress[index] = list.item(index).getTextContent();
+		}
+		this.postcode.set(new PostCode((Element) addressElement.getElementsByTagName(Constants.POSTCODE).item(0)));
+		this.street.set(linesOfAddress[0]);
+		this.town.set(linesOfAddress[1]);
+		this.county.set(linesOfAddress[2]);
+		this.fulladdress.bind(fulladdressBinding);
+	}
+
+	public Element buildElement(Document document) {
+		if (document == null) {
+			throw new IllegalArgumentException("Address: document was null");
+		}
+		Element result = document.createElement(Constants.ADDRESS);
+		result.appendChild(getPostCode().buildElement(document));
+		for (int index = 0; index < getLinesOfAddress().length; index++) {
+			result.appendChild(ElementBuilder.build(Constants.LINE, getLinesOfAddress()[index], document));
+		}
+		return result;
+
 	}
 
 	public String[] getLinesOfAddress() {

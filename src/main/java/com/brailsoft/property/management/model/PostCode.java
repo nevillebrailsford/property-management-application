@@ -2,6 +2,11 @@ package com.brailsoft.property.management.model;
 
 import java.util.Objects;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.brailsoft.property.management.constant.Constants;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -24,6 +29,22 @@ public class PostCode implements Comparable<PostCode> {
 			throw new IllegalArgumentException("PostCode: value must be specified");
 		}
 		this.value.set(that.value.get());
+	}
+
+	public PostCode(Element postCodeElement) {
+		if (postCodeElement == null) {
+			throw new IllegalArgumentException("PostCode: postCodeElement was null");
+		}
+		this.value.set(postCodeElement.getTextContent());
+	}
+
+	public Element buildElement(Document document) {
+		if (document == null) {
+			throw new IllegalArgumentException("PostCode: document was null");
+		}
+		Element result = document.createElement(Constants.POSTCODE);
+		result.setTextContent(value.get());
+		return result;
 	}
 
 	public String getValue() {

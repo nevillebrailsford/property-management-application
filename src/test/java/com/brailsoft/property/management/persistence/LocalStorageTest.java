@@ -84,7 +84,6 @@ public class LocalStorageTest {
 
 	@Test
 	void testLoadArchivedData() throws IOException {
-		System.out.println(LocalDate.now().toString());
 		File parent = new File(getTestDirectory());
 		assertEquals(0, PropertyMonitor.getInstance().getProperties().size());
 		LocalStorage.getInstance(parent).loadArchivedData();
