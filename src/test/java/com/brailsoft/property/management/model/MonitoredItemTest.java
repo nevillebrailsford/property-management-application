@@ -9,11 +9,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import com.brailsoft.property.management.constant.Constants;
 
 class MonitoredItemTest {
 
@@ -23,6 +31,7 @@ class MonitoredItemTest {
 	private LocalDate nextAction;
 	private LocalDate nextNotice;
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd");
+	Document document;
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -36,6 +45,9 @@ class MonitoredItemTest {
 	void setUp() throws Exception {
 		startTest = LocalDate.now();
 		testItem = new MonitoredItem("item1", Period.YEARLY, 1, startTest, 1, Period.WEEKLY);
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		document = documentBuilder.newDocument();
 	}
 
 	@AfterEach
@@ -54,6 +66,24 @@ class MonitoredItemTest {
 		assertEquals(testItem, item);
 		assertEquals(testItem.getDescription(), item.getDescription());
 		assertEquals(testItem.getPeriodForNextAction(), item.getPeriodForNextAction());
+	}
+
+	@Test
+	void testMonitoredItemElement() {
+		Element testElement = testItem.buildElement(document);
+		assertNotNull(testElement);
+		MonitoredItem item = new MonitoredItem(testElement);
+		assertNotNull(item);
+		assertEquals(testItem, item);
+	}
+
+	@Test
+	void testBuildElement() {
+		Element testElement = testItem.buildElement(document);
+		assertNotNull(testElement);
+		assertEquals(Constants.ITEM, testElement.getNodeName());
+		assertTrue(Node.ELEMENT_NODE == testElement.getNodeType());
+		assertEquals(6, testElement.getChildNodes().getLength());
 	}
 
 	@Test
@@ -205,7 +235,24 @@ class MonitoredItemTest {
 	@Test
 	void testNullItem() {
 		assertThrows(IllegalArgumentException.class, () -> {
-			new MonitoredItem(null);
+			MonitoredItem missing = null;
+			new MonitoredItem(missing);
+		});
+	}
+
+	@Test
+	void testNullElement() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			Element missing = null;
+			new MonitoredItem(missing);
+		});
+	}
+
+	@Test
+	void testNullDocument() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			Document missing = null;
+			testItem.buildElement(missing);
 		});
 	}
 

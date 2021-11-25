@@ -4,6 +4,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.brailsoft.property.management.constant.Constants;
 import com.brailsoft.property.management.constant.DateFormats;
 
 import javafx.beans.binding.StringBinding;
@@ -17,6 +21,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class MonitoredItem implements Comparable<MonitoredItem> {
+
 	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(DateFormats.dateFormatForUI);
 
 	private StringProperty description = new SimpleStringProperty(this, "description", "");
@@ -98,19 +103,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		if (periodForNextNotice == null) {
 			throw new IllegalArgumentException("MonitoredItem: periodForNextNotice was null");
 		}
-		this.description.set(description);
-		this.periodForNextAction.set(periodForNextAction);
-		this.noticeEvery.set(noticeEvery);
-		this.advanceNotice.set(advanceNotice);
-		this.periodForNextNotice.set(periodForNextNotice);
-		this.lastActionPerformed.set(lastActioned);
-		this.timeForNextAction.set(calculateTimeForNextAction(periodForNextAction, noticeEvery, lastActioned));
-		this.timeForNextNotice
-				.set(calculateTimeForNextNotice(periodForNextNotice, advanceNotice, this.timeForNextAction.get()));
-		this.owner.set(null);
-		this.lastAction.bind(lastActionBinding);
-		this.nextAction.bind(nextActionBinding);
-		this.nextNotice.bind(nextNoticeBinding);
+		initialize(description, lastActioned, periodForNextAction, noticeEvery, advanceNotice, periodForNextNotice);
 	}
 
 	public MonitoredItem(MonitoredItem that) {
@@ -130,6 +123,66 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		} else {
 			this.owner.set(null);
 		}
+		initializeBindings();
+	}
+
+	public MonitoredItem(Element itemElement) {
+		if (itemElement == null) {
+			throw new IllegalArgumentException("MonitoredItem: itemElement was null");
+		}
+		String description = itemElement.getElementsByTagName(Constants.DESCRIPTION).item(0).getTextContent();
+		String speriodForNextAction = itemElement.getElementsByTagName(Constants.PERIOD_FOR_NEXT_ACTION).item(0)
+				.getTextContent();
+		String snoticeEvery = itemElement.getElementsByTagName(Constants.NOTICE_EVERY).item(0).getTextContent();
+		String slastActioned = itemElement.getElementsByTagName(Constants.LAST_ACTIONED).item(0).getTextContent();
+		String sadvanceNotice = itemElement.getElementsByTagName(Constants.ADVANCE_NOTICE).item(0).getTextContent();
+		String speriodForNextNotice = itemElement.getElementsByTagName(Constants.PERIOD_FOR_NEXT_NOTICE).item(0)
+				.getTextContent();
+
+		LocalDate lastActioned = LocalDate.parse(slastActioned);
+		Period periodForNextAction = Period.valueOf(speriodForNextAction);
+		int noticeEvery = Integer.parseInt(snoticeEvery);
+		int advanceNotice = Integer.parseInt(sadvanceNotice);
+		Period periodForNextNotice = Period.valueOf(speriodForNextNotice);
+
+		initialize(description, lastActioned, periodForNextAction, noticeEvery, advanceNotice, periodForNextNotice);
+	}
+
+	public Element buildElement(Document document) {
+		if (document == null) {
+			throw new IllegalArgumentException("MonitoredItem: document was null");
+		}
+		Element result = document.createElement(Constants.ITEM);
+		result.appendChild(ElementBuilder.build(Constants.DESCRIPTION, getDescription(), document));
+		result.appendChild(
+				ElementBuilder.build(Constants.PERIOD_FOR_NEXT_ACTION, getPeriodForNextAction().toString(), document));
+		result.appendChild(ElementBuilder.build(Constants.NOTICE_EVERY, Integer.toString(getNoticeEvery()), document));
+		result.appendChild(
+				ElementBuilder.build(Constants.LAST_ACTIONED, getLastActionPerformed().toString(), document));
+		result.appendChild(
+				ElementBuilder.build(Constants.ADVANCE_NOTICE, Integer.toString(getAdvanceNotice()), document));
+		result.appendChild(
+				ElementBuilder.build(Constants.PERIOD_FOR_NEXT_NOTICE, getPeriodForNextNotice().toString(), document));
+		return result;
+
+	}
+
+	private void initialize(String description, LocalDate lastActioned, Period periodForNextAction, int noticeEvery,
+			int advanceNotice, Period periodForNextNotice) {
+		this.description.set(description);
+		this.periodForNextAction.set(periodForNextAction);
+		this.noticeEvery.set(noticeEvery);
+		this.advanceNotice.set(advanceNotice);
+		this.periodForNextNotice.set(periodForNextNotice);
+		this.lastActionPerformed.set(lastActioned);
+		this.timeForNextAction.set(calculateTimeForNextAction(periodForNextAction, noticeEvery, lastActioned));
+		this.timeForNextNotice
+				.set(calculateTimeForNextNotice(periodForNextNotice, advanceNotice, this.timeForNextAction.get()));
+		this.owner.set(null);
+		initializeBindings();
+	}
+
+	private void initializeBindings() {
 		this.lastAction.bind(lastActionBinding);
 		this.nextAction.bind(nextActionBinding);
 		this.nextNotice.bind(nextNoticeBinding);

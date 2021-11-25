@@ -8,9 +8,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import com.brailsoft.property.management.constant.Constants;
 
 import javafx.collections.ListChangeListener;
 
@@ -25,6 +32,7 @@ class PropertyTest {
 	private String[] higherLinesOfAddress = new String[] { "99 the street", "the town", "the county" };
 	private Property testProperty;
 	private MonitoredItem testItem;
+	Document document;
 
 	private ListChangeListener<? super MonitoredItem> listener = new ListChangeListener<>() {
 
@@ -45,6 +53,9 @@ class PropertyTest {
 		address = new Address(postCode, linesOfAddress);
 		testProperty = new Property(address);
 		testItem = new MonitoredItem("item1", Period.YEARLY, 1, LocalDate.now(), 1, Period.MONTHLY);
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		document = documentBuilder.newDocument();
 	}
 
 	@AfterEach
@@ -65,6 +76,28 @@ class PropertyTest {
 		assertNotNull(property.getAddress());
 		assertEquals(testProperty, property);
 		assertEquals(postCode.toString(), property.getAddress().getPostCode().toString());
+	}
+
+	@Test
+	void testPropertyElement() {
+		Element testElement = testProperty.buildElement(document);
+		assertNotNull(testElement);
+		Property property = new Property(testElement);
+		assertNotNull(property);
+		assertNotNull(property.getAddress());
+		assertEquals(testProperty, property);
+		assertEquals(postCode.toString(), property.getAddress().getPostCode().toString());
+	}
+
+	@Test
+	void testBuildElement() {
+		Element testElement = testProperty.buildElement(document);
+		assertNotNull(testElement);
+		assertEquals(Constants.PROPERTY, testElement.getNodeName());
+		assertEquals(1, testElement.getChildNodes().getLength());
+		Element element = (Element) testElement.getChildNodes().item(0);
+		assertEquals(Constants.ADDRESS, element.getNodeName());
+		assertEquals(4, element.getChildNodes().getLength());
 	}
 
 	@Test
@@ -181,6 +214,24 @@ class PropertyTest {
 			new Property(p);
 		});
 		assertEquals("Property: property was null", exc.getMessage());
+	}
+
+	@Test
+	void testNullElement() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			Element p = null;
+			new Property(p);
+		});
+		assertEquals("Property: propertyElement was null", exc.getMessage());
+	}
+
+	@Test
+	void testNullDocument() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			Document p = null;
+			testProperty.buildElement(p);
+		});
+		assertEquals("Property: document was null", exc.getMessage());
 	}
 
 	@Test

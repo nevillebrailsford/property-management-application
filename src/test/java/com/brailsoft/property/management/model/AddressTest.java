@@ -1,11 +1,21 @@
 package com.brailsoft.property.management.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import com.brailsoft.property.management.constant.Constants;
 
 class AddressTest {
 
@@ -18,9 +28,13 @@ class AddressTest {
 	private static final String PRINTED_ADDRESS = "99 The Street, The Town, The County CW3 9ST";
 
 	Address address = new Address(POST_CODE, lines);
+	Document document;
 
 	@BeforeEach
 	void setUp() throws Exception {
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		document = documentBuilder.newDocument();
 	}
 
 	@AfterEach
@@ -35,6 +49,17 @@ class AddressTest {
 	@Test
 	void testAddressAddress() {
 		new Address(address);
+	}
+
+	@Test
+	void testAddressElement() {
+		Element testElement = address.buildElement(document);
+		assertNotNull(testElement);
+		Address newAddress = new Address(testElement);
+		assertNotNull(newAddress);
+		assertNotNull(newAddress.getPostCode());
+		assertEquals(3, newAddress.getLinesOfAddress().length);
+		assertEquals(newAddress, address);
 	}
 
 	@Test
@@ -61,6 +86,15 @@ class AddressTest {
 	}
 
 	@Test
+	void testBuildElement() {
+		Element testElement = address.buildElement(document);
+		assertNotNull(testElement);
+		assertEquals(Constants.ADDRESS, testElement.getNodeName());
+		assertEquals(4, testElement.getChildNodes().getLength());
+		assertTrue(testElement.getNodeType() == Node.ELEMENT_NODE);
+	}
+
+	@Test
 	void testNullLinesOfAddress() {
 		assertThrows(IllegalArgumentException.class, () -> {
 			new Address(POST_CODE, null);
@@ -70,7 +104,8 @@ class AddressTest {
 	@Test
 	void testNullPostCode() {
 		assertThrows(IllegalArgumentException.class, () -> {
-			new Address(null, lines);
+			PostCode missing = null;
+			new Address(missing, lines);
 		});
 	}
 
@@ -84,7 +119,24 @@ class AddressTest {
 	@Test
 	void testNullAddress() {
 		assertThrows(IllegalArgumentException.class, () -> {
-			new Address(null);
+			Address missing = null;
+			new Address(missing);
+		});
+	}
+
+	@Test
+	void testNullElement() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			Element missing = null;
+			new Address(missing);
+		});
+	}
+
+	@Test
+	void testNullDocument() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			Document missing = null;
+			address.buildElement(missing);
 		});
 	}
 

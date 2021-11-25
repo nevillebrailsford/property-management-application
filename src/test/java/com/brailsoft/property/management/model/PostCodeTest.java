@@ -2,12 +2,18 @@ package com.brailsoft.property.management.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 class PostCodeTest {
 
@@ -18,8 +24,13 @@ class PostCodeTest {
 
 	PostCode postcodeToBeTested = new PostCode(SAMPLE_POST_CODE);
 
+	Document document;
+
 	@BeforeEach
 	void setUp() throws Exception {
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		document = documentBuilder.newDocument();
 	}
 
 	@AfterEach
@@ -63,6 +74,26 @@ class PostCodeTest {
 	@Test
 	void testFourCharacterPostCode() {
 		assertEquals(FOUR_CHARACTER_POST_CODE, new PostCode(FOUR_CHARACTER_POST_CODE).getValue());
+	}
+
+	@Test
+	void testBuildElement() {
+		assertNotNull(document);
+		Element testElement = postcodeToBeTested.buildElement(document);
+		assertNotNull(testElement);
+		assertNotNull(testElement.getTextContent());
+		assertEquals(SAMPLE_POST_CODE, testElement.getTextContent());
+	}
+
+	@Test
+	void testPostCodeWithElement() {
+		assertNotNull(document);
+		Element testElement = postcodeToBeTested.buildElement(document);
+		assertNotNull(testElement);
+		assertNotNull(testElement.getTextContent());
+		assertEquals(SAMPLE_POST_CODE, testElement.getTextContent());
+		PostCode newPostCode = new PostCode(testElement);
+		assertEquals(SAMPLE_POST_CODE, newPostCode.getValue());
 	}
 
 	@Test
@@ -127,6 +158,22 @@ class PostCodeTest {
 		assertThrows(IllegalArgumentException.class, () -> {
 			String missing = null;
 			new PostCode(missing);
+		});
+	}
+
+	@Test
+	void testNullElementPostCode() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			Element missing = null;
+			new PostCode(missing);
+		});
+	}
+
+	@Test
+	void testNullDocument() {
+		assertThrows(IllegalArgumentException.class, () -> {
+			Document missing = null;
+			postcodeToBeTested.buildElement(missing);
 		});
 	}
 
