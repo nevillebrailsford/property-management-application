@@ -32,6 +32,7 @@ class PropertyTest {
 	private String[] higherLinesOfAddress = new String[] { "99 the street", "the town", "the county" };
 	private Property testProperty;
 	private MonitoredItem testItem;
+	private InventoryItem testInventory;
 	Document document;
 
 	private ListChangeListener<? super MonitoredItem> listener = new ListChangeListener<>() {
@@ -45,6 +46,17 @@ class PropertyTest {
 		}
 	};
 
+	private ListChangeListener<? super InventoryItem> inventoryListener = new ListChangeListener<>() {
+
+		@Override
+		public void onChanged(Change<? extends InventoryItem> change) {
+			change.next();
+			assertTrue(change.wasAdded());
+			assertEquals(1, change.getAddedSize());
+			assertEquals(testInventory, change.getAddedSubList().get(0));
+		}
+	};
+
 	@BeforeEach
 	void setUp() throws Exception {
 		postCode = new PostCode("CW3 9SS");
@@ -53,6 +65,8 @@ class PropertyTest {
 		address = new Address(postCode, linesOfAddress);
 		testProperty = new Property(address);
 		testItem = new MonitoredItem("item1", Period.YEARLY, 1, LocalDate.now(), 1, Period.MONTHLY);
+		testInventory = new InventoryItem("description1", "manufacturer1", "model1", "serialnumber1", "supplier1",
+				LocalDate.now());
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 		document = documentBuilder.newDocument();
@@ -61,6 +75,7 @@ class PropertyTest {
 	@AfterEach
 	void tearDown() throws Exception {
 		testProperty.removeListener(listener);
+		testProperty.removeInventoryListener(inventoryListener);
 		testProperty.clear();
 	}
 
@@ -126,6 +141,26 @@ class PropertyTest {
 		assertEquals(testItem, testProperty.getItems().get(0));
 		testProperty.removeItem(testItem);
 		assertEquals(0, testProperty.getItems().size());
+	}
+
+	@Test
+	void testAddInventoryItem() {
+		assertNotNull(testProperty.getInventory());
+		assertEquals(0, testProperty.getInventory().size());
+		testProperty.addItem(testInventory);
+		assertEquals(1, testProperty.getInventory().size());
+		assertEquals(testInventory, testProperty.getInventory().get(0));
+	}
+
+	@Test
+	void testRemoveInventory() {
+		assertNotNull(testProperty.getInventory());
+		assertEquals(0, testProperty.getInventory().size());
+		testProperty.addItem(testInventory);
+		assertEquals(1, testProperty.getInventory().size());
+		assertEquals(testInventory, testProperty.getInventory().get(0));
+		testProperty.removeItem(testInventory);
+		assertEquals(0, testProperty.getInventory().size());
 	}
 
 	@Test
@@ -199,6 +234,14 @@ class PropertyTest {
 	}
 
 	@Test
+	void testAddInventoryListener() {
+		testProperty.addInventoryListener(inventoryListener);
+		assertEquals(0, testProperty.getInventory().size());
+		testProperty.addItem(testInventory);
+		assertEquals(1, testProperty.getInventory().size());
+	}
+
+	@Test
 	void testNullAddress() {
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			Address a = null;
@@ -237,7 +280,17 @@ class PropertyTest {
 	@Test
 	void testAddNullItem() {
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
-			testProperty.addItem(null);
+			MonitoredItem missing = null;
+			testProperty.addItem(missing);
+		});
+		assertEquals("Property: item was null", exc.getMessage());
+	}
+
+	@Test
+	void testAddNullInventory() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			InventoryItem missing = null;
+			testProperty.addItem(missing);
 		});
 		assertEquals("Property: item was null", exc.getMessage());
 	}
@@ -245,7 +298,17 @@ class PropertyTest {
 	@Test
 	void testRemoveNullItem() {
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
-			testProperty.removeItem(null);
+			MonitoredItem missing = null;
+			testProperty.removeItem(missing);
+		});
+		assertEquals("Property: item was null", exc.getMessage());
+	}
+
+	@Test
+	void testRemoveNullInventory() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			InventoryItem missing = null;
+			testProperty.removeItem(missing);
 		});
 		assertEquals("Property: item was null", exc.getMessage());
 	}
@@ -260,11 +323,45 @@ class PropertyTest {
 	}
 
 	@Test
+	void testRemoveMissingInventory() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			testProperty.removeItem(testInventory);
+		});
+		assertEquals("Property: item description1, manufacturer1, model1, serialnumber1 not found", exc.getMessage());
+	}
+
+	@Test
 	void testAddDuplicateItem() {
 		testProperty.addItem(testItem);
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			testProperty.addItem(testItem);
 		});
 		assertEquals("Property: item item1 already exists", exc.getMessage());
+	}
+
+	@Test
+	void testAddDuplicateInventory() {
+		testProperty.addItem(testInventory);
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			testProperty.addItem(testInventory);
+		});
+		assertEquals("Property: item description1, manufacturer1, model1, serialnumber1 already exists",
+				exc.getMessage());
+	}
+
+	@Test
+	void testRemoveUnknownItem() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			testProperty.removeItem(testItem);
+		});
+		assertEquals("Property: item item1 not found", exc.getMessage());
+	}
+
+	@Test
+	void testRemoveUnknownInventory() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			testProperty.removeItem(testInventory);
+		});
+		assertEquals("Property: item description1, manufacturer1, model1, serialnumber1 not found", exc.getMessage());
 	}
 }

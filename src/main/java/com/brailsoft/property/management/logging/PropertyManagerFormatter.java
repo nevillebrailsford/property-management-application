@@ -50,7 +50,7 @@ public class PropertyManagerFormatter extends Formatter {
 		StringBuilder builder = new StringBuilder();
 		builder.append("************ Start Display Current Environment ************").append(lineEnd);
 		Properties props = System.getProperties();
-		for (Enumeration enumer = props.keys(); enumer.hasMoreElements();) {
+		for (Enumeration<Object> enumer = props.keys(); enumer.hasMoreElements();) {
 			Object key = enumer.nextElement();
 			Object value = props.get(key);
 			builder.append(key.toString()).append(": ").append(value.toString()).append(lineEnd);

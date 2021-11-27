@@ -20,6 +20,7 @@ import javafx.collections.ObservableList;
 public class Property implements Comparable<Property> {
 	private ObjectProperty<Address> address = new SimpleObjectProperty<>(this, "address", null);
 	private ObservableList<MonitoredItem> items = FXCollections.observableArrayList();
+	private ObservableList<InventoryItem> inventory = FXCollections.observableArrayList();
 
 	public Property(Address address) {
 		if (address == null) {
@@ -36,6 +37,10 @@ public class Property implements Comparable<Property> {
 		this.items = FXCollections.observableArrayList();
 		that.items.stream().forEach(item -> {
 			this.items.add(new MonitoredItem(item));
+		});
+		this.inventory = FXCollections.observableArrayList();
+		that.inventory.stream().forEach(item -> {
+			this.inventory.add(new InventoryItem(item));
 		});
 	}
 
@@ -62,11 +67,25 @@ public class Property implements Comparable<Property> {
 		items.addListener(listener);
 	}
 
+	public synchronized void addInventoryListener(ListChangeListener<? super InventoryItem> listener) {
+		if (listener == null) {
+			throw new IllegalArgumentException("Property: listener was null");
+		}
+		inventory.addListener(listener);
+	}
+
 	public synchronized void removeListener(ListChangeListener<? super MonitoredItem> listener) {
 		if (listener == null) {
 			throw new IllegalArgumentException("PropertyMonitor: listener was null");
 		}
 		items.removeListener(listener);
+	}
+
+	public synchronized void removeInventoryListener(ListChangeListener<? super InventoryItem> listener) {
+		if (listener == null) {
+			throw new IllegalArgumentException("PropertyMonitor: listener was null");
+		}
+		inventory.removeListener(listener);
 	}
 
 	public void addItem(MonitoredItem item) {
@@ -121,17 +140,51 @@ public class Property implements Comparable<Property> {
 		}
 	}
 
+	public void addItem(InventoryItem item) {
+		if (item == null) {
+			throw new IllegalArgumentException("Property: item was null");
+		}
+		if (inventory.contains(item)) {
+			throw new IllegalArgumentException("Property: item " + item + " already exists");
+		}
+		inventory.add(new InventoryItem(item));
+	}
+
+	public void removeItem(InventoryItem item) {
+		if (item == null) {
+			throw new IllegalArgumentException("Property: item was null");
+		}
+		if (!inventory.contains(item)) {
+			throw new IllegalArgumentException("Property: item " + item + " not found");
+		}
+		int found = -1;
+		for (int index = 0; index < inventory.size(); index++) {
+			if (inventory.get(index).equals(item)) {
+				found = index;
+				break;
+			}
+		}
+		if (found >= 0) {
+			inventory.remove(found);
+		} else {
+			throw new IllegalArgumentException("Property: item " + item + " not found");
+		}
+	}
+
 	public List<MonitoredItem> getItems() {
-		List<MonitoredItem> copyList = new ArrayList<>();
-		items.stream().forEach(item -> {
-			copyList.add(item);
-		});
-		Collections.sort(copyList);
+		List<MonitoredItem> copyList = items.stream().map(item -> new MonitoredItem(item)).sorted()
+				.collect(Collectors.toList());
 		return copyList;
 	}
 
 	public Address getAddress() {
 		return new Address(address.get());
+	}
+
+	public List<InventoryItem> getInventory() {
+		List<InventoryItem> copyList = inventory.stream().map(item -> new InventoryItem(item)).sorted()
+				.collect(Collectors.toList());
+		return copyList;
 	}
 
 	public boolean areItemsOverdue() {
