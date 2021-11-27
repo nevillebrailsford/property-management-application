@@ -23,7 +23,7 @@ import org.w3c.dom.Node;
 
 import com.brailsoft.property.management.constant.Constants;
 
-class InventoryItemText {
+class InventoryItemTest {
 
 	private Address address;
 	private PostCode postCode;
