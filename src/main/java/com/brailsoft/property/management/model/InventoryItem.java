@@ -29,7 +29,19 @@ public class InventoryItem implements Comparable<InventoryItem> {
 	public InventoryItem(String description, String manufacturer, String model, String serialNumber, String supplier,
 			LocalDate purchaseDateAsDate) {
 		if (description == null || description.isBlank() || description.isEmpty()) {
-			throw new IllegalArgumentException("InventoryItem: description was null");
+			throw new IllegalArgumentException("InventoryItem: description was missing");
+		}
+		if (manufacturer == null) {
+			throw new IllegalArgumentException("InventoryItem: manufacturer was null");
+		}
+		if (model == null) {
+			throw new IllegalArgumentException("InventoryItem: model was null");
+		}
+		if (serialNumber == null) {
+			throw new IllegalArgumentException("InventoryItem: serialNumber was null");
+		}
+		if (supplier == null) {
+			throw new IllegalArgumentException("InventoryItem: supplier was null");
 		}
 		String purchaseDate;
 		if (purchaseDateAsDate == null) {

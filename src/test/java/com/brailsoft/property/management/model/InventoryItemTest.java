@@ -178,7 +178,7 @@ class InventoryItemTest {
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			new InventoryItem(null, "manufacturer1", "model1", "serialnumber1", "supplier1", LocalDate.now());
 		});
-		assertEquals("InventoryItem: description was null", exc.getMessage());
+		assertEquals("InventoryItem: description was missing", exc.getMessage());
 	}
 
 	@Test
@@ -186,7 +186,7 @@ class InventoryItemTest {
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			new InventoryItem("", "manufacturer1", "model1", "serialnumber1", "supplier1", LocalDate.now());
 		});
-		assertEquals("InventoryItem: description was null", exc.getMessage());
+		assertEquals("InventoryItem: description was missing", exc.getMessage());
 	}
 
 	@Test
@@ -194,7 +194,44 @@ class InventoryItemTest {
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			new InventoryItem(" ", "manufacturer1", "model1", "serialnumber1", "supplier1", LocalDate.now());
 		});
-		assertEquals("InventoryItem: description was null", exc.getMessage());
+		assertEquals("InventoryItem: description was missing", exc.getMessage());
+	}
+
+	@Test
+	void testNullManufacturer() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			new InventoryItem("null", null, "model1", "serialnumber1", "supplier1", LocalDate.now());
+		});
+		assertEquals("InventoryItem: manufacturer was null", exc.getMessage());
+	}
+
+	@Test
+	void testNullModel() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			new InventoryItem("null", "manufacturer1", null, "serialnumber1", "supplier1", LocalDate.now());
+		});
+		assertEquals("InventoryItem: model was null", exc.getMessage());
+	}
+
+	@Test
+	void testNullSerialNumber() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			new InventoryItem("null", "manufacturer1", "model1", null, "supplier1", LocalDate.now());
+		});
+		assertEquals("InventoryItem: serialNumber was null", exc.getMessage());
+	}
+
+	@Test
+	void testNullSupplier() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			new InventoryItem("null", "manufacturer1", "model1", "serialnumber1", null, LocalDate.now());
+		});
+		assertEquals("InventoryItem: supplier was null", exc.getMessage());
+	}
+
+	@Test
+	void testNullPurchaseDate() {
+		assertNotNull(new InventoryItem("null", "manufacturer1", "model1", "serialnumber1", "null", null));
 	}
 
 	@Test
