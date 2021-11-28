@@ -44,6 +44,7 @@ class PropertyMonitorTest {
 	private MonitoredItem testItem;
 	private MonitoredItem overdueItem;
 	private MonitoredItem noticeDueItem;
+	private InventoryItem testInventory;
 	ApplicationPreferences applicationPreferences;
 
 	@BeforeAll
@@ -67,6 +68,9 @@ class PropertyMonitorTest {
 		startTest = LocalDate.now();
 		testItem = new MonitoredItem("item1", Period.YEARLY, 1, startTest, 1, Period.WEEKLY);
 		testItem.setOwner(property1);
+		testInventory = new InventoryItem("inventory1", "manufacturer1", "model1", "serialnumber1", "supplier1",
+				LocalDate.now());
+		testInventory.setOwner(property1);
 		applicationPreferences = ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
 		applicationPreferences.setDirectory(rootDirectory.getAbsolutePath());
 		LocalStorage.getInstance(new File(applicationPreferences.getDirectory()));
@@ -172,6 +176,16 @@ class PropertyMonitorTest {
 	}
 
 	@Test
+	void testGetInventory() {
+		assertEquals(0, monitor.getProperties().size());
+		monitor.addProperty(property1);
+		assertEquals(1, monitor.getProperties().size());
+		assertEquals(0, monitor.getItemsFor(property1).size());
+		monitor.addItem(testInventory);
+		assertEquals(1, monitor.getInventoryFor(property1).size());
+	}
+
+	@Test
 	void testRemoveItem() {
 		assertEquals(0, monitor.getProperties().size());
 		monitor.addProperty(property1);
@@ -181,6 +195,18 @@ class PropertyMonitorTest {
 		assertEquals(1, monitor.getItemsFor(property1).size());
 		monitor.removeItem(testItem);
 		assertEquals(0, monitor.getItemsFor(property1).size());
+	}
+
+	@Test
+	void testRemoveInventory() {
+		assertEquals(0, monitor.getProperties().size());
+		monitor.addProperty(property1);
+		assertEquals(1, monitor.getProperties().size());
+		assertEquals(0, monitor.getInventoryFor(property1).size());
+		monitor.addItem(testInventory);
+		assertEquals(1, monitor.getInventoryFor(property1).size());
+		monitor.removeItem(testInventory);
+		assertEquals(0, monitor.getInventoryFor(property1).size());
 	}
 
 	@Test
@@ -242,9 +268,19 @@ class PropertyMonitorTest {
 	@Test
 	void testRemoveNullItem() {
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
-			monitor.removeItem(null);
+			MonitoredItem missing = null;
+			monitor.removeItem(missing);
 		});
 		assertEquals("PropertyMonitor: monitoredItem was null", exc.getMessage());
+	}
+
+	@Test
+	void testRemoveNullInventory() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			InventoryItem missing = null;
+			monitor.removeItem(missing);
+		});
+		assertEquals("PropertyMonitor: inventoryItem was null", exc.getMessage());
 	}
 
 	@Test
@@ -257,12 +293,30 @@ class PropertyMonitorTest {
 	}
 
 	@Test
+	void testRemoveInventoryWithUnknownProperty() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			monitor.removeItem(testInventory);
+		});
+		assertEquals("PropertyMonitor: property 99 The Street, The Town, The County CW3 9ST was not known",
+				exc.getMessage());
+	}
+
+	@Test
 	void testRemoveUnknownItem() {
 		monitor.addProperty(property1);
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			monitor.removeItem(testItem);
 		});
 		assertEquals("Property: item item1 not found", exc.getMessage());
+	}
+
+	@Test
+	void testRemoveUnknownInventory() {
+		monitor.addProperty(property1);
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			monitor.removeItem(testInventory);
+		});
+		assertEquals("Property: item inventory1, manufacturer1, model1, serialnumber1 not found", exc.getMessage());
 	}
 
 	@Test
@@ -308,6 +362,40 @@ class PropertyMonitorTest {
 			monitor.replaceProperty(property1, property2);
 		});
 		assertEquals("PropertyMonitor: property 99 The Street, The Town, The County CW3 9SU already exists",
+				exc.getMessage());
+	}
+
+	@Test
+	void testGetItemsForNullProperty() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			monitor.getItemsFor(null);
+		});
+		assertEquals("PropertyMonitor: property was null", exc.getMessage());
+	}
+
+	@Test
+	void testGetItemsForUnknownProperty() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			monitor.getItemsFor(property1);
+		});
+		assertEquals("PropertyMonitor: property 99 The Street, The Town, The County CW3 9ST not found",
+				exc.getMessage());
+	}
+
+	@Test
+	void testGetInventoryForNullProperty() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			monitor.getInventoryFor(null);
+		});
+		assertEquals("PropertyMonitor: property was null", exc.getMessage());
+	}
+
+	@Test
+	void testGetInventoryForUnknownProperty() {
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			monitor.getInventoryFor(property1);
+		});
+		assertEquals("PropertyMonitor: property 99 The Street, The Town, The County CW3 9ST not found",
 				exc.getMessage());
 	}
 

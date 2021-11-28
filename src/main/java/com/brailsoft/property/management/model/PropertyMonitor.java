@@ -80,6 +80,22 @@ public class PropertyMonitor {
 		findProperty(property).removeListener(listener);
 	}
 
+	public synchronized void addInventoryListener(ListChangeListener<? super InventoryItem> inventoryListener,
+			Property property) {
+		if (inventoryListener == null) {
+			throw new IllegalArgumentException("PropertyMonitor: inventoryListener was null");
+		}
+		findProperty(property).addInventoryListener(inventoryListener);
+	}
+
+	public synchronized void removeInventoryListener(ListChangeListener<? super InventoryItem> inventoryListener,
+			Property property) {
+		if (inventoryListener == null) {
+			throw new IllegalArgumentException("PropertyMonitor: inventoryListener was null");
+		}
+		findProperty(property).removeInventoryListener(inventoryListener);
+	}
+
 	public synchronized void clear() {
 		LOGGER.entering(CLASS_NAME, "clear");
 		auditBeforeClearing();
@@ -236,6 +252,60 @@ public class PropertyMonitor {
 		LOGGER.exiting(CLASS_NAME, "removeItem");
 	}
 
+	public synchronized void addItem(InventoryItem inventoryItem) {
+		LOGGER.entering(CLASS_NAME, "addItem", inventoryItem);
+		if (inventoryItem == null) {
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: inventoryItem was null");
+			LOGGER.throwing(CLASS_NAME, "addItem", exc);
+			LOGGER.exiting(CLASS_NAME, "addItem");
+			throw exc;
+		}
+		Property property = inventoryItem.getOwner();
+		if (property == null) {
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
+			LOGGER.throwing(CLASS_NAME, "addItem", exc);
+			LOGGER.exiting(CLASS_NAME, "addItem");
+			throw exc;
+		}
+		if (!properties.contains(property)) {
+			IllegalArgumentException exc = new IllegalArgumentException(
+					"PropertyMonitor: property " + property + " was not known");
+			LOGGER.throwing(CLASS_NAME, "addItem", exc);
+			LOGGER.exiting(CLASS_NAME, "addItem");
+			throw exc;
+		}
+		findProperty(property).addItem(inventoryItem);
+		updateStorage();
+		LOGGER.exiting(CLASS_NAME, "addItem");
+	}
+
+	public synchronized void removeItem(InventoryItem inventoryItem) {
+		LOGGER.entering(CLASS_NAME, "removeItem", inventoryItem);
+		if (inventoryItem == null) {
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: inventoryItem was null");
+			LOGGER.throwing(CLASS_NAME, "removeItem", exc);
+			LOGGER.exiting(CLASS_NAME, "removeItem");
+			throw exc;
+		}
+		Property property = inventoryItem.getOwner();
+		if (property == null) {
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
+			LOGGER.throwing(CLASS_NAME, "removeItem", exc);
+			LOGGER.exiting(CLASS_NAME, "removeItem");
+			throw exc;
+		}
+		if (!properties.contains(property)) {
+			IllegalArgumentException exc = new IllegalArgumentException(
+					"PropertyMonitor: property " + property + " was not known");
+			LOGGER.throwing(CLASS_NAME, "removeItem", exc);
+			LOGGER.exiting(CLASS_NAME, "removeItem");
+			throw exc;
+		}
+		findProperty(property).removeItem(inventoryItem);
+		updateStorage();
+		LOGGER.exiting(CLASS_NAME, "removeItem");
+	}
+
 	private void updateStorage() {
 		LOGGER.entering(CLASS_NAME, "updateStorage");
 		try {
@@ -276,6 +346,12 @@ public class PropertyMonitor {
 
 	public synchronized List<MonitoredItem> getItemsFor(Property property) {
 		LOGGER.entering(CLASS_NAME, "getItemsFor", property);
+		if (property == null) {
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
+			LOGGER.throwing(CLASS_NAME, "getItemsFor", exc);
+			LOGGER.exiting(CLASS_NAME, "getItemsFor");
+			throw exc;
+		}
 		if (findProperty(property) == null) {
 			IllegalArgumentException exc = new IllegalArgumentException(
 					"PropertyMonitor: property " + property + " not found");
@@ -287,6 +363,27 @@ public class PropertyMonitor {
 				.collect(Collectors.toList());
 		Collections.sort(copyList);
 		LOGGER.exiting(CLASS_NAME, "getItemsFor", copyList);
+		return copyList;
+	}
+
+	public synchronized List<InventoryItem> getInventoryFor(Property property) {
+		LOGGER.entering(CLASS_NAME, "getInventoryFor", property);
+		if (property == null) {
+			IllegalArgumentException exc = new IllegalArgumentException("PropertyMonitor: property was null");
+			LOGGER.throwing(CLASS_NAME, "getInventoryFor", exc);
+			LOGGER.exiting(CLASS_NAME, "getInventoryFor");
+			throw exc;
+		}
+		if (findProperty(property) == null) {
+			IllegalArgumentException exc = new IllegalArgumentException(
+					"PropertyMonitor: property " + property + " not found");
+			LOGGER.throwing(CLASS_NAME, "getInventoryFor", exc);
+			LOGGER.exiting(CLASS_NAME, "getInventoryFor");
+			throw exc;
+		}
+		List<InventoryItem> copyList = findProperty(property).getInventory().stream()
+				.map(item -> new InventoryItem(item)).sorted().collect(Collectors.toList());
+		LOGGER.exiting(CLASS_NAME, "getInventoryFor", copyList);
 		return copyList;
 	}
 
@@ -380,6 +477,20 @@ public class PropertyMonitor {
 		Property property = monitoredItem.getOwner();
 		AuditRecord record = new AuditRecord(AuditType.REMOVED, AuditObject.MONITOREDITEM);
 		record.setDescription(monitoredItem.toString() + " removed from " + property.toString());
+		auditWrite(record);
+	}
+
+	public void auditAddItem(InventoryItem inventoryItem) {
+		Property property = inventoryItem.getOwner();
+		AuditRecord record = new AuditRecord(AuditType.ADDED, AuditObject.INVENTORYITEM);
+		record.setDescription(inventoryItem.toString() + " added to " + property.toString());
+		auditWrite(record);
+	}
+
+	public void auditRemoveItem(InventoryItem inventoryItem) {
+		Property property = inventoryItem.getOwner();
+		AuditRecord record = new AuditRecord(AuditType.REMOVED, AuditObject.INVENTORYITEM);
+		record.setDescription(inventoryItem.toString() + " removed from " + property.toString());
 		auditWrite(record);
 	}
 
