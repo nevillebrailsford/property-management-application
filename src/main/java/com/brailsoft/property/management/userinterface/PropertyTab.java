@@ -13,6 +13,7 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -23,6 +24,7 @@ public class PropertyTab extends Tab {
 	Image tick = new Image(getClass().getResourceAsStream("tick-16.png"));
 
 	private ItemTableView tableView;
+	private TabPane content;
 
 	private Button actionComplete;
 
@@ -31,18 +33,46 @@ public class PropertyTab extends Tab {
 		this.property = new Property(property);
 
 		this.setText(property.getAddress().getPostCode().toString());
-		VBox content = new VBox();
+
+		content = new TabPane();
 		this.setContent(content);
-		AddressHBox addressHBox = new AddressHBox(property.getAddress());
-		content.getChildren().add(addressHBox);
 
-		tableView = new ItemTableView();
-		content.getChildren().add(tableView);
+		createItemTab(property);
 
-		ButtonBar buttonBar = createButtonBar();
-		content.getChildren().add(buttonBar);
+		createInventoryTab(property);
 
 		PropertyMonitor.getInstance().addListener(listener, property);
+	}
+
+	private void createItemTab(Property property) {
+		Tab itemTab = new Tab();
+		itemTab.setText("Items");
+		content.getTabs().add(itemTab);
+
+		VBox vboxContent = new VBox();
+		itemTab.setContent(vboxContent);
+
+		AddressHBox addressHBox = new AddressHBox(property.getAddress());
+		vboxContent.getChildren().add(addressHBox);
+
+		tableView = new ItemTableView();
+		vboxContent.getChildren().add(tableView);
+
+		ButtonBar buttonBar = createButtonBar();
+		vboxContent.getChildren().add(buttonBar);
+	}
+
+	private void createInventoryTab(Property property) {
+		Tab inventoryTab = new Tab();
+		inventoryTab.setText("Inventory");
+		content.getTabs().add(inventoryTab);
+
+		VBox vboxContent = new VBox();
+		inventoryTab.setContent(vboxContent);
+
+		AddressHBox addressHBox = new AddressHBox(property.getAddress());
+		vboxContent.getChildren().add(addressHBox);
+
 	}
 
 	private ButtonBar createButtonBar() {
