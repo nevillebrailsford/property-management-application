@@ -15,5 +15,13 @@
             <advanceNotice>1</advanceNotice>
             <periodForNextNotice>WEEKLY</periodForNextNotice>
         </item>
+        <inventory>
+        	<description>description1</description>
+        	<manufacturer>manufacturer1</manufacturer>
+        	<model>model1</model>
+        	<serialnumber>serialnumber1</serialnumber>
+        	<supplier>supplier1</supplier>
+        	<purchasedate>29/11/2021</purchasedate>
+        </inventory>
     </property>
 </properties>

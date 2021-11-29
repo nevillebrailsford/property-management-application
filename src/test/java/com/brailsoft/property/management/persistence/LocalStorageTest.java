@@ -19,6 +19,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.brailsoft.property.management.constant.TestConstants;
 import com.brailsoft.property.management.model.Address;
+import com.brailsoft.property.management.model.InventoryItem;
 import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Period;
 import com.brailsoft.property.management.model.PostCode;
@@ -44,6 +45,7 @@ public class LocalStorageTest {
 	private Address address = new Address(postcode, lines);
 	private Property property = new Property(address);
 	private MonitoredItem testItem;
+	private InventoryItem testInventory;
 	private LocalDate startTest;
 
 	@BeforeAll
@@ -69,6 +71,8 @@ public class LocalStorageTest {
 		PropertyMonitor.getInstance().clear();
 		startTest = LocalDate.now();
 		testItem = new MonitoredItem("item1", Period.YEARLY, 1, startTest, 1, Period.WEEKLY);
+		testInventory = new InventoryItem("description1", "manufacturer1", "model1", "serialnumber1", "supplier1",
+				LocalDate.now());
 	}
 
 	@AfterEach
@@ -97,14 +101,16 @@ public class LocalStorageTest {
 		assertEquals(3, address.getLinesOfAddress().length);
 		assertEquals(POST_CODE, postcode.toString());
 		assertEquals(1, property.getItems().size());
+		assertEquals(1, property.getInventory().size());
 	}
 
 	@Test
 	void testSaveArchiveData() throws IOException {
 		property.addItem(testItem);
+		property.addItem(testInventory);
 		PropertyMonitor.getInstance().addProperty(property);
 		assertTrue(fileExistsAndIsValid(new File(LocalStorage.getInstance(rootDirectory).getDirectory(), PROPERTY_DAT),
-				19));
+				27));
 	}
 
 	@Test
