@@ -27,6 +27,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.brailsoft.property.management.constant.Constants;
+import com.brailsoft.property.management.model.InventoryItem;
 import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Property;
 import com.brailsoft.property.management.model.PropertyMonitor;
@@ -171,6 +172,9 @@ public class LocalStorage {
 		for (int index = 0; index < property.getItems().size(); index++) {
 			propertyElement.appendChild(property.getItems().get(index).buildElement(document));
 		}
+		for (int index = 0; index < property.getInventory().size(); index++) {
+			propertyElement.appendChild(property.getInventory().get(index).buildElement(document));
+		}
 		return propertyElement;
 	}
 
@@ -198,6 +202,7 @@ public class LocalStorage {
 				Property property = new Property(propertyElement);
 				PropertyMonitor.getInstance().addProperty(property);
 				updatePropertyWithMonitoredItems(property, propertyElement);
+				updatePropertyWithInventoryItems(property, propertyElement);
 			}
 		}
 	}
@@ -214,6 +219,22 @@ public class LocalStorage {
 				MonitoredItem monitoredItem = new MonitoredItem(itemElement);
 				monitoredItem.setOwner(property);
 				PropertyMonitor.getInstance().addItem(monitoredItem);
+			}
+		}
+	}
+
+	private void updatePropertyWithInventoryItems(Property property, Element propertyElement) {
+		NodeList list = propertyElement.getElementsByTagName(Constants.INVENTORY);
+		if (list == null || list.getLength() == 0) {
+			return;
+		}
+		for (int index = 0; index < list.getLength(); index++) {
+			Node node = list.item(index);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element itemElement = (Element) node;
+				InventoryItem inventoryItem = new InventoryItem(itemElement);
+				inventoryItem.setOwner(property);
+				PropertyMonitor.getInstance().addItem(inventoryItem);
 			}
 		}
 	}
