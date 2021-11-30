@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import com.brailsoft.property.management.dialog.DateDialog;
+import com.brailsoft.property.management.model.InventoryItem;
 import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Property;
 import com.brailsoft.property.management.model.PropertyMonitor;
@@ -23,7 +24,8 @@ public class PropertyTab extends Tab {
 
 	Image tick = new Image(getClass().getResourceAsStream("tick-16.png"));
 
-	private ItemTableView tableView;
+	private ItemTableView itemTableView;
+	private InventoryTableView inventoryTableView;
 	private TabPane content;
 
 	private Button actionComplete;
@@ -41,7 +43,8 @@ public class PropertyTab extends Tab {
 
 		createInventoryTab(property);
 
-		PropertyMonitor.getInstance().addListener(listener, property);
+		PropertyMonitor.getInstance().addListener(itemListener, property);
+		PropertyMonitor.getInstance().addInventoryListener(inventoryListener, property);
 	}
 
 	private void createItemTab(Property property) {
@@ -55,10 +58,10 @@ public class PropertyTab extends Tab {
 		AddressHBox addressHBox = new AddressHBox(property.getAddress());
 		vboxContent.getChildren().add(addressHBox);
 
-		tableView = new ItemTableView();
-		vboxContent.getChildren().add(tableView);
+		itemTableView = new ItemTableView();
+		vboxContent.getChildren().add(itemTableView);
 
-		ButtonBar buttonBar = createButtonBar();
+		ButtonBar buttonBar = createItemButtonBar();
 		vboxContent.getChildren().add(buttonBar);
 	}
 
@@ -73,9 +76,14 @@ public class PropertyTab extends Tab {
 		AddressHBox addressHBox = new AddressHBox(property.getAddress());
 		vboxContent.getChildren().add(addressHBox);
 
+		inventoryTableView = new InventoryTableView();
+		vboxContent.getChildren().add(inventoryTableView);
+
+		ButtonBar buttonBar = createInventoryButtonBar();
+		vboxContent.getChildren().add(buttonBar);
 	}
 
-	private ButtonBar createButtonBar() {
+	private ButtonBar createItemButtonBar() {
 		ButtonBar buttonBar = new ButtonBar();
 		ImageView imageView = new ImageView(tick);
 		actionComplete = new Button("Mark Complete", imageView);
@@ -84,8 +92,8 @@ public class PropertyTab extends Tab {
 		});
 		actionComplete.setDisable(true);
 		actionComplete.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-			return tableView.getSelectionModel().selectedItemProperty().get() == null;
-		}, tableView.getSelectionModel().selectedItemProperty()));
+			return itemTableView.getSelectionModel().selectedItemProperty().get() == null;
+		}, itemTableView.getSelectionModel().selectedItemProperty()));
 
 		Button selectNone = new Button("Clear Selection");
 		selectNone.setOnAction(event -> {
@@ -95,12 +103,22 @@ public class PropertyTab extends Tab {
 		return buttonBar;
 	}
 
+	private ButtonBar createInventoryButtonBar() {
+		ButtonBar buttonBar = new ButtonBar();
+		Button selectNone = new Button("Clear Selection");
+		selectNone.setOnAction(event -> {
+			clearSelection();
+		});
+		buttonBar.getButtons().addAll(selectNone);
+		return buttonBar;
+	}
+
 	public Property getProperty() {
 		return new Property(property);
 	}
 
 	private void recordActionComplete() {
-		MonitoredItem item = tableView.getSelectionModel().getSelectedItem();
+		MonitoredItem item = itemTableView.getSelectionModel().getSelectedItem();
 		Optional<LocalDate> result = new DateDialog(item).showAndWait();
 		if (result.isPresent()) {
 			item.actionPerformed(result.get());
@@ -111,33 +129,58 @@ public class PropertyTab extends Tab {
 	}
 
 	private void clearSelection() {
-		tableView.getSelectionModel().clearSelection();
+		itemTableView.getSelectionModel().clearSelection();
 	}
 
-	private ListChangeListener<? super MonitoredItem> listener = new ListChangeListener<>() {
+	private ListChangeListener<? super MonitoredItem> itemListener = new ListChangeListener<>() {
 
 		@Override
 		public void onChanged(Change<? extends MonitoredItem> change) {
 			while (change.next()) {
 				if (change.wasReplaced()) {
 					for (MonitoredItem monitoredItem : change.getAddedSubList()) {
-						tableView.replaceItem(monitoredItem);
+						itemTableView.replaceItem(monitoredItem);
 					}
 				} else if (change.wasAdded()) {
 					for (MonitoredItem monitoredItem : change.getAddedSubList()) {
-						tableView.addItem(monitoredItem);
+						itemTableView.addItem(monitoredItem);
 					}
 				} else if (change.wasRemoved()) {
 					for (MonitoredItem monitoredItem : change.getRemoved()) {
-						tableView.removeItem(monitoredItem);
+						itemTableView.removeItem(monitoredItem);
 					}
 				}
 			}
 		}
 	};
 
-	public ListChangeListener<? super MonitoredItem> getListener() {
-		return listener;
+	public ListChangeListener<? super MonitoredItem> getItemListener() {
+		return itemListener;
 	}
 
+	private ListChangeListener<? super InventoryItem> inventoryListener = new ListChangeListener<>() {
+
+		@Override
+		public void onChanged(Change<? extends InventoryItem> change) {
+			while (change.next()) {
+				if (change.wasReplaced()) {
+					for (InventoryItem inventoryItem : change.getAddedSubList()) {
+						inventoryTableView.replaceItem(inventoryItem);
+					}
+				} else if (change.wasAdded()) {
+					for (InventoryItem inventoryItem : change.getAddedSubList()) {
+						inventoryTableView.addItem(inventoryItem);
+					}
+				} else if (change.wasRemoved()) {
+					for (InventoryItem inventoryItem : change.getRemoved()) {
+						inventoryTableView.removeItem(inventoryItem);
+					}
+				}
+			}
+		}
+	};
+
+	public ListChangeListener<? super InventoryItem> getInventoryListener() {
+		return inventoryListener;
+	}
 }
