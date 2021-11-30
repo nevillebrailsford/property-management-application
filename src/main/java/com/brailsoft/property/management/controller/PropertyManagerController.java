@@ -350,7 +350,8 @@ public class PropertyManagerController implements Initializable {
 		LOGGER.entering(CLASS_NAME, "removeTabsFromView");
 		for (Tab t : tabPane.getTabs()) {
 			PropertyTab pt = (PropertyTab) t;
-			PropertyMonitor.getInstance().removeListener(pt.getListener(), pt.getProperty());
+			PropertyMonitor.getInstance().removeListener(pt.getItemListener(), pt.getProperty());
+			PropertyMonitor.getInstance().removeInventoryListener(pt.getInventoryListener(), pt.getProperty());
 		}
 		tabPane.getTabs().clear();
 		LOGGER.exiting(CLASS_NAME, "removeTabsFromView");
