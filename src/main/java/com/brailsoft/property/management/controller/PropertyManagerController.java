@@ -10,6 +10,8 @@ import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 
 import com.brailsoft.property.management.constant.Constants;
+import com.brailsoft.property.management.dialog.AddInventoryDialog;
+import com.brailsoft.property.management.dialog.DeleteInventoryDialog;
 import com.brailsoft.property.management.dialog.DeleteItemDialog;
 import com.brailsoft.property.management.dialog.EventDialog;
 import com.brailsoft.property.management.dialog.PreferencesDialog;
@@ -17,6 +19,7 @@ import com.brailsoft.property.management.dialog.PropertyDialog;
 import com.brailsoft.property.management.launcher.LoadProperty;
 import com.brailsoft.property.management.launcher.PropertyManager;
 import com.brailsoft.property.management.logging.PropertyManagerLogConfigurer;
+import com.brailsoft.property.management.model.InventoryItem;
 import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Property;
 import com.brailsoft.property.management.model.PropertyMonitor;
@@ -59,10 +62,16 @@ public class PropertyManagerController implements Initializable {
 	private MenuItem addItem;
 
 	@FXML
+	private MenuItem addInventory;
+
+	@FXML
 	private MenuItem deleteProperty;
 
 	@FXML
 	private MenuItem deleteItem;
+
+	@FXML
+	private MenuItem deleteInventory;
 
 	@FXML
 	private TabPane tabPane;
@@ -176,6 +185,33 @@ public class PropertyManagerController implements Initializable {
 			propertyMonitor.auditRemoveItem(item);
 		}
 		LOGGER.exiting(CLASS_NAME, "deleteItem");
+	}
+
+	@FXML
+	void addInventory(ActionEvent event) {
+		LOGGER.entering(CLASS_NAME, "addInventory");
+		Property property = getSelectedProperty();
+		Optional<InventoryItem> result = new AddInventoryDialog(property).showAndWait();
+		if (result.isPresent()) {
+			InventoryItem item = result.get();
+			item.setOwner(property);
+			propertyMonitor.addItem(item);
+			propertyMonitor.auditAddItem(item);
+		}
+		LOGGER.exiting(CLASS_NAME, "addInventory");
+	}
+
+	@FXML
+	void deleteInventory(ActionEvent event) {
+		LOGGER.entering(CLASS_NAME, "deleteInventory");
+		Property property = getSelectedProperty();
+		Optional<InventoryItem> result = new DeleteInventoryDialog(property).showAndWait();
+		if (result.isPresent()) {
+			InventoryItem item = result.get();
+			propertyMonitor.removeItem(item);
+			propertyMonitor.auditRemoveItem(item);
+		}
+		LOGGER.exiting(CLASS_NAME, "deleteInventory");
 	}
 
 	@FXML
