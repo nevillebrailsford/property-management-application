@@ -35,7 +35,9 @@
 								<MenuItem fx:id="addProperty" mnemonicParsing="false"
 									onAction="#addProperty" text="A Property" />
 								<MenuItem fx:id="addItem" mnemonicParsing="false"
-									onAction="#addItem" text="An item" />
+									onAction="#addItem" text="An event" />
+                                <MenuItem fx:id="addInventory" mnemonicParsing="false"
+                                    onAction="#addInventory" text="To inventory" />
 							</items>
 						</Menu>
 						<Menu mnemonicParsing="false" text="Delete">
@@ -44,7 +46,9 @@
 									mnemonicParsing="false" onAction="#deleteProperty"
 									text="A Property" />
 								<MenuItem fx:id="deleteItem" mnemonicParsing="false"
-									onAction="#deleteItem" text="An item" />
+									onAction="#deleteItem" text="An event" />
+                                <MenuItem fx:id="deleteInventory" mnemonicParsing="false"
+                                    onAction="#deleteInventory" text="From inventory" />
 							</items>
 						</Menu>
 					</items>
