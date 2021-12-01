@@ -28,14 +28,11 @@ public class PropertyManagerLogConfigurer {
 			}
 			parent = parent.getParent();
 		}
-		ConsoleHandler handler = new ConsoleHandler();
-		handler.setFormatter(new PropertyManagerFormatter());
-		LOGGER.addHandler(handler);
 
 		try {
 			String rootDirectory = preferences.getDirectory() + File.separator + LocalStorage.DIRECTORY;
 			String logfileName = rootDirectory + File.separator + LOG_FILE;
-			FileHandler fileHandler = new FileHandler(logfileName, false);
+			FileHandler fileHandler = new FileHandler(logfileName, 8192000, 1, false);
 			fileHandler.setFormatter(new PropertyManagerFormatter());
 			LOGGER.addHandler(fileHandler);
 		} catch (SecurityException e) {
@@ -44,7 +41,7 @@ public class PropertyManagerLogConfigurer {
 			e.printStackTrace();
 		}
 		changeLevel(preferences.getLevel());
-		LogRecord record = new LogRecord(Level.CONFIG, "message");
+		LogRecord record = new LogRecord(Level.CONFIG, "setting configuration");
 		LOGGER.log(record);
 	}
 

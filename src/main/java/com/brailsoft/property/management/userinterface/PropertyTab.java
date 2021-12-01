@@ -79,8 +79,6 @@ public class PropertyTab extends Tab {
 		inventoryTableView = new InventoryTableView();
 		vboxContent.getChildren().add(inventoryTableView);
 
-		ButtonBar buttonBar = createInventoryButtonBar();
-		vboxContent.getChildren().add(buttonBar);
 	}
 
 	private ButtonBar createItemButtonBar() {
@@ -100,16 +98,6 @@ public class PropertyTab extends Tab {
 			clearSelection();
 		});
 		buttonBar.getButtons().addAll(selectNone, actionComplete);
-		return buttonBar;
-	}
-
-	private ButtonBar createInventoryButtonBar() {
-		ButtonBar buttonBar = new ButtonBar();
-		Button selectNone = new Button("Clear Selection");
-		selectNone.setOnAction(event -> {
-			clearSelection();
-		});
-		buttonBar.getButtons().addAll(selectNone);
 		return buttonBar;
 	}
 
