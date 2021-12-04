@@ -130,7 +130,7 @@ public class PropertyManagerController implements Initializable {
 	void about(ActionEvent event) {
 		LOGGER.entering(CLASS_NAME, "about");
 		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setContentText("Property Management \nVersion 1.0.0\nBuild date: 31/10/2021");
+		alert.setContentText("Property Management \nVersion 1.0.0\nBuild date: 04/12/2021");
 		alert.setTitle("About Property Management");
 		alert.setHeaderText("Property Management");
 		alert.showAndWait();
@@ -295,6 +295,13 @@ public class PropertyManagerController implements Initializable {
 		LOGGER.entering(CLASS_NAME, "printReport");
 		PrintReport.printReport((Stage) tabPane.getScene().getWindow());
 		LOGGER.exiting(CLASS_NAME, "printReport");
+	}
+
+	@FXML
+	void printInventory() {
+		LOGGER.entering(CLASS_NAME, "");
+		PrintReport.printInventory((Stage) tabPane.getScene().getWindow());
+		LOGGER.exiting(CLASS_NAME, "");
 	}
 
 	@FXML

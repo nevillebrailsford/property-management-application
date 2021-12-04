@@ -23,6 +23,8 @@
 						<SeparatorMenuItem mnemonicParsing="false" />
 						<MenuItem mnemonicParsing="false" onAction="#printReport"
 							text="Print" />
+                        <MenuItem mnemonicParsing="false" onAction="#printInventory"
+                            text="Print Inventory" />
 						<SeparatorMenuItem mnemonicParsing="false" />
 						<MenuItem mnemonicParsing="false"
 							onAction="#exitApplication" text="Exit Application" />

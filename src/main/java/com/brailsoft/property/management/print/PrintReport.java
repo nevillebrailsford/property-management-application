@@ -18,4 +18,19 @@ public class PrintReport {
 			PropertyManagementPrinter.print(job);
 		}
 	}
+
+	public static void printInventory(Stage owner) {
+
+		PrinterJob job = PrinterJob.createPrinterJob();
+
+		if (job == null) {
+			throw new IllegalStateException("Could not create a print job");
+		}
+
+		boolean proceed = job.showPrintDialog(owner);
+
+		if (proceed) {
+			PropertyManagementPrinter.printInventory(job);
+		}
+	}
 }
