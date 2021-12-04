@@ -2,22 +2,10 @@ package com.brailsoft.property.management.print;
 
 import com.brailsoft.property.management.model.MonitoredItem;
 
-import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-public class ItemPrintBox extends HBox {
-	private static final double FONT_SIZE = 10.0;
+public class ItemPrintBox extends PrintBox {
 	private MonitoredItem monitoredItem;
 	Label lastActionLabel;
 	Label nextActionLabel;
@@ -30,27 +18,21 @@ public class ItemPrintBox extends HBox {
 		createGUI();
 	}
 
-	private void setStyles() {
+	@Override
+	protected void setStyles() {
 		setNextActionStyle();
 		setNextNoticeStyle();
 	}
 
-	private void bind() {
+	@Override
+	protected void bind() {
 		lastActionLabel.textProperty().bind(monitoredItem.lastActionProperty());
 		nextActionLabel.textProperty().bind(monitoredItem.nextActionProperty());
 		nextNoticeLabel.textProperty().bind(monitoredItem.nextNoticeProperty());
 	}
 
-	private void createGUI() {
-		makeSpace();
-		makeLabels();
-		makeSpace();
-		bind();
-		setStyles();
-		setOuterBorder();
-	}
-
-	private void makeLabels() {
+	@Override
+	protected void makeLabels() {
 		makeDescriptionLabel();
 		createDivider();
 		makeLastActionLabels();
@@ -58,16 +40,6 @@ public class ItemPrintBox extends HBox {
 		makeNextActionLabels();
 		createDivider();
 		makeNextNoticeLabels();
-	}
-
-	private void createDivider() {
-		getChildren().add(new Separator(Orientation.VERTICAL));
-	}
-
-	private void makeSpace() {
-		Pane pane = new Pane();
-		HBox.setHgrow(pane, Priority.ALWAYS);
-		getChildren().add(pane);
 	}
 
 	private void makeDescriptionLabel() {
@@ -118,10 +90,5 @@ public class ItemPrintBox extends HBox {
 		} else {
 			nextActionLabel.setFont(new Font(FONT_SIZE));
 		}
-	}
-
-	private void setOuterBorder() {
-		setBorder(new Border(
-				new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
 	}
 }

@@ -2,6 +2,7 @@ package com.brailsoft.property.management.print;
 
 import java.util.List;
 
+import com.brailsoft.property.management.model.InventoryItem;
 import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Property;
 import com.brailsoft.property.management.model.PropertyMonitor;
@@ -22,6 +23,18 @@ public class PropertyManagementPrinter {
 	public static void print(PrinterJob job) {
 
 		boolean success = job.printPage(generateReportNode());
+
+		if (success) {
+			job.endJob();
+			showSuccess();
+		} else {
+			showCancelled();
+		}
+	}
+
+	public static void printInventory(PrinterJob job) {
+
+		boolean success = job.printPage(generateInventoryReport());
 
 		if (success) {
 			job.endJob();
@@ -53,6 +66,21 @@ public class PropertyManagementPrinter {
 		return vBox;
 	}
 
+	private static VBox generateInventoryReport() {
+		VBox vBox = new VBox();
+		populateWithInventory(vBox);
+		return vBox;
+	}
+
+	private static void populateWithInventory(VBox vBox) {
+		List<Property> properties = PropertyMonitor.getInstance().getProperties();
+		for (Property property : properties) {
+			vBox.getChildren().add(new PropertyPrintBox(property));
+			populateWithInventoryForProperty(vBox, property);
+			vBox.getChildren().add(new Separator());
+		}
+	}
+
 	private static void populateWithProperties(VBox vBox) {
 		List<Property> properties = PropertyMonitor.getInstance().getProperties();
 		for (Property property : properties) {
@@ -66,6 +94,13 @@ public class PropertyManagementPrinter {
 		List<MonitoredItem> items = property.getItems();
 		for (MonitoredItem item : items) {
 			vBox.getChildren().add(new ItemPrintBox(item));
+		}
+	}
+
+	private static void populateWithInventoryForProperty(VBox vBox, Property property) {
+		List<InventoryItem> inventory = property.getInventory();
+		for (InventoryItem item : inventory) {
+			vBox.getChildren().add(new InventoryPrintBox(item));
 		}
 	}
 
