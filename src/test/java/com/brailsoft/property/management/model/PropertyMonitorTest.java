@@ -17,6 +17,8 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.brailsoft.property.management.constant.TestConstants;
 import com.brailsoft.property.management.persistence.LocalStorage;
+import com.brailsoft.property.management.persistence.SaveData;
+import com.brailsoft.property.management.persistence.StorageListener;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
 
 import javafx.application.Platform;
@@ -46,6 +48,12 @@ class PropertyMonitorTest {
 	private MonitoredItem noticeDueItem;
 	private InventoryItem testInventory;
 	ApplicationPreferences applicationPreferences;
+	private Object waitForIO = new Object();
+	private StorageListener ioListener = (event) -> {
+		synchronized (waitForIO) {
+			waitForIO.notifyAll();
+		}
+	};
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -75,6 +83,7 @@ class PropertyMonitorTest {
 		applicationPreferences.setDirectory(rootDirectory.getAbsolutePath());
 		LocalStorage.getInstance(new File(applicationPreferences.getDirectory()));
 		monitor = PropertyMonitor.getInstance();
+		Thread.sleep(100);
 		listener = new ListChangeListener<>() {
 
 			@Override
@@ -82,11 +91,13 @@ class PropertyMonitorTest {
 				System.out.print(c);
 			}
 		};
+		SaveData.addStorageListener(ioListener);
 	}
 
 	@AfterEach
 	void tearDown() throws Exception {
 		PropertyMonitor.getInstance().clear();
+		SaveData.removeStorageListener(ioListener);
 		PropertyMonitor.getInstance().removeListener(listener);
 		applicationPreferences.clear();
 	}
@@ -107,119 +118,197 @@ class PropertyMonitorTest {
 	}
 
 	@Test
-	void testAddProperty() {
+	void testAddProperty() throws InterruptedException {
 		assertEquals(0, monitor.getProperties().size());
-		monitor.addProperty(property1);
+		synchronized (waitForIO) {
+			monitor.addProperty(property1);
+			waitForIO.wait();
+		}
 		assertEquals(1, monitor.getProperties().size());
 	}
 
 	@Test
-	void testReplaceProperty() {
+	void testReplaceProperty() throws InterruptedException {
 		assertEquals(0, monitor.getProperties().size());
-		monitor.addProperty(property1);
+		synchronized (waitForIO) {
+			monitor.addProperty(property1);
+			waitForIO.wait();
+		}
 		assertEquals(1, monitor.getProperties().size());
-		monitor.replaceProperty(property1, property2);
+		synchronized (waitForIO) {
+			monitor.replaceProperty(property1, property2);
+			waitForIO.wait();
+		}
 		assertEquals(1, monitor.getProperties().size());
 	}
 
 	@Test
-	void testRemoveProperty() {
+	void testRemoveProperty() throws InterruptedException {
 		assertEquals(0, monitor.getProperties().size());
-		monitor.addProperty(property1);
+		synchronized (waitForIO) {
+			monitor.addProperty(property1);
+			waitForIO.wait();
+		}
 		assertEquals(1, monitor.getProperties().size());
-		monitor.removeProperty(property1);
+		synchronized (waitForIO) {
+			monitor.removeProperty(property1);
+			waitForIO.wait();
+		}
 		assertEquals(0, monitor.getProperties().size());
 	}
 
 	@Test
-	void testGetProperties() {
+	void testGetProperties() throws InterruptedException {
 		assertEquals(0, monitor.getProperties().size());
-		monitor.addProperty(property1);
+		synchronized (waitForIO) {
+			monitor.addProperty(property1);
+			waitForIO.wait();
+		}
 		assertEquals(1, monitor.getProperties().size());
 		assertEquals(property1, monitor.getProperties().get(0));
 	}
 
 	@Test
-	void testGetPropertiesWithOverdueItems() {
+	void testGetPropertiesWithOverdueItems() throws InterruptedException {
 		assertEquals(0, monitor.getPropertiesWithOverdueItems().size());
-		monitor.addProperty(property1);
-		monitor.addItem(testItem);
+		synchronized (waitForIO) {
+			monitor.addProperty(property1);
+			waitForIO.wait();
+		}
+		synchronized (waitForIO) {
+			monitor.addItem(testItem);
+			waitForIO.wait();
+		}
 		assertEquals(0, monitor.getPropertiesWithOverdueItems().size());
 		overdueItem = new MonitoredItem("item2", Period.YEARLY, 1, startTest.minusYears(1).minusDays(1), 1,
 				Period.WEEKLY);
 		overdueItem.setOwner(property1);
-		monitor.addItem(overdueItem);
+		synchronized (waitForIO) {
+			monitor.addItem(overdueItem);
+			waitForIO.wait();
+		}
 		assertEquals(1, monitor.getPropertiesWithOverdueItems().size());
 	}
 
 	@Test
-	void testGetPropertiesWithOverdueNotices() {
+	void testGetPropertiesWithOverdueNotices() throws InterruptedException {
 		assertEquals(0, monitor.getPropertiesWithOverdueNotices().size());
-		monitor.addProperty(property1);
-		monitor.addItem(testItem);
+		synchronized (waitForIO) {
+			monitor.addProperty(property1);
+			waitForIO.wait();
+		}
+		synchronized (waitForIO) {
+			monitor.addItem(testItem);
+			waitForIO.wait();
+		}
 		assertEquals(0, monitor.getPropertiesWithOverdueNotices().size());
 		noticeDueItem = new MonitoredItem("item2", Period.YEARLY, 1, startTest.minusYears(1), 1, Period.WEEKLY);
 		noticeDueItem.setOwner(property1);
-		monitor.addItem(noticeDueItem);
+		synchronized (waitForIO) {
+			monitor.addItem(noticeDueItem);
+			waitForIO.wait();
+		}
 		assertEquals(1, monitor.getPropertiesWithOverdueNotices().size());
 		assertEquals(0, monitor.getPropertiesWithOverdueItems().size());
 	}
 
 	@Test
-	void testGetItems() {
+	void testGetItems() throws InterruptedException {
 		assertEquals(0, monitor.getProperties().size());
-		monitor.addProperty(property1);
+		synchronized (waitForIO) {
+			monitor.addProperty(property1);
+			waitForIO.wait();
+		}
 		assertEquals(1, monitor.getProperties().size());
 		assertEquals(0, monitor.getItemsFor(property1).size());
-		monitor.addItem(testItem);
+		synchronized (waitForIO) {
+			monitor.addItem(testItem);
+			waitForIO.wait();
+		}
 		assertEquals(1, monitor.getItemsFor(property1).size());
 	}
 
 	@Test
-	void testGetInventory() {
+	void testGetInventory() throws InterruptedException {
 		assertEquals(0, monitor.getProperties().size());
-		monitor.addProperty(property1);
+		synchronized (waitForIO) {
+			monitor.addProperty(property1);
+			waitForIO.wait();
+		}
 		assertEquals(1, monitor.getProperties().size());
 		assertEquals(0, monitor.getItemsFor(property1).size());
-		monitor.addItem(testInventory);
+		synchronized (waitForIO) {
+			monitor.addItem(testInventory);
+			waitForIO.wait();
+		}
 		assertEquals(1, monitor.getInventoryFor(property1).size());
 	}
 
 	@Test
-	void testRemoveItem() {
+	void testRemoveItem() throws InterruptedException {
 		assertEquals(0, monitor.getProperties().size());
-		monitor.addProperty(property1);
+		synchronized (waitForIO) {
+			monitor.addProperty(property1);
+			waitForIO.wait();
+		}
 		assertEquals(1, monitor.getProperties().size());
 		assertEquals(0, monitor.getItemsFor(property1).size());
-		monitor.addItem(testItem);
+		synchronized (waitForIO) {
+			monitor.addItem(testItem);
+			waitForIO.wait();
+		}
 		assertEquals(1, monitor.getItemsFor(property1).size());
-		monitor.removeItem(testItem);
+		synchronized (waitForIO) {
+			monitor.removeItem(testItem);
+			waitForIO.wait();
+		}
 		assertEquals(0, monitor.getItemsFor(property1).size());
 	}
 
 	@Test
-	void testRemoveInventory() {
+	void testRemoveInventory() throws InterruptedException {
 		assertEquals(0, monitor.getProperties().size());
-		monitor.addProperty(property1);
+		synchronized (waitForIO) {
+			monitor.addProperty(property1);
+			waitForIO.wait();
+		}
 		assertEquals(1, monitor.getProperties().size());
 		assertEquals(0, monitor.getInventoryFor(property1).size());
-		monitor.addItem(testInventory);
+		synchronized (waitForIO) {
+			monitor.addItem(testInventory);
+			waitForIO.wait();
+		}
 		assertEquals(1, monitor.getInventoryFor(property1).size());
-		monitor.removeItem(testInventory);
+		synchronized (waitForIO) {
+			monitor.removeItem(testInventory);
+			waitForIO.wait();
+		}
 		assertEquals(0, monitor.getInventoryFor(property1).size());
 	}
 
 	@Test
-	void testGetOverdueItemsForDate() {
-		monitor.addProperty(property1);
-		monitor.addItem(testItem);
+	void testGetOverdueItemsForDate() throws InterruptedException {
+		synchronized (waitForIO) {
+			monitor.addProperty(property1);
+			waitForIO.wait();
+		}
+		synchronized (waitForIO) {
+			monitor.addItem(testItem);
+			waitForIO.wait();
+		}
 		assertEquals(1, monitor.getOverdueItemsFor(testItem.getTimeForNextAction()).size());
 	}
 
 	@Test
-	void testGetNotifiedItemsForDate() {
-		monitor.addProperty(property1);
-		monitor.addItem(testItem);
+	void testGetNotifiedItemsForDate() throws InterruptedException {
+		synchronized (waitForIO) {
+			monitor.addProperty(property1);
+			waitForIO.wait();
+		}
+		synchronized (waitForIO) {
+			monitor.addItem(testItem);
+			waitForIO.wait();
+		}
 		assertEquals(1, monitor.getNotifiedItemsFor(testItem.getTimeForNextNotice()).size());
 	}
 
@@ -248,8 +337,11 @@ class PropertyMonitorTest {
 	}
 
 	@Test
-	void testAddDUplicateProperty() {
-		monitor.addProperty(property1);
+	void testAddDUplicateProperty() throws InterruptedException {
+		synchronized (waitForIO) {
+			monitor.addProperty(property1);
+			waitForIO.wait();
+		}
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			monitor.addProperty(property1);
 		});
@@ -302,8 +394,11 @@ class PropertyMonitorTest {
 	}
 
 	@Test
-	void testRemoveUnknownItem() {
-		monitor.addProperty(property1);
+	void testRemoveUnknownItem() throws InterruptedException {
+		synchronized (waitForIO) {
+			monitor.addProperty(property1);
+			waitForIO.wait();
+		}
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			monitor.removeItem(testItem);
 		});
@@ -311,8 +406,11 @@ class PropertyMonitorTest {
 	}
 
 	@Test
-	void testRemoveUnknownInventory() {
-		monitor.addProperty(property1);
+	void testRemoveUnknownInventory() throws InterruptedException {
+		synchronized (waitForIO) {
+			monitor.addProperty(property1);
+			waitForIO.wait();
+		}
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			monitor.removeItem(testInventory);
 		});
@@ -320,8 +418,11 @@ class PropertyMonitorTest {
 	}
 
 	@Test
-	void testRemoveUnknownProperty() {
-		monitor.addProperty(property1);
+	void testRemoveUnknownProperty() throws InterruptedException {
+		synchronized (waitForIO) {
+			monitor.addProperty(property1);
+			waitForIO.wait();
+		}
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			monitor.removeProperty(property2);
 		});
@@ -355,9 +456,15 @@ class PropertyMonitorTest {
 	}
 
 	@Test
-	void testReplaceKnownProperty() {
-		monitor.addProperty(property1);
-		monitor.addProperty(property2);
+	void testReplaceKnownProperty() throws InterruptedException {
+		synchronized (waitForIO) {
+			monitor.addProperty(property1);
+			waitForIO.wait();
+		}
+		synchronized (waitForIO) {
+			monitor.addProperty(property2);
+			waitForIO.wait();
+		}
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			monitor.replaceProperty(property1, property2);
 		});

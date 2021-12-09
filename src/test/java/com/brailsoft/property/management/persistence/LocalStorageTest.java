@@ -47,6 +47,12 @@ public class LocalStorageTest {
 	private MonitoredItem testItem;
 	private InventoryItem testInventory;
 	private LocalDate startTest;
+	private Object waitForIO = new Object();
+	private StorageListener ioListener = (event) -> {
+		synchronized (waitForIO) {
+			waitForIO.notifyAll();
+		}
+	};
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -73,6 +79,7 @@ public class LocalStorageTest {
 		testItem = new MonitoredItem("item1", Period.YEARLY, 1, startTest, 1, Period.WEEKLY);
 		testInventory = new InventoryItem("description1", "manufacturer1", "model1", "serialnumber1", "supplier1",
 				LocalDate.now());
+		SaveData.addStorageListener(ioListener);
 	}
 
 	@AfterEach
@@ -87,10 +94,13 @@ public class LocalStorageTest {
 	}
 
 	@Test
-	void testLoadArchivedData() throws IOException {
+	void testLoadArchivedData() throws IOException, InterruptedException {
 		File parent = new File(getTestDirectory());
 		assertEquals(0, PropertyMonitor.getInstance().getProperties().size());
-		LocalStorage.getInstance(parent).loadArchivedData();
+		synchronized (waitForIO) {
+			LocalStorage.getInstance(parent).loadArchivedData();
+			waitForIO.wait();
+		}
 		assertEquals(1, PropertyMonitor.getInstance().getProperties().size());
 		Property property = PropertyMonitor.getInstance().getProperties().get(0);
 		assertNotNull(property);
@@ -105,10 +115,13 @@ public class LocalStorageTest {
 	}
 
 	@Test
-	void testSaveArchiveData() throws IOException {
+	void testSaveArchiveData() throws IOException, InterruptedException {
 		property.addItem(testItem);
 		property.addItem(testInventory);
-		PropertyMonitor.getInstance().addProperty(property);
+		synchronized (waitForIO) {
+			PropertyMonitor.getInstance().addProperty(property);
+			waitForIO.wait();
+		}
 		assertTrue(fileExistsAndIsValid(new File(LocalStorage.getInstance(rootDirectory).getDirectory(), PROPERTY_DAT),
 				27));
 	}

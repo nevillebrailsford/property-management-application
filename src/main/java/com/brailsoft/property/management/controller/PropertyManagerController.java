@@ -30,7 +30,6 @@ import com.brailsoft.property.management.print.PrintReport;
 import com.brailsoft.property.management.userinterface.CalendarView;
 import com.brailsoft.property.management.userinterface.PropertyTab;
 
-import javafx.beans.binding.Bindings;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -107,12 +106,6 @@ public class PropertyManagerController implements Initializable {
 		propertyMonitor.addListener(listener);
 		try {
 			localStorage.loadArchivedData();
-			addItem.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-				return tabPane.getSelectionModel().selectedItemProperty().get() == null;
-			}));
-			deleteProperty.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-				return tabPane.getSelectionModel().selectedItemProperty().get() == null;
-			}));
 		} catch (IOException e) {
 			if (e.getMessage().startsWith("LocalStorage: archiveFile") && e.getMessage().endsWith("not found")) {
 			} else {
@@ -130,7 +123,7 @@ public class PropertyManagerController implements Initializable {
 	void about(ActionEvent event) {
 		LOGGER.entering(CLASS_NAME, "about");
 		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setContentText("Property Management \nVersion 1.0.0\nBuild date: 04/12/2021");
+		alert.setContentText("Property Management \nVersion 1.0.0\nBuild date: 09/12/2021");
 		alert.setTitle("About Property Management");
 		alert.setHeaderText("Property Management");
 		alert.showAndWait();

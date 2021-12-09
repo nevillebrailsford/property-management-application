@@ -2,6 +2,8 @@ package com.brailsoft.property.management.launcher;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
@@ -30,6 +32,7 @@ public class PropertyManager extends Application {
 	private ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
 
 	private static PropertyManagerController mainController;
+	private static ExecutorService executor = Executors.newFixedThreadPool(5);
 	private Timer timer;
 
 	@Override
@@ -82,6 +85,10 @@ public class PropertyManager extends Application {
 		PropertyManagerLogConfigurer.setUp();
 	}
 
+	public static ExecutorService executor() {
+		return executor;
+	}
+
 	public void shutdown() {
 		LOGGER.entering(CLASS_NAME, "shutdown");
 		performShutdown();
@@ -91,6 +98,7 @@ public class PropertyManager extends Application {
 	private void performShutdown() {
 		LOGGER.entering(CLASS_NAME, "performShutdown");
 		timer.stop();
+		executor.shutdown();
 		LOGGER.exiting(CLASS_NAME, "performShutdown");
 		Platform.exit();
 	}
