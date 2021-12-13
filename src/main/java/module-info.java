@@ -8,6 +8,7 @@ module com.brailsoft.property.manager {
 	requires java.logging;
 
 	opens com.brailsoft.property.management.audit;
+	opens com.brailsoft.property.management.edit;
 	opens com.brailsoft.property.management.launcher;
 	opens com.brailsoft.property.management.constant;
 	opens com.brailsoft.property.management.controller;
