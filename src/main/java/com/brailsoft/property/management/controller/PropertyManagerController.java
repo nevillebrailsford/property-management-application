@@ -16,6 +16,13 @@ import com.brailsoft.property.management.dialog.DeleteItemDialog;
 import com.brailsoft.property.management.dialog.EventDialog;
 import com.brailsoft.property.management.dialog.PreferencesDialog;
 import com.brailsoft.property.management.dialog.PropertyDialog;
+import com.brailsoft.property.management.edit.AddInventoryChange;
+import com.brailsoft.property.management.edit.AddMonitoredChange;
+import com.brailsoft.property.management.edit.AddPropertyChange;
+import com.brailsoft.property.management.edit.ChangeManager;
+import com.brailsoft.property.management.edit.RemoveInventoryChange;
+import com.brailsoft.property.management.edit.RemoveMonitoredChange;
+import com.brailsoft.property.management.edit.RemovePropertyChange;
 import com.brailsoft.property.management.launcher.LoadProperty;
 import com.brailsoft.property.management.launcher.PropertyManager;
 import com.brailsoft.property.management.logging.PropertyManagerLogConfigurer;
@@ -75,6 +82,12 @@ public class PropertyManagerController implements Initializable {
 	@FXML
 	private TabPane tabPane;
 
+	@FXML
+	private MenuItem undo;
+
+	@FXML
+	private MenuItem redo;
+
 	private ListChangeListener<? super Property> listener = new ListChangeListener<>() {
 		@Override
 		public void onChanged(Change<? extends Property> change) {
@@ -131,13 +144,27 @@ public class PropertyManagerController implements Initializable {
 	}
 
 	@FXML
+	void undo(ActionEvent event) {
+		LOGGER.entering(CLASS_NAME, "undo");
+		ChangeManager.getInstance().undo();
+		LOGGER.exiting(CLASS_NAME, "undo");
+	}
+
+	@FXML
+	void redo(ActionEvent event) {
+		LOGGER.entering(CLASS_NAME, "redo");
+		ChangeManager.getInstance().redo();
+		LOGGER.exiting(CLASS_NAME, "redo");
+	}
+
+	@FXML
 	void addProperty(ActionEvent event) {
 		LOGGER.entering(CLASS_NAME, "addProperty");
 		Optional<Property> result = new PropertyDialog().showAndWait();
 		if (result.isPresent()) {
 			Property property = result.get();
-			propertyMonitor.addProperty(property);
-			propertyMonitor.auditAddProperty(property);
+			AddPropertyChange addPropertyChange = new AddPropertyChange(property);
+			ChangeManager.getInstance().execute(addPropertyChange);
 		}
 		LOGGER.exiting(CLASS_NAME, "addProperty");
 	}
@@ -147,8 +174,8 @@ public class PropertyManagerController implements Initializable {
 		LOGGER.entering(CLASS_NAME, "deleteProperty");
 		Property property = getSelectedProperty();
 		if (userWantsToDeleteProperty(property) == ButtonType.YES) {
-			propertyMonitor.removeProperty(property);
-			propertyMonitor.auditRemoveProperty(property);
+			RemovePropertyChange removePropertyChange = new RemovePropertyChange(property);
+			ChangeManager.getInstance().execute(removePropertyChange);
 		}
 		LOGGER.exiting(CLASS_NAME, "deleteProperty");
 	}
@@ -161,8 +188,8 @@ public class PropertyManagerController implements Initializable {
 			MonitoredItem item = result.get();
 			Property property = getSelectedProperty();
 			item.setOwner(property);
-			propertyMonitor.addItem(item);
-			propertyMonitor.auditAddItem(item);
+			AddMonitoredChange addMonitoredChange = new AddMonitoredChange(item);
+			ChangeManager.getInstance().execute(addMonitoredChange);
 		}
 		LOGGER.exiting(CLASS_NAME, "addItem");
 	}
@@ -174,8 +201,8 @@ public class PropertyManagerController implements Initializable {
 		Optional<MonitoredItem> result = new DeleteItemDialog(property).showAndWait();
 		if (result.isPresent()) {
 			MonitoredItem item = result.get();
-			propertyMonitor.removeItem(item);
-			propertyMonitor.auditRemoveItem(item);
+			RemoveMonitoredChange removeMonitoredChange = new RemoveMonitoredChange(item);
+			ChangeManager.getInstance().execute(removeMonitoredChange);
 		}
 		LOGGER.exiting(CLASS_NAME, "deleteItem");
 	}
@@ -188,8 +215,8 @@ public class PropertyManagerController implements Initializable {
 		if (result.isPresent()) {
 			InventoryItem item = result.get();
 			item.setOwner(property);
-			propertyMonitor.addItem(item);
-			propertyMonitor.auditAddItem(item);
+			AddInventoryChange addInventoryChange = new AddInventoryChange(item);
+			ChangeManager.getInstance().execute(addInventoryChange);
 		}
 		LOGGER.exiting(CLASS_NAME, "addInventory");
 	}
@@ -201,8 +228,8 @@ public class PropertyManagerController implements Initializable {
 		Optional<InventoryItem> result = new DeleteInventoryDialog(property).showAndWait();
 		if (result.isPresent()) {
 			InventoryItem item = result.get();
-			propertyMonitor.removeItem(item);
-			propertyMonitor.auditRemoveItem(item);
+			RemoveInventoryChange removeInventoryChange = new RemoveInventoryChange(item);
+			ChangeManager.getInstance().execute(removeInventoryChange);
 		}
 		LOGGER.exiting(CLASS_NAME, "deleteInventory");
 	}

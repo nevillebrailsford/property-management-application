@@ -19,12 +19,12 @@
 				<Menu mnemonicParsing="false" text="File">
 					<items>
 						<MenuItem mnemonicParsing="false" onAction="#preferences"
-							text="Prerferences" />
+							text="Preferences" />
 						<SeparatorMenuItem mnemonicParsing="false" />
 						<MenuItem mnemonicParsing="false" onAction="#printReport"
 							text="Print" />
-                        <MenuItem mnemonicParsing="false" onAction="#printInventory"
-                            text="Print Inventory" />
+						<MenuItem mnemonicParsing="false"
+							onAction="#printInventory" text="Print Inventory" />
 						<SeparatorMenuItem mnemonicParsing="false" />
 						<MenuItem mnemonicParsing="false"
 							onAction="#exitApplication" text="Exit Application" />
@@ -32,14 +32,20 @@
 				</Menu>
 				<Menu mnemonicParsing="false" text="Edit">
 					<items>
+						<MenuItem fx:id="undo" mnemonicParsing="false" onAction="#undo"
+							text="Undo" />
+						<MenuItem fx:id="redo" mnemonicParsing="false" onAction="#redo"
+							text="Redo" />
+						<SeparatorMenuItem mnemonicParsing="false" />
 						<Menu mnemonicParsing="false" text="Add">
 							<items>
 								<MenuItem fx:id="addProperty" mnemonicParsing="false"
 									onAction="#addProperty" text="A New Property" />
 								<MenuItem fx:id="addItem" mnemonicParsing="false"
 									onAction="#addItem" text="An Event To The Selected Property" />
-                                <MenuItem fx:id="addInventory" mnemonicParsing="false"
-                                    onAction="#addInventory" text="An Inventory Item to The Selected Property" />
+								<MenuItem fx:id="addInventory" mnemonicParsing="false"
+									onAction="#addInventory"
+									text="An Inventory Item to The Selected Property" />
 							</items>
 						</Menu>
 						<Menu mnemonicParsing="false" text="Delete">
@@ -48,9 +54,11 @@
 									mnemonicParsing="false" onAction="#deleteProperty"
 									text="The Selected Property" />
 								<MenuItem fx:id="deleteItem" mnemonicParsing="false"
-									onAction="#deleteItem" text="An Event From The Selected Property" />
-                                <MenuItem fx:id="deleteInventory" mnemonicParsing="false"
-                                    onAction="#deleteInventory" text="An Inventory Item From The Selected Property" />
+									onAction="#deleteItem"
+									text="An Event From The Selected Property" />
+								<MenuItem fx:id="deleteInventory"
+									mnemonicParsing="false" onAction="#deleteInventory"
+									text="An Inventory Item From The Selected Property" />
 							</items>
 						</Menu>
 					</items>

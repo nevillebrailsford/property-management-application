@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import com.brailsoft.property.management.dialog.DateDialog;
+import com.brailsoft.property.management.edit.ChangeManager;
+import com.brailsoft.property.management.edit.ReplaceMonitoredChange;
 import com.brailsoft.property.management.model.InventoryItem;
 import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Property;
@@ -109,10 +111,10 @@ public class PropertyTab extends Tab {
 		MonitoredItem item = itemTableView.getSelectionModel().getSelectedItem();
 		Optional<LocalDate> result = new DateDialog(item).showAndWait();
 		if (result.isPresent()) {
+			MonitoredItem before = new MonitoredItem(item);
 			item.actionPerformed(result.get());
-			PropertyMonitor propertyMonitor = PropertyMonitor.getInstance();
-			propertyMonitor.replaceItem(item);
-			propertyMonitor.auditReplaceItem(item);
+			ReplaceMonitoredChange replaceMonitoredChange = new ReplaceMonitoredChange(before, item);
+			ChangeManager.getInstance().execute(replaceMonitoredChange);
 		}
 	}
 
