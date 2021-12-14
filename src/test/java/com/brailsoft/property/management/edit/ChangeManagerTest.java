@@ -1,14 +1,28 @@
 package com.brailsoft.property.management.edit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class ChangeManagerTest {
 
 	private Change change = new UTChange();
 	private Counter count = new Counter();
+
+	@BeforeEach
+	void setUp() throws Exception {
+
+	}
+
+	@AfterEach
+	void tearDown() throws Exception {
+		ChangeManager.getInstance().reset();
+	}
 
 	@Test
 	void testGetInstance() {
@@ -82,6 +96,50 @@ class ChangeManagerTest {
 		ChangeManager.getInstance().redo();
 		assertEquals(Change.State.DONE, change.getState());
 		assertEquals(2, ((UTChange) change).getCount());
+	}
+
+	@Test
+	void testUndoable() {
+		assertFalse(ChangeManager.getInstance().undoableProperty().get());
+		ChangeManager.getInstance().execute(change);
+		assertEquals(Change.State.DONE, change.getState());
+		assertTrue(ChangeManager.getInstance().undoableProperty().get());
+		ChangeManager.getInstance().undo();
+		assertEquals(Change.State.UNDONE, change.getState());
+		assertFalse(ChangeManager.getInstance().undoableProperty().get());
+	}
+
+	@Test
+	void testRedoable() {
+		assertFalse(ChangeManager.getInstance().redoableProperty().get());
+		ChangeManager.getInstance().execute(change);
+		assertEquals(Change.State.DONE, change.getState());
+		assertFalse(ChangeManager.getInstance().redoableProperty().get());
+		ChangeManager.getInstance().undo();
+		assertEquals(Change.State.UNDONE, change.getState());
+		assertTrue(ChangeManager.getInstance().redoableProperty().get());
+		ChangeManager.getInstance().redo();
+		assertEquals(Change.State.DONE, change.getState());
+		assertFalse(ChangeManager.getInstance().redoableProperty().get());
+	}
+
+	@Test
+	void testMultiUndoRedos() {
+		assertFalse(ChangeManager.getInstance().undoableProperty().get());
+		assertFalse(ChangeManager.getInstance().redoableProperty().get());
+		ChangeManager.getInstance().execute(change);
+		assertEquals(Change.State.DONE, change.getState());
+		assertTrue(ChangeManager.getInstance().undoableProperty().get());
+		assertFalse(ChangeManager.getInstance().redoableProperty().get());
+		for (int i = 0; i < 10; i++) {
+			ChangeManager.getInstance().undo();
+			assertFalse(ChangeManager.getInstance().undoableProperty().get());
+			assertTrue(ChangeManager.getInstance().redoableProperty().get());
+			ChangeManager.getInstance().redo();
+			assertTrue(ChangeManager.getInstance().undoableProperty().get());
+			assertFalse(ChangeManager.getInstance().redoableProperty().get());
+		}
+
 	}
 
 	@Test
