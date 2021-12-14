@@ -5,6 +5,9 @@ import java.util.logging.Logger;
 
 import com.brailsoft.property.management.constant.Constants;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 public class ChangeManager {
 	private static final String CLASS_NAME = ChangeManager.class.getName();
 	private static final Logger LOGGER = Logger.getLogger(Constants.LOGGER_NAME);
@@ -14,9 +17,13 @@ public class ChangeManager {
 	private Stack<Change> undoStack = new Stack<>();
 	private Stack<Change> redoStack = new Stack<>();
 
+	private BooleanProperty undoable = new SimpleBooleanProperty(this, "undoable", false);
+	private BooleanProperty redoable = new SimpleBooleanProperty(this, "redoable", false);
+
 	public static synchronized ChangeManager getInstance() {
 		if (instance == null) {
 			instance = new ChangeManager();
+			instance.setChangable();
 		}
 		return instance;
 	}
@@ -24,9 +31,18 @@ public class ChangeManager {
 	private ChangeManager() {
 	}
 
+	public BooleanProperty undoableProperty() {
+		return undoable;
+	}
+
+	public BooleanProperty redoableProperty() {
+		return redoable;
+	}
+
 	public void reset() {
 		undoStack.clear();
 		redoStack.clear();
+		setChangable();
 	}
 
 	public void execute(Change change) {
@@ -39,6 +55,7 @@ public class ChangeManager {
 			undoStack.clear();
 			redoStack.clear();
 		}
+		setChangable();
 		LOGGER.exiting(CLASS_NAME, "execute");
 	}
 
@@ -54,6 +71,7 @@ public class ChangeManager {
 				redoStack.clear();
 			}
 		}
+		setChangable();
 		LOGGER.exiting(CLASS_NAME, "undo");
 	}
 
@@ -69,6 +87,12 @@ public class ChangeManager {
 				redoStack.clear();
 			}
 		}
+		setChangable();
 		LOGGER.exiting(CLASS_NAME, "redo");
+	}
+
+	private void setChangable() {
+		undoable.set(!undoStack.isEmpty());
+		redoable.set(!redoStack.isEmpty());
 	}
 }

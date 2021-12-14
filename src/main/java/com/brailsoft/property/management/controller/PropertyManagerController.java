@@ -125,7 +125,8 @@ public class PropertyManagerController implements Initializable {
 				System.out.println(e.getMessage());
 			}
 		}
-
+		undo.disableProperty().bind(ChangeManager.getInstance().undoableProperty().not());
+		redo.disableProperty().bind(ChangeManager.getInstance().redoableProperty().not());
 	}
 
 	public void setPropertyManager(PropertyManager propertyManager) {
