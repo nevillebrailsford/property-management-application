@@ -7,7 +7,10 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 
 <BorderPane prefHeight="600.0" prefWidth="900.0"
 	stylesheets="@PropertyManager.css" xmlns="http://javafx.com/javafx/17"
@@ -32,10 +35,10 @@
 				</Menu>
 				<Menu mnemonicParsing="false" text="Edit">
 					<items>
-						<MenuItem fx:id="undo" mnemonicParsing="false" onAction="#undo"
-							text="Undo" />
-						<MenuItem fx:id="redo" mnemonicParsing="false" onAction="#redo"
-							text="Redo" />
+						<MenuItem fx:id="undo" mnemonicParsing="false"
+							onAction="#undo" text="Undo" />
+						<MenuItem fx:id="redo" mnemonicParsing="false"
+							onAction="#redo" text="Redo" />
 						<SeparatorMenuItem mnemonicParsing="false" />
 						<Menu mnemonicParsing="false" text="Add">
 							<items>
@@ -90,12 +93,21 @@
 			tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
 	</center>
 	<bottom>
-		<ButtonBar prefHeight="40.0" prefWidth="200.0"
-			BorderPane.alignment="CENTER">
-			<buttons>
-				<Button mnemonicParsing="false" onAction="#exitApplication"
-					text="Exit Application" />
-			</buttons>
-		</ButtonBar>
+		<HBox alignment="BOTTOM_LEFT" prefHeight="20.0" prefWidth="880.0"
+			BorderPane.alignment="CENTER_LEFT">
+			<children>
+				<TextField fx:id="status" maxHeight="-Infinity"
+					maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+					prefHeight="20" HBox.hgrow="ALWAYS" />
+				<Pane prefHeight="20.0" HBox.hgrow="ALWAYS" />
+				<ButtonBar prefHeight="40.0" prefWidth="200.0"
+					HBox.hgrow="NEVER">
+					<buttons>
+						<Button mnemonicParsing="false" onAction="#exitApplication"
+							text="Exit Application" />
+					</buttons>
+				</ButtonBar>
+			</children>
+		</HBox>
 	</bottom>
 </BorderPane>

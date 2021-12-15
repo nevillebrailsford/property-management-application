@@ -2,7 +2,9 @@ package com.brailsoft.property.management.persistence;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 import com.brailsoft.property.management.constant.Constants;
@@ -56,7 +58,7 @@ public class LocalStorage {
 			throw exc;
 		}
 		LoadData worker = new LoadData(archiveFile);
-		executor.execute(worker);
+		Future<String> future = executor.submit(worker);
 		LOGGER.exiting(CLASS_NAME, "loadArchivedData");
 	}
 
@@ -64,7 +66,13 @@ public class LocalStorage {
 		LOGGER.entering(CLASS_NAME, "saveArchivedData");
 		File archiveFile = new File(directory, FILE_NAME);
 		SaveData worker = new SaveData(archiveFile);
-		executor.execute(worker);
+		Future<String> future = executor.submit(worker);
+		try {
+			LOGGER.fine("Issuing get");
+			String result = future.get();
+			System.out.println(result);
+		} catch (InterruptedException | ExecutionException e) {
+		}
 		LOGGER.exiting(CLASS_NAME, "saveArchivedData");
 	}
 
