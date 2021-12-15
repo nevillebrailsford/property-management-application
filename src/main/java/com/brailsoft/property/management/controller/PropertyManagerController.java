@@ -48,6 +48,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -87,6 +88,9 @@ public class PropertyManagerController implements Initializable {
 
 	@FXML
 	private MenuItem redo;
+
+	@FXML
+	private TextField status;
 
 	private ListChangeListener<? super Property> listener = new ListChangeListener<>() {
 		@Override

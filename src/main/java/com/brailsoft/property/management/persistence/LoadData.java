@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -25,7 +26,7 @@ import com.brailsoft.property.management.model.PropertyMonitor;
 
 import javafx.event.ActionEvent;
 
-public class LoadData extends DataHandler implements Runnable {
+public class LoadData extends DataHandler implements Callable<String> {
 	private static final String CLASS_NAME = LoadData.class.getName();
 	private static final Logger LOGGER = Logger.getLogger(Constants.LOGGER_NAME);
 
@@ -36,7 +37,7 @@ public class LoadData extends DataHandler implements Runnable {
 	}
 
 	@Override
-	public void run() {
+	public String call() {
 		LOGGER.entering(CLASS_NAME, "run");
 		StorageLock.readLock().lock();
 		LoadingState.startLoading();
@@ -50,6 +51,7 @@ public class LoadData extends DataHandler implements Runnable {
 			tellListeners(new ActionEvent());
 			LOGGER.exiting(CLASS_NAME, "run");
 		}
+		return "Data has loaded successfully";
 	}
 
 	private void loadArchivedData() throws IOException {
