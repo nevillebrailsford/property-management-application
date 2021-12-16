@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -19,6 +18,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.brailsoft.property.management.constant.Constants;
+import com.brailsoft.property.management.controller.StatusMonitor;
 import com.brailsoft.property.management.model.InventoryItem;
 import com.brailsoft.property.management.model.MonitoredItem;
 import com.brailsoft.property.management.model.Property;
@@ -26,7 +26,7 @@ import com.brailsoft.property.management.model.PropertyMonitor;
 
 import javafx.event.ActionEvent;
 
-public class LoadData extends DataHandler implements Callable<String> {
+public class LoadData extends DataHandler implements Runnable {
 	private static final String CLASS_NAME = LoadData.class.getName();
 	private static final Logger LOGGER = Logger.getLogger(Constants.LOGGER_NAME);
 
@@ -37,7 +37,7 @@ public class LoadData extends DataHandler implements Callable<String> {
 	}
 
 	@Override
-	public String call() {
+	public void run() {
 		LOGGER.entering(CLASS_NAME, "run");
 		StorageLock.readLock().lock();
 		LoadingState.startLoading();
@@ -49,9 +49,9 @@ public class LoadData extends DataHandler implements Callable<String> {
 			LoadingState.stopLoading();
 			StorageLock.readLock().unlock();
 			tellListeners(new ActionEvent());
+			StatusMonitor.getInstance().update("Initial load of data has completed");
 			LOGGER.exiting(CLASS_NAME, "run");
 		}
-		return "Data has loaded successfully";
 	}
 
 	private void loadArchivedData() throws IOException {
