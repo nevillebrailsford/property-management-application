@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -27,7 +26,7 @@ import com.brailsoft.property.management.model.PropertyMonitor;
 
 import javafx.event.ActionEvent;
 
-public class SaveData extends DataHandler implements Callable<String> {
+public class SaveData extends DataHandler implements Runnable {
 
 	private static final String CLASS_NAME = SaveData.class.getName();
 	private static final Logger LOGGER = Logger.getLogger(Constants.LOGGER_NAME);
@@ -39,14 +38,14 @@ public class SaveData extends DataHandler implements Callable<String> {
 	}
 
 	@Override
-	public String call() {
+	public void run() {
 		LOGGER.entering(CLASS_NAME, "run");
 		StorageLock.readLock().lock();
 		boolean loading = LoadingState.isLoading();
 		if (loading) {
 			LOGGER.exiting(CLASS_NAME, "run", loading);
 			StorageLock.readLock().unlock();
-			return null;
+			return;
 		}
 		StorageLock.readLock().unlock();
 		StorageLock.writeLock().lock();
@@ -60,7 +59,6 @@ public class SaveData extends DataHandler implements Callable<String> {
 			tellListeners(new ActionEvent());
 			LOGGER.exiting(CLASS_NAME, "run");
 		}
-		return "Data saved successfully";
 	}
 
 	private void saveArchiveData() throws IOException {

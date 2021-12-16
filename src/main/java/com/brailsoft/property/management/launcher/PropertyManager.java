@@ -28,6 +28,7 @@ import javafx.stage.WindowEvent;
 public class PropertyManager extends Application {
 	private static final String CLASS_NAME = PropertyManager.class.getName();
 	private static final Logger LOGGER = Logger.getLogger(PropertyManager.class.getName());
+	private static boolean started = false;
 
 	private ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
 
@@ -38,6 +39,7 @@ public class PropertyManager extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		LOGGER.entering(CLASS_NAME, "start");
+		started = true;
 		if (firstUse()) {
 			PreferencesData preferencesData = makeInitialChoices();
 			if (preferencesData == null) {
@@ -87,6 +89,10 @@ public class PropertyManager extends Application {
 
 	public static ExecutorService executor() {
 		return executor;
+	}
+
+	public static boolean started() {
+		return started;
 	}
 
 	public void shutdown() {

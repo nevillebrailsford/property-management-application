@@ -13,6 +13,7 @@ import com.brailsoft.property.management.audit.AuditRecord;
 import com.brailsoft.property.management.audit.AuditType;
 import com.brailsoft.property.management.audit.AuditWriter;
 import com.brailsoft.property.management.constant.Constants;
+import com.brailsoft.property.management.controller.StatusMonitor;
 import com.brailsoft.property.management.persistence.LocalStorage;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
 import com.brailsoft.property.management.timer.Timer;
@@ -119,6 +120,7 @@ public class PropertyMonitor {
 			throw exc;
 		}
 		properties.add(new Property(newProperty));
+		StatusMonitor.getInstance().update("Property " + newProperty + " added");
 		updateStorage();
 		LOGGER.exiting(CLASS_NAME, "addProperty");
 	}
@@ -148,6 +150,7 @@ public class PropertyMonitor {
 		properties.remove(oldProperty);
 		properties.add(newProperty);
 		updateStorage();
+		StatusMonitor.getInstance().update("Property " + newProperty + " replaced");
 		LOGGER.exiting(CLASS_NAME, "replaceProperty");
 	}
 
@@ -168,6 +171,7 @@ public class PropertyMonitor {
 		}
 		properties.remove(oldProperty);
 		updateStorage();
+		StatusMonitor.getInstance().update("Property " + oldProperty + " deleted");
 		LOGGER.exiting(CLASS_NAME, "removeProperty");
 	}
 
@@ -195,6 +199,7 @@ public class PropertyMonitor {
 		}
 		findProperty(property).addItem(monitoredItem);
 		updateStorage();
+		StatusMonitor.getInstance().update("Event " + monitoredItem + " added");
 		LOGGER.exiting(CLASS_NAME, "addItem");
 	}
 
@@ -222,6 +227,7 @@ public class PropertyMonitor {
 		}
 		findProperty(property).replaceItem(monitoredItem);
 		updateStorage();
+		StatusMonitor.getInstance().update("Event " + monitoredItem + " updated");
 		LOGGER.exiting(CLASS_NAME, "replaceItem");
 	}
 
@@ -249,6 +255,8 @@ public class PropertyMonitor {
 		}
 		findProperty(property).removeItem(monitoredItem);
 		updateStorage();
+		StatusMonitor.getInstance().update("Event " + monitoredItem + " deleted");
+
 		LOGGER.exiting(CLASS_NAME, "removeItem");
 	}
 
@@ -276,6 +284,7 @@ public class PropertyMonitor {
 		}
 		findProperty(property).addItem(inventoryItem);
 		updateStorage();
+		StatusMonitor.getInstance().update("Inventory Item " + inventoryItem + " added");
 		LOGGER.exiting(CLASS_NAME, "addItem");
 	}
 
@@ -303,6 +312,7 @@ public class PropertyMonitor {
 		}
 		findProperty(property).removeItem(inventoryItem);
 		updateStorage();
+		StatusMonitor.getInstance().update("Inventory Item " + inventoryItem + " deleted");
 		LOGGER.exiting(CLASS_NAME, "removeItem");
 	}
 

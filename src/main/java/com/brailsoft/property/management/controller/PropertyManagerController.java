@@ -37,6 +37,7 @@ import com.brailsoft.property.management.print.PrintReport;
 import com.brailsoft.property.management.userinterface.CalendarView;
 import com.brailsoft.property.management.userinterface.PropertyTab;
 
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -120,6 +121,12 @@ public class PropertyManagerController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		try {
+			StatusMonitor.getInstance(this);
+		} catch (Throwable t) {
+			System.out.println(t);
+			Platform.exit();
+		}
 		propertyMonitor.addListener(listener);
 		try {
 			localStorage.loadArchivedData();
@@ -137,11 +144,15 @@ public class PropertyManagerController implements Initializable {
 		this.propertyManager = propertyManager;
 	}
 
+	public void updateStatus(String status) {
+		this.status.textProperty().set(status);
+	}
+
 	@FXML
 	void about(ActionEvent event) {
 		LOGGER.entering(CLASS_NAME, "about");
 		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setContentText("Property Management \nVersion 1.0.0\nBuild date: 09/12/2021");
+		alert.setContentText("Property Management \nVersion 1.0.0\nBuild date: 16/12/2021");
 		alert.setTitle("About Property Management");
 		alert.setHeaderText("Property Management");
 		alert.showAndWait();
