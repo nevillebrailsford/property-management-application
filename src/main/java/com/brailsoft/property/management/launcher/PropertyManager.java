@@ -12,6 +12,7 @@ import com.brailsoft.property.management.constant.Constants;
 import com.brailsoft.property.management.controller.PropertyManagerController;
 import com.brailsoft.property.management.dialog.PreferencesDialog;
 import com.brailsoft.property.management.logging.PropertyManagerLogConfigurer;
+import com.brailsoft.property.management.persistence.ArchiveManager;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
 import com.brailsoft.property.management.preference.PreferencesData;
 import com.brailsoft.property.management.timer.Timer;
@@ -22,6 +23,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -60,9 +63,16 @@ public class PropertyManager extends Application {
 			} catch (Exception e) {
 				LOGGER.warning("Caught exception: " + e.getMessage());
 				LOGGER.exiting(CLASS_NAME, "start");
-				Platform.exit();
-				System.exit(0);
+				performShutdown();
 			}
+		}
+		try {
+			ArchiveManager.getInstance().archive(applicationPreferences.getDirectory());
+		} catch (IOException e) {
+			LOGGER.warning("PropertyManager caught execption " + e);
+			new Alert(AlertType.WARNING, "Unable to archive data. Caught exeception " + e).showAndWait();
+			LOGGER.exiting(CLASS_NAME, "start");
+			performShutdown();
 		}
 		LoadProperty LoadProperty = loadFXML("PropertyManager");
 		Scene scene = new Scene(LoadProperty.getParent());
@@ -76,6 +86,7 @@ public class PropertyManager extends Application {
 		scene.getWindow().setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
+				LOGGER.exiting(CLASS_NAME, "start");
 				performShutdown();
 			}
 		});
@@ -103,10 +114,14 @@ public class PropertyManager extends Application {
 
 	private void performShutdown() {
 		LOGGER.entering(CLASS_NAME, "performShutdown");
-		timer.stop();
+		if (timer != null) {
+			timer.stop();
+		}
 		executor.shutdown();
 		LOGGER.exiting(CLASS_NAME, "performShutdown");
+		PropertyManagerLogConfigurer.shutdown();
 		Platform.exit();
+		System.exit(0);
 	}
 
 	public static LoadProperty loadFXML(String fxml) throws IOException {

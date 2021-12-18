@@ -17,6 +17,7 @@ public class PropertyManagerLogConfigurer {
 	private static final Logger LOGGER = Logger.getLogger(Constants.LOGGER_NAME);
 	private static ApplicationPreferences preferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
 	private static final String LOG_FILE = "property.manager.log";
+	private static FileHandler fileHandler;
 
 	public static void setUp() {
 		Logger parent = LOGGER;
@@ -32,7 +33,7 @@ public class PropertyManagerLogConfigurer {
 		try {
 			String rootDirectory = preferences.getDirectory() + File.separator + LocalStorage.DIRECTORY;
 			String logfileName = rootDirectory + File.separator + LOG_FILE;
-			FileHandler fileHandler = new FileHandler(logfileName, 8192000, 1, false);
+			fileHandler = new FileHandler(logfileName, 8192000, 1, false);
 			fileHandler.setFormatter(new PropertyManagerFormatter());
 			LOGGER.addHandler(fileHandler);
 		} catch (SecurityException e) {
@@ -56,5 +57,10 @@ public class PropertyManagerLogConfigurer {
 		}
 		LogRecord record = new LogRecord(Level.WARNING, "logging level has been set to " + level);
 		LOGGER.log(record);
+	}
+
+	public static void shutdown() {
+		fileHandler.flush();
+		fileHandler.close();
 	}
 }
