@@ -16,7 +16,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.brailsoft.property.management.constants.TestConstants;
+import com.brailsoft.property.management.constant.TestConstants;
 
 class ArchiveManagerTest {
 	private final String FILE_NAME = "property.dat";
