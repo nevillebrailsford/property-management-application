@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="line" type="xs:string" />
+	<xs:element name="description" type="xs:string" />
+	<xs:element name="lastActioned" type="xs:date" />
+	<xs:element name="manufacturer" type="xs:string" />
+	<xs:element name="model" type="xs:string" />
+	<xs:element name="serialnumber" type="xs:string" />
+	<xs:element name="supplier" type="xs:string" />
+	<xs:element name="purchasedate" type="xs:string" />
+
+	<xs:simpleType name="noticeType">
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="1" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="periodType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="WEEKLY" />
+			<xs:enumeration value="MONTHLY" />
+			<xs:enumeration value="YEARLY" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="postcodeType">
+		<xs:restriction base="xs:string">
+			<xs:pattern
+				value="[A-Z]{1,2}[0-9][A-Z0-9]? ?[0-9][A-Z]{2}" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="addressType">
+		<xs:sequence>
+			<xs:element name="postcode" type="postcodeType" />
+			<xs:element ref="line" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="itemType">
+		<xs:sequence>
+			<xs:element ref="description" />
+			<xs:element name="periodfornextaction" type="periodType" />
+			<xs:element name="noticeEvery" type="noticeType" />
+			<xs:element ref="lastActioned" />
+			<xs:element name="advanceNotice" type="noticeType" />
+			<xs:element name="periodForNextNotice" type="periodType" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="inventoryType">
+		<xs:sequence>
+			<xs:element ref="description" />
+			<xs:element ref="manufacturer" minOccurs="0" />
+			<xs:element ref="model" minOccurs="0" />
+			<xs:element ref="serialnumber" minOccurs="0" />
+			<xs:element ref="supplier" minOccurs="0" />
+			<xs:element ref="purchasedate" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="propertyType">
+		<xs:sequence>
+		  <xs:element name="address" type="addressType"/>
+		  <xs:element name="item" type="itemType" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="inventory" type="inventoryType" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:element name="properties">
+	   <xs:complexType>
+	       <xs:sequence>
+	           <xs:element name="property" type="propertyType" minOccurs="0" maxOccurs="unbounded"/>
+	       </xs:sequence>
+	   </xs:complexType>
+	</xs:element>
+
+</xs:schema>
