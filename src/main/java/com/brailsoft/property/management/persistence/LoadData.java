@@ -5,11 +5,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,7 +46,8 @@ public class LoadData extends DataHandler implements Runnable {
 		StorageLock.readLock().lock();
 		LoadingState.startLoading();
 		try {
-			loadArchivedData();
+			Document document = loadArchivedData();
+			readDataFrom(document);
 		} catch (IOException e) {
 			LOGGER.warning("caught exception: " + e.getMessage());
 		} finally {
@@ -54,10 +59,11 @@ public class LoadData extends DataHandler implements Runnable {
 		}
 	}
 
-	private void loadArchivedData() throws IOException {
+	Document loadArchivedData() throws IOException {
+		Document document = null;
 		LOGGER.entering(CLASS_NAME, "loadArchivedData");
 		try (InputStream archive = new BufferedInputStream(new FileInputStream(archiveFile))) {
-			readDataFrom(archive);
+			document = readDataFrom(archive);
 		} catch (Exception e) {
 			LOGGER.warning("caught exception: " + e.getMessage());
 			IOException exc = new IOException("LocalStorage: Exception occurred - " + e.getMessage());
@@ -66,16 +72,25 @@ public class LoadData extends DataHandler implements Runnable {
 		} finally {
 			LOGGER.exiting(CLASS_NAME, "loadArchivedData");
 		}
+		return document;
 	}
 
-	private void readDataFrom(InputStream archive) throws IOException {
+	private Document readDataFrom(InputStream archive) throws IOException {
+		Document document = null;
 		LOGGER.entering(CLASS_NAME, "readDataFrom");
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		documentBuilderFactory.setNamespaceAware(true);
+		SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
 		try {
+			XMLErrorHandler handler = new XMLErrorHandler();
+			URL url = LoadData.class.getResource("property.xsd");
+			documentBuilderFactory
+					.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(url.toExternalForm()) }));
 			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-			Document document = documentBuilder.parse(archive);
+			documentBuilder.setErrorHandler(handler);
+			document = documentBuilder.parse(archive);
+			handler.failFast();
 			document.getDocumentElement().normalize();
-			readDataFrom(document);
 		} catch (ParserConfigurationException e) {
 			LOGGER.warning("Caught exception: " + e.getMessage());
 			IOException exc = new IOException(e.getMessage());
@@ -90,6 +105,7 @@ public class LoadData extends DataHandler implements Runnable {
 			throw exc;
 		}
 		LOGGER.exiting(CLASS_NAME, "readDataFrom");
+		return document;
 	}
 
 	private void readDataFrom(Document document) throws IOException {

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<properties>
+    <property>
+        <item>
+            <description>item1</description>
+            <periodfornextaction>YEARLY</periodfornextaction>
+            <noticeEvery>1</noticeEvery>
+            <lastActioned>2021-10-21</lastActioned>
+            <advanceNotice>1</advanceNotice>
+            <periodForNextNotice>WEEKLY</periodForNextNotice>
+        </item>
+    </property>
+</properties>
