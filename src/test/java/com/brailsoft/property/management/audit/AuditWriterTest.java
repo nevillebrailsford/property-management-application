@@ -24,6 +24,7 @@ class AuditWriterTest {
 	@TempDir
 	File rootDirectory;
 	File applicationDirectory;
+	File auditDirectory;
 	File auditFile;
 
 	@BeforeEach
@@ -32,7 +33,8 @@ class AuditWriterTest {
 		applicationPreferences.setDirectory(rootDirectory.getAbsolutePath());
 		rootDirectory = new File(ApplicationPreferences.getInstance(Constants.NODE_NAME).getDirectory());
 		applicationDirectory = new File(rootDirectory, LocalStorage.DIRECTORY);
-		auditFile = new File(applicationDirectory, AuditWriter.AUDIT_FILE);
+		auditDirectory = new File(applicationDirectory, AuditWriter.AUDIT_DIRECTORY);
+		auditFile = new File(auditDirectory, AuditWriter.AUDIT_FILE);
 	}
 
 	@AfterEach

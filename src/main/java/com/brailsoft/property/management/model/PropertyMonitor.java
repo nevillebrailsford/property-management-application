@@ -320,7 +320,7 @@ public class PropertyMonitor {
 		LOGGER.entering(CLASS_NAME, "updateStorage");
 		try {
 			File rootDirectory = new File(applicationPreferences.getDirectory());
-			LocalStorage.getInstance(rootDirectory).saveArchiveData();
+			LocalStorage.getInstance(rootDirectory).storeData();
 		} catch (IOException e) {
 			LOGGER.warning("Caught exception: " + e.getMessage());
 		}

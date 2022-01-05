@@ -46,7 +46,7 @@ public class LoadData extends DataHandler implements Runnable {
 		StorageLock.readLock().lock();
 		LoadingState.startLoading();
 		try {
-			Document document = loadArchivedData();
+			Document document = loadStoredData();
 			readDataFrom(document);
 		} catch (IOException e) {
 			LOGGER.warning("caught exception: " + e.getMessage());
@@ -59,18 +59,18 @@ public class LoadData extends DataHandler implements Runnable {
 		}
 	}
 
-	Document loadArchivedData() throws IOException {
+	Document loadStoredData() throws IOException {
 		Document document = null;
-		LOGGER.entering(CLASS_NAME, "loadArchivedData");
+		LOGGER.entering(CLASS_NAME, "loadStoredData");
 		try (InputStream archive = new BufferedInputStream(new FileInputStream(archiveFile))) {
 			document = readDataFrom(archive);
 		} catch (Exception e) {
 			LOGGER.warning("caught exception: " + e.getMessage());
 			IOException exc = new IOException("LocalStorage: Exception occurred - " + e.getMessage());
-			LOGGER.throwing(CLASS_NAME, "loadArchivedData", exc);
+			LOGGER.throwing(CLASS_NAME, "loadStoredData", exc);
 			throw exc;
 		} finally {
-			LOGGER.exiting(CLASS_NAME, "loadArchivedData");
+			LOGGER.exiting(CLASS_NAME, "loadStoredData");
 		}
 		return document;
 	}

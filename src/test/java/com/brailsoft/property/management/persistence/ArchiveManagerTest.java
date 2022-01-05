@@ -28,7 +28,12 @@ class ArchiveManagerTest {
 	public void cleanUpFiles() {
 		if (rootDir.exists()) {
 			File targetDir = new File(rootDir, LocalStorage.DIRECTORY);
-			File[] files = targetDir.listFiles();
+			File archiveFile = new File(targetDir, ArchiveManager.ARCHIVE_DIRECTORY);
+			File[] files = archiveFile.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				files[i].delete();
+			}
+			files = targetDir.listFiles();
 			for (int i = 0; i < files.length; i++) {
 				files[i].delete();
 			}
@@ -48,6 +53,7 @@ class ArchiveManagerTest {
 		rootDir.mkdir();
 		File targetDir = new File(rootDir, LocalStorage.DIRECTORY);
 		targetDir.mkdir();
+		File archiveDir = new File(targetDir, ArchiveManager.ARCHIVE_DIRECTORY);
 		File file = new File(targetDir, FILE_NAME);
 		Path newFile = Files.createFile(file.toPath());
 		File f = newFile.toFile();
@@ -56,7 +62,8 @@ class ArchiveManagerTest {
 		ArchiveManager.getInstance().archive(TestConstants.TEST_DIRECTORY);
 		String finish = formatter.format(LocalDateTime.now());
 		assertEquals(2, targetDir.listFiles().length);
-		File[] files = targetDir.listFiles();
+		assertEquals(1, archiveDir.listFiles().length);
+		File[] files = archiveDir.listFiles();
 		for (int i = 0; i < files.length; i++) {
 			assertTrue(files[i].getName().startsWith(FILE_NAME));
 			if (files[i].getName().length() > FILE_NAME.length()) {

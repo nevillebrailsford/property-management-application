@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<properties>
+    <property>
+        <address>
+            <postcode>CW3 9ST</postcode>
+            <line>99 The Street</line>
+            <line>The Town</line>
+            <line>The County</line>
+        </address>
+        <item>
+            <description>item1</description>
+            <periodfornextaction>YEARLY</periodfornextaction>
+            <noticeEvery>1</noticeEvery>
+            <lastActioned>2021-10-21</lastActioned>
+            <advanceNotice>1</advanceNotice>
+            <periodForNextNotice>WEEKLY</periodForNextNotice>
+        </item>
+        <inventory>
+        	<description>description1</description>
+        	<manufacturer>manufacturer1</manufacturer>
+        	<model>model1</model>
+        	<serialnumber>serialnumber1</serialnumber>
+        	<supplier>supplier1</supplier>
+        	<purchasedate>2021-11-19</purchasedate>
+        </inventory>
+    </property>
+</properties>

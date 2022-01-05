@@ -12,6 +12,8 @@ import java.util.logging.Logger;
 import com.brailsoft.property.management.launcher.PropertyManager;
 
 public class ArchiveManager {
+	public static final String ARCHIVE_DIRECTORY = "archive";
+
 	private static final String CLASS_NAME = ArchiveManager.class.getName();
 	private static final Logger LOGGER = Logger.getLogger(PropertyManager.class.getName());
 
@@ -41,7 +43,11 @@ public class ArchiveManager {
 			LOGGER.exiting(CLASS_NAME, "archive");
 			return;
 		}
-		File archiveFile = new File(activeDirectory, LocalStorage.FILE_NAME + formatter.format(LocalDateTime.now()));
+		File archiveDirectory = new File(activeDirectory, ARCHIVE_DIRECTORY);
+		if (!archiveDirectory.exists()) {
+			archiveDirectory.mkdirs();
+		}
+		File archiveFile = new File(archiveDirectory, LocalStorage.FILE_NAME + formatter.format(LocalDateTime.now()));
 		Path activePath = activeFile.toPath();
 		Path archivePath = archiveFile.toPath();
 		try {

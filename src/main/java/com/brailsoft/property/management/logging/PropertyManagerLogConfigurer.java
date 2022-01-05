@@ -10,12 +10,12 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import com.brailsoft.property.management.constant.Constants;
-import com.brailsoft.property.management.persistence.LocalStorage;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
 
 public class PropertyManagerLogConfigurer {
 	private static final Logger LOGGER = Logger.getLogger(Constants.LOGGER_NAME);
 	private static ApplicationPreferences preferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
+	private static final String LOG_DIRECTORY = "property.manager.logs";
 	private static final String LOG_FILE = "property.manager.log";
 	private static FileHandler fileHandler;
 
@@ -30,9 +30,15 @@ public class PropertyManagerLogConfigurer {
 			parent = parent.getParent();
 		}
 
+		String rootDirectory = System.getProperty("user.home") + File.separator + LOG_DIRECTORY + File.separator
+				+ "trace";
+		File f = new File(rootDirectory);
+		if (!f.exists()) {
+			f.mkdirs();
+		}
+		String logfileName = rootDirectory + File.separator + LOG_FILE;
+
 		try {
-			String rootDirectory = preferences.getDirectory() + File.separator + LocalStorage.DIRECTORY;
-			String logfileName = rootDirectory + File.separator + LOG_FILE;
 			fileHandler = new FileHandler(logfileName, 8192000, 1, false);
 			fileHandler.setFormatter(new PropertyManagerFormatter());
 			LOGGER.addHandler(fileHandler);

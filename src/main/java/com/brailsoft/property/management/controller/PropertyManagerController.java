@@ -129,7 +129,7 @@ public class PropertyManagerController implements Initializable {
 		}
 		propertyMonitor.addListener(listener);
 		try {
-			localStorage.loadArchivedData();
+			localStorage.loadStoredData();
 		} catch (IOException e) {
 			if (e.getMessage().startsWith("LocalStorage: archiveFile") && e.getMessage().endsWith("not found")) {
 			} else {
@@ -357,7 +357,7 @@ public class PropertyManagerController implements Initializable {
 					applicationPreferences.setDirectory(newDirectory);
 					removeTabsFromView();
 					resetModelToEmpty();
-					LocalStorage.getInstance(new File(applicationPreferences.getDirectory())).loadArchivedData();
+					LocalStorage.getInstance(new File(applicationPreferences.getDirectory())).loadStoredData();
 				}
 			} catch (BackingStoreException e) {
 				LOGGER.warning("Caught exception: " + e.getMessage());

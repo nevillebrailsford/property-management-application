@@ -86,14 +86,14 @@ class SchemaTest {
 		assertTrue(archiveFile.exists());
 		LoadData loader = new LoadData(archiveFile);
 		assertNotNull(loader);
-		Document document = loader.loadArchivedData();
+		Document document = loader.loadStoredData();
 		assertNotNull(document);
 	}
 
 	@Test
 	void testDocumentIsValidStructure() throws IOException {
 		LoadData loader = new LoadData(archiveFile);
-		Document document = loader.loadArchivedData();
+		Document document = loader.loadStoredData();
 		NodeList list = document.getElementsByTagName("property");
 		assertEquals(1, list.getLength());
 		Element propertyElement = (Element) list.item(0);
@@ -120,7 +120,7 @@ class SchemaTest {
 		assertTrue(propertyComplete.exists());
 		LoadData loader = new LoadData(propertyComplete);
 		assertNotNull(loader);
-		Document document = loader.loadArchivedData();
+		Document document = loader.loadStoredData();
 		assertNotNull(document);
 	}
 
@@ -129,7 +129,7 @@ class SchemaTest {
 		assertTrue(propertyMultipleItems.exists());
 		LoadData loader = new LoadData(propertyMultipleItems);
 		assertNotNull(loader);
-		Document document = loader.loadArchivedData();
+		Document document = loader.loadStoredData();
 		assertNotNull(document);
 	}
 
@@ -138,7 +138,7 @@ class SchemaTest {
 		assertTrue(propertyMultipleInventory.exists());
 		LoadData loader = new LoadData(propertyMultipleInventory);
 		assertNotNull(loader);
-		Document document = loader.loadArchivedData();
+		Document document = loader.loadStoredData();
 		assertNotNull(document);
 	}
 
@@ -147,7 +147,7 @@ class SchemaTest {
 		assertTrue(propertyEmpty.exists());
 		LoadData loader = new LoadData(propertyEmpty);
 		assertNotNull(loader);
-		Document document = loader.loadArchivedData();
+		Document document = loader.loadStoredData();
 		assertNotNull(document);
 	}
 
@@ -156,7 +156,7 @@ class SchemaTest {
 		assertTrue(noProperty.exists());
 		LoadData loader = new LoadData(noProperty);
 		assertNotNull(loader);
-		Document document = loader.loadArchivedData();
+		Document document = loader.loadStoredData();
 		assertNotNull(document);
 	}
 
@@ -165,7 +165,7 @@ class SchemaTest {
 		assertTrue(multiProperty.exists());
 		LoadData loader = new LoadData(multiProperty);
 		assertNotNull(loader);
-		Document document = loader.loadArchivedData();
+		Document document = loader.loadStoredData();
 		assertNotNull(document);
 		NodeList list = document.getElementsByTagName("property");
 		assertEquals(2, list.getLength());
@@ -177,7 +177,7 @@ class SchemaTest {
 		invalidPostCode = new File(url);
 		LoadData loader = new LoadData(invalidPostCode);
 		Exception exc = assertThrows(IOException.class, () -> {
-			loader.loadArchivedData();
+			loader.loadStoredData();
 		});
 		assertTrue(exc.getMessage().endsWith("'postcode' is not valid."));
 	}
@@ -188,7 +188,7 @@ class SchemaTest {
 		duplicateAddress = new File(url);
 		LoadData loader = new LoadData(duplicateAddress);
 		Exception exc = assertThrows(IOException.class, () -> {
-			loader.loadArchivedData();
+			loader.loadStoredData();
 		});
 		assertTrue(exc.getMessage().endsWith("'address'. One of '{item, inventory}' is expected."));
 	}
@@ -199,7 +199,7 @@ class SchemaTest {
 		invalidDate = new File(url);
 		LoadData loader = new LoadData(invalidDate);
 		Exception exc = assertThrows(IOException.class, () -> {
-			loader.loadArchivedData();
+			loader.loadStoredData();
 		});
 		assertTrue(exc.getMessage().endsWith("'lastActioned' is not valid."));
 	}
@@ -210,7 +210,7 @@ class SchemaTest {
 		invalidPeriod = new File(url);
 		LoadData loader = new LoadData(invalidPeriod);
 		Exception exc = assertThrows(IOException.class, () -> {
-			loader.loadArchivedData();
+			loader.loadStoredData();
 		});
 		assertTrue(exc.getMessage().endsWith("'periodForNextNotice' is not valid."));
 	}
@@ -221,7 +221,7 @@ class SchemaTest {
 		missingAddress = new File(url);
 		LoadData loader = new LoadData(missingAddress);
 		Exception exc = assertThrows(IOException.class, () -> {
-			loader.loadArchivedData();
+			loader.loadStoredData();
 		});
 		assertTrue(exc.getMessage().endsWith("One of '{address}' is expected."));
 	}
@@ -232,7 +232,7 @@ class SchemaTest {
 		missingDescription = new File(url);
 		LoadData loader = new LoadData(missingDescription);
 		Exception exc = assertThrows(IOException.class, () -> {
-			loader.loadArchivedData();
+			loader.loadStoredData();
 		});
 		assertTrue(exc.getMessage().endsWith("One of '{description}' is expected."));
 	}
