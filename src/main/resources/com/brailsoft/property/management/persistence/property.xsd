@@ -7,7 +7,7 @@
 	<xs:element name="model" type="xs:string" />
 	<xs:element name="serialnumber" type="xs:string" />
 	<xs:element name="supplier" type="xs:string" />
-	<xs:element name="purchasedate" type="xs:string" />
+	<xs:element name="purchasedate" type="xs:date" />
 
 	<xs:simpleType name="noticeType">
 		<xs:restriction base="xs:integer">

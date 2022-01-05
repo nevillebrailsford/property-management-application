@@ -29,7 +29,7 @@
             <model>model1</model>
             <serialnumber>serialnumber1</serialnumber>
             <supplier>supplier1</supplier>
-            <purchasedate>29/11/2021</purchasedate>
+            <purchasedate>2021-11-29</purchasedate>
         </inventory>
     </property>
 </properties>
