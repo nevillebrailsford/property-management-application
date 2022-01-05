@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.brailsoft.property.management.constant.Constants;
 import com.brailsoft.property.management.constant.DateFormats;
@@ -17,6 +18,7 @@ import javafx.beans.property.StringProperty;
 
 public class InventoryItem implements Comparable<InventoryItem> {
 	private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(DateFormats.dateFormatForUI);
+	private DateTimeFormatter storageFormatter = DateTimeFormatter.ofPattern(DateFormats.dateFormatForStorage);
 
 	private StringProperty description = new SimpleStringProperty(this, "description", "");
 	private StringProperty manufacturer = new SimpleStringProperty(this, "manufacturuer", "");
@@ -45,7 +47,7 @@ public class InventoryItem implements Comparable<InventoryItem> {
 		}
 		String purchaseDate;
 		if (purchaseDateAsDate == null) {
-			purchaseDate = "Unknown";
+			purchaseDate = "";
 		} else {
 			purchaseDate = purchaseDateAsDate.format(dateFormatter);
 		}
@@ -74,13 +76,26 @@ public class InventoryItem implements Comparable<InventoryItem> {
 			throw new IllegalArgumentException("InventoryItem: itemElement was null");
 		}
 		String description = itemElement.getElementsByTagName(Constants.DESCRIPTION).item(0).getTextContent();
-		String manufacturer = itemElement.getElementsByTagName(Constants.MANUFACTURER).item(0).getTextContent();
-		String model = itemElement.getElementsByTagName(Constants.MODEL).item(0).getTextContent();
-		String serialNumber = itemElement.getElementsByTagName(Constants.SERIAL_NUMBER).item(0).getTextContent();
-		String supplier = itemElement.getElementsByTagName(Constants.SUPPLIER).item(0).getTextContent();
-		String purchaseDate = itemElement.getElementsByTagName(Constants.PURCHASE_DATE).item(0).getTextContent();
+		String manufacturer = textContent(itemElement, Constants.MANUFACTURER);
+		String model = textContent(itemElement, Constants.MODEL);
+		String serialNumber = textContent(itemElement, Constants.SERIAL_NUMBER);
+		String supplier = textContent(itemElement, Constants.SUPPLIER);
+		String purchaseDate = textContent(itemElement, Constants.PURCHASE_DATE);
+		if (!purchaseDate.isEmpty()) {
+			LocalDate lDate = LocalDate.parse(purchaseDate, storageFormatter);
+			purchaseDate = lDate.format(dateFormatter);
+		}
 
 		initialize(description, manufacturer, model, serialNumber, supplier, purchaseDate);
+	}
+
+	private String textContent(Element itemElement, String tag) {
+		String result = "";
+		NodeList list = itemElement.getElementsByTagName(tag);
+		if (list.getLength() == 1) {
+			result = list.item(0).getTextContent();
+		}
+		return result;
 	}
 
 	public Element buildElement(Document document) {
@@ -89,11 +104,23 @@ public class InventoryItem implements Comparable<InventoryItem> {
 		}
 		Element result = document.createElement(Constants.INVENTORY);
 		result.appendChild(ElementBuilder.build(Constants.DESCRIPTION, getDescription(), document));
-		result.appendChild(ElementBuilder.build(Constants.MANUFACTURER, getManufacturer(), document));
-		result.appendChild(ElementBuilder.build(Constants.MODEL, getModel(), document));
-		result.appendChild(ElementBuilder.build(Constants.SERIAL_NUMBER, getSerialNumber(), document));
-		result.appendChild(ElementBuilder.build(Constants.SUPPLIER, getSupplier(), document));
-		result.appendChild(ElementBuilder.build(Constants.PURCHASE_DATE, getPurchaseDate(), document));
+		if (!getManufacturer().isEmpty()) {
+			result.appendChild(ElementBuilder.build(Constants.MANUFACTURER, getManufacturer(), document));
+		}
+		if (!getModel().isEmpty()) {
+			result.appendChild(ElementBuilder.build(Constants.MODEL, getModel(), document));
+		}
+		if (!getSerialNumber().isEmpty()) {
+			result.appendChild(ElementBuilder.build(Constants.SERIAL_NUMBER, getSerialNumber(), document));
+		}
+		if (!getSupplier().isEmpty()) {
+			result.appendChild(ElementBuilder.build(Constants.SUPPLIER, getSupplier(), document));
+		}
+		if (!getPurchaseDate().isEmpty()) {
+			LocalDate lDate = LocalDate.parse(getPurchaseDate(), dateFormatter);
+			String dateForStorage = lDate.format(storageFormatter);
+			result.appendChild(ElementBuilder.build(Constants.PURCHASE_DATE, dateForStorage, document));
+		}
 		return result;
 	}
 
