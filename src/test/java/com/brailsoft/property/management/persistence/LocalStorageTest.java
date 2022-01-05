@@ -94,11 +94,11 @@ public class LocalStorageTest {
 	}
 
 	@Test
-	void testLoadArchivedData() throws IOException, InterruptedException {
+	void testLoadStoredData() throws IOException, InterruptedException {
 		File parent = new File(getTestDirectory());
 		assertEquals(0, PropertyMonitor.getInstance().getProperties().size());
 		synchronized (waitForIO) {
-			LocalStorage.getInstance(parent).loadArchivedData();
+			LocalStorage.getInstance(parent).loadStoredData();
 			waitForIO.wait();
 		}
 		assertEquals(1, PropertyMonitor.getInstance().getProperties().size());
@@ -115,7 +115,7 @@ public class LocalStorageTest {
 	}
 
 	@Test
-	void testSaveArchiveData() throws IOException, InterruptedException {
+	void testStoreData() throws IOException, InterruptedException {
 		property.addItem(testItem);
 		property.addItem(testInventory);
 		synchronized (waitForIO) {
@@ -130,7 +130,7 @@ public class LocalStorageTest {
 	void testGetDirectory() {
 		LocalStorage ls = LocalStorage.getInstance(rootDirectory);
 		assertEquals(ls.getDirectory().getAbsolutePath(),
-				rootDirectory.getAbsolutePath() + File.separator + LocalStorage.DIRECTORY);
+				rootDirectory.getAbsolutePath() + File.separator + LocalStorage.DIRECTORY + File.separator + "model");
 	}
 
 	private boolean fileExistsAndIsValid(File file, int expectedCount) {

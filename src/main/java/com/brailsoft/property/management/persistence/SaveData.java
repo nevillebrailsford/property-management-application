@@ -50,7 +50,7 @@ public class SaveData extends DataHandler implements Runnable {
 		StorageLock.readLock().unlock();
 		StorageLock.writeLock().lock();
 		try {
-			saveArchiveData();
+			storeData();
 		} catch (IOException e) {
 			LOGGER.warning("caught exception: " + e.getMessage());
 			e.printStackTrace();
@@ -61,17 +61,17 @@ public class SaveData extends DataHandler implements Runnable {
 		}
 	}
 
-	private void saveArchiveData() throws IOException {
-		LOGGER.entering(CLASS_NAME, "saveArchivedData");
+	private void storeData() throws IOException {
+		LOGGER.entering(CLASS_NAME, "storeData");
 		try (OutputStream archive = new BufferedOutputStream(new FileOutputStream(archiveFile))) {
 			writeDataTo(archive);
 		} catch (Exception e) {
 			e.printStackTrace();
 			IOException exc = new IOException("LocalStorage: Exception occurred - " + e.getMessage());
-			LOGGER.throwing(CLASS_NAME, "saveArchivedData", exc);
+			LOGGER.throwing(CLASS_NAME, "storeData", exc);
 			throw exc;
 		} finally {
-			LOGGER.exiting(CLASS_NAME, "saveArchivedData");
+			LOGGER.exiting(CLASS_NAME, "storeData");
 		}
 	}
 

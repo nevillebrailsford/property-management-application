@@ -38,21 +38,21 @@ public class LocalStorage {
 
 	private void updateDirectory(File directory) {
 		LOGGER.entering(CLASS_NAME, "updateDirectory", directory);
-		this.directory = directory;
-		if (!directory.exists()) {
-			directory.mkdirs();
+		this.directory = new File(directory, "model");
+		if (!this.directory.exists()) {
+			this.directory.mkdirs();
 		}
 		LOGGER.exiting(CLASS_NAME, "updateDirectory");
 	}
 
-	public void loadArchivedData() throws IOException {
-		LOGGER.entering(CLASS_NAME, "loadArchivedData");
+	public void loadStoredData() throws IOException {
+		LOGGER.entering(CLASS_NAME, "loadStoredData");
 		File archiveFile = new File(directory, FILE_NAME);
 		if (!archiveFile.exists()) {
 			IOException exc = new IOException(
 					"LocalStorage: archiveFile " + archiveFile.getAbsolutePath() + " not found");
-			LOGGER.throwing(CLASS_NAME, "loadArchivedData", exc);
-			LOGGER.exiting(CLASS_NAME, "loadArchivedData");
+			LOGGER.throwing(CLASS_NAME, "loadStoredData", exc);
+			LOGGER.exiting(CLASS_NAME, "loadStoredData");
 			throw exc;
 		}
 		LoadData worker = new LoadData(archiveFile);
@@ -60,12 +60,12 @@ public class LocalStorage {
 		LOGGER.exiting(CLASS_NAME, "loadArchivedData");
 	}
 
-	public void saveArchiveData() throws IOException {
-		LOGGER.entering(CLASS_NAME, "saveArchivedData");
+	public void storeData() throws IOException {
+		LOGGER.entering(CLASS_NAME, "storeData");
 		File archiveFile = new File(directory, FILE_NAME);
 		SaveData worker = new SaveData(archiveFile);
 		executor.execute(worker);
-		LOGGER.exiting(CLASS_NAME, "saveArchivedData");
+		LOGGER.exiting(CLASS_NAME, "storeData");
 	}
 
 	public File getDirectory() {
