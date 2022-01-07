@@ -16,6 +16,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.brailsoft.property.management.constant.Constants;
 import com.brailsoft.property.management.constant.TestConstants;
 
 class ArchiveManagerTest {
@@ -28,7 +29,7 @@ class ArchiveManagerTest {
 	public void cleanUpFiles() {
 		if (rootDir.exists()) {
 			File targetDir = new File(rootDir, LocalStorage.DIRECTORY);
-			File archiveFile = new File(targetDir, ArchiveManager.ARCHIVE_DIRECTORY);
+			File archiveFile = new File(targetDir, Constants.ARCHIVE_DIRECTORY);
 			File[] files = archiveFile.listFiles();
 			for (int i = 0; i < files.length; i++) {
 				files[i].delete();
@@ -53,7 +54,7 @@ class ArchiveManagerTest {
 		rootDir.mkdir();
 		File targetDir = new File(rootDir, LocalStorage.DIRECTORY);
 		targetDir.mkdir();
-		File archiveDir = new File(targetDir, ArchiveManager.ARCHIVE_DIRECTORY);
+		File archiveDir = new File(targetDir, Constants.ARCHIVE_DIRECTORY);
 		File file = new File(targetDir, FILE_NAME);
 		Path newFile = Files.createFile(file.toPath());
 		File f = newFile.toFile();

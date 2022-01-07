@@ -38,7 +38,7 @@ public class LocalStorage {
 
 	private void updateDirectory(File directory) {
 		LOGGER.entering(CLASS_NAME, "updateDirectory", directory);
-		this.directory = new File(directory, "model");
+		this.directory = new File(directory, Constants.MODEL_DIRECTORY);
 		if (!this.directory.exists()) {
 			this.directory.mkdirs();
 		}

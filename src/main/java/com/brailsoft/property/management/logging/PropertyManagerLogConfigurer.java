@@ -15,8 +15,6 @@ import com.brailsoft.property.management.preference.ApplicationPreferences;
 public class PropertyManagerLogConfigurer {
 	private static final Logger LOGGER = Logger.getLogger(Constants.LOGGER_NAME);
 	private static ApplicationPreferences preferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
-	private static final String LOG_DIRECTORY = "property.manager.logs";
-	private static final String LOG_FILE = "property.manager.log";
 	private static FileHandler fileHandler;
 
 	public static void setUp() {
@@ -30,16 +28,10 @@ public class PropertyManagerLogConfigurer {
 			parent = parent.getParent();
 		}
 
-		String rootDirectory = System.getProperty("user.home") + File.separator + LOG_DIRECTORY + File.separator
-				+ "trace";
-		File f = new File(rootDirectory);
-		if (!f.exists()) {
-			f.mkdirs();
-		}
-		String logfileName = rootDirectory + File.separator + LOG_FILE;
+		String logfileName = new File(preferences.getTraceDirectory(), Constants.LOG_FILE).getAbsolutePath();
 
 		try {
-			fileHandler = new FileHandler(logfileName, 8192000, 1, false);
+			fileHandler = new FileHandler(logfileName, 1000000000l, 1, false);
 			fileHandler.setFormatter(new PropertyManagerFormatter());
 			LOGGER.addHandler(fileHandler);
 		} catch (SecurityException e) {

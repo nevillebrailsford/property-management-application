@@ -197,7 +197,7 @@ public class InventoryItem implements Comparable<InventoryItem> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(manufacturer.get(), model.get(), serialNumber.get());
+		return Objects.hash(description.get());
 	}
 
 	@Override
@@ -209,9 +209,7 @@ public class InventoryItem implements Comparable<InventoryItem> {
 		if (getClass() != obj.getClass())
 			return false;
 		InventoryItem other = (InventoryItem) obj;
-		return Objects.equals(manufacturer.get(), other.manufacturer.get())
-				&& Objects.equals(model.get(), other.model.get())
-				&& Objects.equals(serialNumber.get(), other.serialNumber.get());
+		return Objects.equals(description.get(), other.description.get());
 	}
 
 	@Override

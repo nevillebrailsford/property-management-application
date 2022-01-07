@@ -28,4 +28,13 @@ public class Constants {
 	public static final String SERIAL_NUMBER = "serialnumber";
 	public static final String SUPPLIER = "supplier";
 	public static final String PURCHASE_DATE = "purchasedate";
+
+	public static final String AUDIT_DIRECTORY = "audit";
+	public static final String AUDIT_FILE = "application.audit";
+
+	public static final String LOG_DIRECTORY = "property.manager.logs";
+	public static final String LOG_FILE = "property.manager.log";
+	public static final String TRACE_DIRECTORY = "trace";
+	public static final String ARCHIVE_DIRECTORY = "archive";
+	public static final String MODEL_DIRECTORY = "model";
 }

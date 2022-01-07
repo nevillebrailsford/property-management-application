@@ -1,8 +1,12 @@
 package com.brailsoft.property.management.preference;
 
+import java.io.File;
 import java.util.logging.Level;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+
+import com.brailsoft.property.management.constant.Constants;
+import com.brailsoft.property.management.persistence.LocalStorage;
 
 public class ApplicationPreferences {
 	private static final String DIRECTORY_NAME = "directory.name";
@@ -19,6 +23,42 @@ public class ApplicationPreferences {
 			instance = new ApplicationPreferences(nodeName);
 		}
 		return instance;
+	}
+
+	public File getAuditDirectory() {
+		File rootDirectory = new File(getDirectory());
+		File applicationDirectory = new File(rootDirectory, LocalStorage.DIRECTORY);
+		File auditDirectory = new File(applicationDirectory, Constants.AUDIT_DIRECTORY);
+		if (!auditDirectory.exists()) {
+			auditDirectory.mkdirs();
+		}
+		return auditDirectory;
+	}
+
+	public File getTraceDirectory() {
+		File rootDirectory = new File(System.getProperty("user.home"));
+		File logDirectory = new File(rootDirectory, Constants.LOG_DIRECTORY);
+		File traceDirectory = new File(logDirectory, Constants.TRACE_DIRECTORY);
+		if (!traceDirectory.exists()) {
+			traceDirectory.mkdirs();
+		}
+		return traceDirectory;
+	}
+
+	public File getActiveDirectory(String directory) {
+		File rootDirectory = new File(directory);
+		File activeDirectory = new File(rootDirectory, LocalStorage.DIRECTORY);
+		return activeDirectory;
+	}
+
+	public File getArchiveDirectory(String directory) {
+		File rootDirectory = new File(directory);
+		File activeDirectory = new File(rootDirectory, LocalStorage.DIRECTORY);
+		File archiveDirectory = new File(activeDirectory, Constants.ARCHIVE_DIRECTORY);
+		if (!archiveDirectory.exists()) {
+			archiveDirectory.mkdirs();
+		}
+		return archiveDirectory;
 	}
 
 	private ApplicationPreferences(String nodeName) {
