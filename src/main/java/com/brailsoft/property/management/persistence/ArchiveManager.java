@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.logging.Logger;
 
+import com.brailsoft.property.management.constant.Constants;
 import com.brailsoft.property.management.launcher.PropertyManager;
+import com.brailsoft.property.management.preference.ApplicationPreferences;
 
 public class ArchiveManager {
-	public static final String ARCHIVE_DIRECTORY = "archive";
-
 	private static final String CLASS_NAME = ArchiveManager.class.getName();
 	private static final Logger LOGGER = Logger.getLogger(PropertyManager.class.getName());
 
@@ -36,17 +36,13 @@ public class ArchiveManager {
 			LOGGER.exiting(CLASS_NAME, "archive");
 			throw new InvalidParameterException("ArchiveManager: directory was null");
 		}
-		File rootDirectory = new File(directory);
-		File activeDirectory = new File(rootDirectory, LocalStorage.DIRECTORY);
+		File activeDirectory = ApplicationPreferences.getInstance(Constants.NODE_NAME).getActiveDirectory(directory);
 		File activeFile = new File(activeDirectory, LocalStorage.FILE_NAME);
 		if (!activeFile.exists()) {
 			LOGGER.exiting(CLASS_NAME, "archive");
 			return;
 		}
-		File archiveDirectory = new File(activeDirectory, ARCHIVE_DIRECTORY);
-		if (!archiveDirectory.exists()) {
-			archiveDirectory.mkdirs();
-		}
+		File archiveDirectory = ApplicationPreferences.getInstance(Constants.NODE_NAME).getArchiveDirectory(directory);
 		File archiveFile = new File(archiveDirectory, LocalStorage.FILE_NAME + formatter.format(LocalDateTime.now()));
 		Path activePath = activeFile.toPath();
 		Path archivePath = archiveFile.toPath();

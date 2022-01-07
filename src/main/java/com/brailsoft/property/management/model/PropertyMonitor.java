@@ -119,10 +119,17 @@ public class PropertyMonitor {
 			LOGGER.exiting(CLASS_NAME, "addProperty");
 			throw exc;
 		}
-		properties.add(new Property(newProperty));
-		StatusMonitor.getInstance().update("Property " + newProperty + " added");
-		updateStorage();
-		LOGGER.exiting(CLASS_NAME, "addProperty");
+		try {
+			properties.add(new Property(newProperty));
+			StatusMonitor.getInstance().update("Property " + newProperty + " added");
+			updateStorage();
+		} catch (Exception e) {
+			LOGGER.warning("Caught exception: " + e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "addProperty", e);
+			throw e;
+		} finally {
+			LOGGER.exiting(CLASS_NAME, "addProperty");
+		}
 	}
 
 	public synchronized void replaceProperty(Property oldProperty, Property newProperty) {
@@ -147,11 +154,18 @@ public class PropertyMonitor {
 			LOGGER.exiting(CLASS_NAME, "replaceProperty");
 			throw exc;
 		}
-		properties.remove(oldProperty);
-		properties.add(newProperty);
-		updateStorage();
-		StatusMonitor.getInstance().update("Property " + newProperty + " replaced");
-		LOGGER.exiting(CLASS_NAME, "replaceProperty");
+		try {
+			properties.remove(oldProperty);
+			properties.add(newProperty);
+			updateStorage();
+			StatusMonitor.getInstance().update("Property " + newProperty + " replaced");
+		} catch (Exception e) {
+			LOGGER.warning("Caught exception: " + e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "replaceProperty", e);
+			throw e;
+		} finally {
+			LOGGER.exiting(CLASS_NAME, "replaceProperty");
+		}
 	}
 
 	public synchronized void removeProperty(Property oldProperty) {
@@ -169,10 +183,17 @@ public class PropertyMonitor {
 			LOGGER.exiting(CLASS_NAME, "removeProperty");
 			throw exc;
 		}
-		properties.remove(oldProperty);
-		updateStorage();
-		StatusMonitor.getInstance().update("Property " + oldProperty + " deleted");
-		LOGGER.exiting(CLASS_NAME, "removeProperty");
+		try {
+			properties.remove(oldProperty);
+			updateStorage();
+			StatusMonitor.getInstance().update("Property " + oldProperty + " deleted");
+		} catch (Exception e) {
+			LOGGER.warning("Caught exception: " + e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "removeProperty", e);
+			throw e;
+		} finally {
+			LOGGER.exiting(CLASS_NAME, "removeProperty");
+		}
 	}
 
 	public synchronized void addItem(MonitoredItem monitoredItem) {
@@ -197,10 +218,17 @@ public class PropertyMonitor {
 			LOGGER.exiting(CLASS_NAME, "addItem");
 			throw exc;
 		}
-		findProperty(property).addItem(monitoredItem);
-		updateStorage();
-		StatusMonitor.getInstance().update("Event " + monitoredItem + " added");
-		LOGGER.exiting(CLASS_NAME, "addItem");
+		try {
+			findProperty(property).addItem(monitoredItem);
+			updateStorage();
+			StatusMonitor.getInstance().update("Event " + monitoredItem + " added");
+		} catch (Exception e) {
+			LOGGER.warning("Caught exception: " + e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "addItem", e);
+			throw e;
+		} finally {
+			LOGGER.exiting(CLASS_NAME, "addItem");
+		}
 	}
 
 	public synchronized void replaceItem(MonitoredItem monitoredItem) {
@@ -225,10 +253,17 @@ public class PropertyMonitor {
 			LOGGER.exiting(CLASS_NAME, "replaceItem");
 			throw exc;
 		}
-		findProperty(property).replaceItem(monitoredItem);
-		updateStorage();
-		StatusMonitor.getInstance().update("Event " + monitoredItem + " updated");
-		LOGGER.exiting(CLASS_NAME, "replaceItem");
+		try {
+			findProperty(property).replaceItem(monitoredItem);
+			updateStorage();
+			StatusMonitor.getInstance().update("Event " + monitoredItem + " updated");
+		} catch (Exception e) {
+			LOGGER.warning("Caught exception: " + e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "replaceItem", e);
+			throw e;
+		} finally {
+			LOGGER.exiting(CLASS_NAME, "replaceItem");
+		}
 	}
 
 	public synchronized void removeItem(MonitoredItem monitoredItem) {
@@ -253,11 +288,17 @@ public class PropertyMonitor {
 			LOGGER.exiting(CLASS_NAME, "removeItem");
 			throw exc;
 		}
-		findProperty(property).removeItem(monitoredItem);
-		updateStorage();
-		StatusMonitor.getInstance().update("Event " + monitoredItem + " deleted");
-
-		LOGGER.exiting(CLASS_NAME, "removeItem");
+		try {
+			findProperty(property).removeItem(monitoredItem);
+			updateStorage();
+			StatusMonitor.getInstance().update("Event " + monitoredItem + " deleted");
+		} catch (Exception e) {
+			LOGGER.warning("Caught exception: " + e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "removeItem", e);
+			throw e;
+		} finally {
+			LOGGER.exiting(CLASS_NAME, "removeItem");
+		}
 	}
 
 	public synchronized void addItem(InventoryItem inventoryItem) {
@@ -282,10 +323,17 @@ public class PropertyMonitor {
 			LOGGER.exiting(CLASS_NAME, "addItem");
 			throw exc;
 		}
-		findProperty(property).addItem(inventoryItem);
-		updateStorage();
-		StatusMonitor.getInstance().update("Inventory Item " + inventoryItem + " added");
-		LOGGER.exiting(CLASS_NAME, "addItem");
+		try {
+			findProperty(property).addItem(inventoryItem);
+			updateStorage();
+			StatusMonitor.getInstance().update("Inventory Item " + inventoryItem + " added");
+		} catch (Exception e) {
+			LOGGER.warning("Caught exception: " + e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "addItem", e);
+			throw e;
+		} finally {
+			LOGGER.exiting(CLASS_NAME, "addItem");
+		}
 	}
 
 	public synchronized void removeItem(InventoryItem inventoryItem) {
@@ -310,10 +358,17 @@ public class PropertyMonitor {
 			LOGGER.exiting(CLASS_NAME, "removeItem");
 			throw exc;
 		}
-		findProperty(property).removeItem(inventoryItem);
-		updateStorage();
-		StatusMonitor.getInstance().update("Inventory Item " + inventoryItem + " deleted");
-		LOGGER.exiting(CLASS_NAME, "removeItem");
+		try {
+			findProperty(property).removeItem(inventoryItem);
+			updateStorage();
+			StatusMonitor.getInstance().update("Inventory Item " + inventoryItem + " deleted");
+		} catch (Exception e) {
+			LOGGER.warning("Caught exception: " + e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "removeItem", e);
+			throw e;
+		} finally {
+			LOGGER.exiting(CLASS_NAME, "removeItem");
+		}
 	}
 
 	private void updateStorage() {

@@ -33,8 +33,8 @@ class AuditWriterTest {
 		applicationPreferences.setDirectory(rootDirectory.getAbsolutePath());
 		rootDirectory = new File(ApplicationPreferences.getInstance(Constants.NODE_NAME).getDirectory());
 		applicationDirectory = new File(rootDirectory, LocalStorage.DIRECTORY);
-		auditDirectory = new File(applicationDirectory, AuditWriter.AUDIT_DIRECTORY);
-		auditFile = new File(auditDirectory, AuditWriter.AUDIT_FILE);
+		auditDirectory = new File(applicationDirectory, Constants.AUDIT_DIRECTORY);
+		auditFile = new File(auditDirectory, Constants.AUDIT_FILE);
 	}
 
 	@AfterEach
