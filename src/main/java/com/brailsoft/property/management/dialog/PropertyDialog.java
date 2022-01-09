@@ -46,7 +46,8 @@ public class PropertyDialog extends Dialog<Property> {
 		getDialogPane().setContent(grid);
 
 		ButtonType buttonTypeOk = new ButtonType("Add Property", ButtonData.OK_DONE);
-		getDialogPane().getButtonTypes().add(buttonTypeOk);
+		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.NO);
+		getDialogPane().getButtonTypes().addAll(buttonTypeOk, buttonTypeCancel);
 		getDialogPane().lookupButton(buttonTypeOk).disableProperty().bind(invalidInputProperty());
 
 		setResultConverter(new Callback<ButtonType, Property>() {

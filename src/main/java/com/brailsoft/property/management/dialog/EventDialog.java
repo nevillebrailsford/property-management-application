@@ -67,7 +67,8 @@ public class EventDialog extends Dialog<MonitoredItem> {
 		getDialogPane().setContent(grid);
 
 		ButtonType buttonTypeOk = new ButtonType("Add Event", ButtonData.OK_DONE);
-		getDialogPane().getButtonTypes().add(buttonTypeOk);
+		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.NO);
+		getDialogPane().getButtonTypes().addAll(buttonTypeOk, buttonTypeCancel);
 		getDialogPane().lookupButton(buttonTypeOk).disableProperty().bind(invalidInputProperty());
 
 		lastAction.setValue(LocalDate.now());

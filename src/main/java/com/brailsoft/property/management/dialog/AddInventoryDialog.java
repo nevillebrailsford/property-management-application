@@ -31,12 +31,13 @@ public class AddInventoryDialog extends Dialog<InventoryItem> {
 		setHeaderText("Enter the details below to add a new item to the inventory.");
 		setResizable(true);
 
-		Label label1 = new Label("Description:");
+		Label label1 = new Label("Description*:");
 		Label label2 = new Label("Manufacturer:");
 		Label label3 = new Label("Model:");
 		Label label4 = new Label("Serial Number:");
 		Label label5 = new Label("Supplier:");
 		Label label6 = new Label("Date Purchased:");
+		Label label7 = new Label("* description must be specified");
 
 		GridPane grid = new GridPane();
 		grid.setHgap(10.0);
@@ -53,11 +54,13 @@ public class AddInventoryDialog extends Dialog<InventoryItem> {
 		grid.add(supplier, 2, 5);
 		grid.add(label6, 1, 6);
 		grid.add(purchasedate, 2, 6);
+		grid.add(label7, 1, 7, 2, 1);
 
 		getDialogPane().setContent(grid);
 
 		ButtonType buttonTypeOk = new ButtonType("Add Item", ButtonData.OK_DONE);
-		getDialogPane().getButtonTypes().add(buttonTypeOk);
+		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.NO);
+		getDialogPane().getButtonTypes().addAll(buttonTypeOk, buttonTypeCancel);
 		getDialogPane().lookupButton(buttonTypeOk).disableProperty().bind(invalidInputProperty());
 
 		setResultConverter(new Callback<ButtonType, InventoryItem>() {
