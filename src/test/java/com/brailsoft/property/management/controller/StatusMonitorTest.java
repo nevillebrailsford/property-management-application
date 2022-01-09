@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.brailsoft.property.management.constant.TestConstants;
+import com.brailsoft.property.management.logging.PropertyManagerLogConfigurer;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
 
 import javafx.application.Platform;
@@ -26,7 +27,7 @@ class StatusMonitorTest {
 			});
 		} catch (IllegalStateException e) {
 		}
-		preferences.setLevel(Level.OFF);
+		PropertyManagerLogConfigurer.changeLevel(Level.OFF);
 	}
 
 	@AfterAll

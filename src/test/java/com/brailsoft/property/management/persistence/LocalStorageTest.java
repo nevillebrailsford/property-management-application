@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.logging.Level;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import com.brailsoft.property.management.constant.TestConstants;
+import com.brailsoft.property.management.logging.PropertyManagerLogConfigurer;
 import com.brailsoft.property.management.model.Address;
 import com.brailsoft.property.management.model.InventoryItem;
 import com.brailsoft.property.management.model.MonitoredItem;
@@ -61,6 +63,7 @@ public class LocalStorageTest {
 			});
 		} catch (IllegalStateException e) {
 		}
+		PropertyManagerLogConfigurer.changeLevel(Level.OFF);
 	}
 
 	@AfterAll

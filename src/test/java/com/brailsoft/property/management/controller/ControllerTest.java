@@ -3,6 +3,7 @@ package com.brailsoft.property.management.controller;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import com.brailsoft.property.management.constant.TestConstants;
 import com.brailsoft.property.management.launcher.PropertyManager;
+import com.brailsoft.property.management.logging.PropertyManagerLogConfigurer;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
 
 import javafx.application.Platform;
@@ -25,6 +27,7 @@ class ControllerTest {
 		} catch (IllegalStateException e) {
 		}
 		ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
+		PropertyManagerLogConfigurer.changeLevel(Level.OFF);
 	}
 
 	@AfterEach
