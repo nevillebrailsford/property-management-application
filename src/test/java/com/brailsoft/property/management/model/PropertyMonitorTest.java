@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import com.brailsoft.property.management.constant.TestConstants;
+import com.brailsoft.property.management.logging.PropertyManagerLogConfigurer;
 import com.brailsoft.property.management.persistence.LocalStorage;
 import com.brailsoft.property.management.persistence.SaveData;
 import com.brailsoft.property.management.persistence.StorageListener;
@@ -62,7 +63,7 @@ class PropertyMonitorTest {
 			});
 		} catch (IllegalStateException e) {
 		}
-		preferences.setLevel(Level.OFF);
+		PropertyManagerLogConfigurer.changeLevel(Level.OFF);
 	}
 
 	@AfterAll
