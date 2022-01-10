@@ -38,6 +38,8 @@ import com.brailsoft.property.management.userinterface.CalendarView;
 import com.brailsoft.property.management.userinterface.PropertyTab;
 
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -62,6 +64,8 @@ public class PropertyManagerController implements Initializable {
 	private File rootDirectory = new File(applicationPreferences.getDirectory());
 	private LocalStorage localStorage = LocalStorage.getInstance(rootDirectory);
 	private PropertyMonitor propertyMonitor = PropertyMonitor.getInstance();
+
+	private BooleanProperty propertiesExist = new SimpleBooleanProperty(this, "propertiesExist", false);
 
 	@FXML
 	private MenuItem addProperty;
@@ -116,6 +120,7 @@ public class PropertyManagerController implements Initializable {
 					});
 				}
 			}
+			updatePropertiesExist();
 		}
 	};
 
@@ -138,6 +143,11 @@ public class PropertyManagerController implements Initializable {
 		}
 		undo.disableProperty().bind(ChangeManager.getInstance().undoableProperty().not());
 		redo.disableProperty().bind(ChangeManager.getInstance().redoableProperty().not());
+		addItem.disableProperty().bind(propertiesExist.not());
+		addInventory.disableProperty().bind(propertiesExist.not());
+		deleteProperty.disableProperty().bind(propertiesExist.not());
+		deleteItem.disableProperty().bind(propertiesExist.not());
+		deleteInventory.disableProperty().bind(propertiesExist.not());
 	}
 
 	public void setPropertyManager(PropertyManager propertyManager) {
@@ -152,7 +162,7 @@ public class PropertyManagerController implements Initializable {
 	void about(ActionEvent event) {
 		LOGGER.entering(CLASS_NAME, "about");
 		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setContentText("Property Management \nVersion 1.0.0\nBuild date: 16/12/2021");
+		alert.setContentText("Property Management \nVersion 1.0.0\nBuild date: 10/01/2022");
 		alert.setTitle("About Property Management");
 		alert.setHeaderText("Property Management");
 		alert.showAndWait();
@@ -415,4 +425,7 @@ public class PropertyManagerController implements Initializable {
 		return property;
 	}
 
+	private void updatePropertiesExist() {
+		propertiesExist.set(!tabPane.getTabs().isEmpty());
+	}
 }
