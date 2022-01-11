@@ -126,19 +126,25 @@ public class PropertyManagerController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		LOGGER.entering(CLASS_NAME, "initialize");
 		try {
 			StatusMonitor.getInstance(this);
 		} catch (Throwable t) {
-			System.out.println(t);
+			LOGGER.warning("Caught exception: " + t.getMessage());
+			LOGGER.exiting(CLASS_NAME, "initialize");
 			Platform.exit();
 		}
 		propertyMonitor.addListener(listener);
 		try {
 			localStorage.loadStoredData();
 		} catch (IOException e) {
+			LOGGER.warning("Caught exception: " + e.getMessage());
 			if (e.getMessage().startsWith("LocalStorage: archiveFile") && e.getMessage().endsWith("not found")) {
+				LOGGER.fine("Ignoring exception");
 			} else {
-				System.out.println(e.getMessage());
+				LOGGER.fine("Unknown exception");
+				LOGGER.exiting(CLASS_NAME, "initialize");
+				Platform.exit();
 			}
 		}
 		undo.disableProperty().bind(ChangeManager.getInstance().undoableProperty().not());
@@ -148,6 +154,7 @@ public class PropertyManagerController implements Initializable {
 		deleteProperty.disableProperty().bind(propertiesExist.not());
 		deleteItem.disableProperty().bind(propertiesExist.not());
 		deleteInventory.disableProperty().bind(propertiesExist.not());
+		LOGGER.exiting(CLASS_NAME, "initialize");
 	}
 
 	public void setPropertyManager(PropertyManager propertyManager) {
@@ -263,8 +270,8 @@ public class PropertyManagerController implements Initializable {
 	@FXML
 	void exitApplication(ActionEvent event) {
 		LOGGER.entering(CLASS_NAME, "exitApplication");
-		propertyManager.shutdown();
 		LOGGER.exiting(CLASS_NAME, "exitApplication");
+		propertyManager.shutdown();
 	}
 
 	@FXML

@@ -86,7 +86,8 @@ public class PropertyManager extends Application {
 		scene.getWindow().setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
-				LOGGER.exiting(CLASS_NAME, "start");
+				LOGGER.entering(CLASS_NAME, "handle");
+				LOGGER.exiting(CLASS_NAME, "handle");
 				performShutdown();
 			}
 		});
@@ -108,8 +109,8 @@ public class PropertyManager extends Application {
 
 	public void shutdown() {
 		LOGGER.entering(CLASS_NAME, "shutdown");
-		performShutdown();
 		LOGGER.exiting(CLASS_NAME, "shutdown");
+		performShutdown();
 	}
 
 	private void performShutdown() {
