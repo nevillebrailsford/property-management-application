@@ -364,6 +364,8 @@ public class PropertyManagerController implements Initializable {
 		if (result.isPresent()) {
 			String newDirectory = result.get().getDirectory();
 			Level loggingLevel = result.get().getLevel();
+			boolean notification = result.get().getEmailNotification();
+			String emails = result.get().getEmailList();
 			try {
 				ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
 				if (!applicationPreferences.getLevel().equals(loggingLevel)) {
@@ -376,6 +378,8 @@ public class PropertyManagerController implements Initializable {
 					resetModelToEmpty();
 					LocalStorage.getInstance(new File(applicationPreferences.getDirectory())).loadStoredData();
 				}
+				applicationPreferences.setEmailNotification(notification);
+				applicationPreferences.setEMailList(emails);
 			} catch (BackingStoreException e) {
 				LOGGER.warning("Caught exception: " + e.getMessage());
 			} catch (IOException e) {
