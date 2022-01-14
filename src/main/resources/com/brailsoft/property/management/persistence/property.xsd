@@ -8,6 +8,7 @@
 	<xs:element name="serialnumber" type="xs:string" />
 	<xs:element name="supplier" type="xs:string" />
 	<xs:element name="purchasedate" type="xs:date" />
+	<xs:element name="emailSentOn" type="xs:date"/>
 
 	<xs:simpleType name="noticeType">
 		<xs:restriction base="xs:integer">
@@ -45,6 +46,7 @@
 			<xs:element ref="lastActioned" />
 			<xs:element name="advanceNotice" type="noticeType" />
 			<xs:element name="periodForNextNotice" type="periodType" />
+			<xs:element ref="emailSentOn" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 

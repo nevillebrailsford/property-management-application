@@ -1,6 +1,7 @@
 package com.brailsoft.property.management.dialog;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,6 +14,7 @@ import javafx.beans.binding.BooleanExpression;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -35,6 +37,12 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 	private Label label2 = new Label("Logging Level:");
 	private ChoiceBox<String> loggingChoice = new ChoiceBox<>();
 	private Button resetButton = new Button("Reset to default");
+
+	private CheckBox emailNotification = new CheckBox("Send notifications by email");
+	private Button editEMail = new Button("Edit");
+
+	private Label label3 = new Label("Send notifications to:");
+	private TextField emails = new TextField();
 
 	private static final String[] loggingChoices = new String[] { "ALL", "SEVERE", "WARNING", "INFO", "CONFIG", "FINE",
 			"FINER", "FINEST", "OFF" };
@@ -59,6 +67,10 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 		grid.add(label2, 1, 2);
 		grid.add(loggingChoice, 2, 2);
 		grid.add(resetButton, 3, 2);
+		grid.add(emailNotification, 1, 3, 3, 1);
+		grid.add(label3, 1, 4);
+		grid.add(emails, 2, 4);
+		grid.add(editEMail, 3, 4);
 		getDialogPane().setContent(grid);
 
 		selectDirectory.setOnAction((event) -> {
@@ -85,6 +97,17 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 			loggingChoice.getSelectionModel().select(DEFAULT_LEVEL);
 		});
 
+		emailNotification.setOnAction((event) -> {
+		});
+
+		editEMail.setOnAction((event) -> {
+			Optional<String> result = new EmailListDialog(
+					ApplicationPreferences.getInstance(Constants.NODE_NAME).getEMailList()).showAndWait();
+			if (result.isPresent()) {
+				emails.setText(result.get());
+			}
+		});
+
 		String currentDirectory = ApplicationPreferences.getInstance(Constants.NODE_NAME).getDirectory();
 		if (!(currentDirectory == null || currentDirectory.isBlank() || currentDirectory.isEmpty())) {
 			directory.textProperty().set(currentDirectory);
@@ -92,10 +115,16 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 			directory.textProperty().set(System.getProperty("user.home"));
 		}
 
+		emails.setText(ApplicationPreferences.getInstance(Constants.NODE_NAME).getEMailList());
+
 		ButtonType buttonTypeOk = new ButtonType("Set Preferences", ButtonData.OK_DONE);
 		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.NO);
 		getDialogPane().getButtonTypes().addAll(buttonTypeOk, buttonTypeCancel);
 		getDialogPane().lookupButton(buttonTypeOk).disableProperty().bind(invalidInputProperty());
+		emails.disableProperty().bind(emailNotification.selectedProperty().not());
+		editEMail.disableProperty().bind(emailNotification.selectedProperty().not());
+
+		emailNotification.setSelected(ApplicationPreferences.getInstance(Constants.NODE_NAME).getEmailNotification());
 
 		setResultConverter(new Callback<ButtonType, PreferencesData>() {
 
@@ -106,6 +135,8 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 					PreferencesData data = new PreferencesData();
 					data.setDirectory(directory.textProperty().get());
 					data.setLevel(Level.parse(loggingChoice.getSelectionModel().selectedItemProperty().get()));
+					data.setEmailNotification(emailNotification.isSelected());
+					data.setEmailList(emails.getText());
 					LOGGER.exiting(CLASS_NAME, "call", data);
 					return data;
 				}

@@ -11,6 +11,8 @@ import com.brailsoft.property.management.persistence.LocalStorage;
 public class ApplicationPreferences {
 	private static final String DIRECTORY_NAME = "directory.name";
 	private static final String LOGGING_LEVEL = "logging.level";
+	private static final String EMAIL_NOTOFCATIONS = "email.notifications";
+	private static final String EMAIL_LIST = "email.list";
 	private static ApplicationPreferences instance = null;
 
 	private Preferences applicationPreferences = null;
@@ -88,6 +90,25 @@ public class ApplicationPreferences {
 	public void setLevel(Level level) throws BackingStoreException {
 		String lvl = convertLevelToString(level);
 		applicationPreferences.put(LOGGING_LEVEL, lvl);
+		applicationPreferences.flush();
+	}
+
+	public boolean getEmailNotification() {
+		String notification = applicationPreferences.get(EMAIL_NOTOFCATIONS, "false");
+		return Boolean.valueOf(notification).booleanValue();
+	}
+
+	public void setEmailNotification(boolean emailNotification) throws BackingStoreException {
+		applicationPreferences.put(EMAIL_NOTOFCATIONS, Boolean.toString(emailNotification));
+		applicationPreferences.flush();
+	}
+
+	public String getEMailList() {
+		return applicationPreferences.get(EMAIL_LIST, "");
+	}
+
+	public void setEMailList(String list) throws BackingStoreException {
+		applicationPreferences.put(EMAIL_LIST, list);
 		applicationPreferences.flush();
 	}
 
