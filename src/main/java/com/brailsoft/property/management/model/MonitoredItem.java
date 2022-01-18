@@ -31,9 +31,10 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 	private ObjectProperty<LocalDate> timeForNextNotice = new SimpleObjectProperty<>(this, "timeForNextNotice", null);
 	private ObjectProperty<Period> periodForNextAction = new SimpleObjectProperty<>(this, "periodForNextAction", null);;
 	private IntegerProperty noticeEvery = new SimpleIntegerProperty(this, "noticeEvery", 0);;
-	private ObjectProperty<Period> periodForNextNotice = new SimpleObjectProperty<>(this, "periodForNextAction", null);;
+	private ObjectProperty<Period> periodForNextNotice = new SimpleObjectProperty<>(this, "periodForNextNotice", null);;
 	private IntegerProperty advanceNotice = new SimpleIntegerProperty(this, "advanceNotice", 0);
 	private ObjectProperty<Property> owner = new SimpleObjectProperty<>(this, "owner", null);
+	private ObjectProperty<LocalDate> emailSentOn = new SimpleObjectProperty<>(this, "emailSentOn", null);
 
 	private final StringBinding lastActionBinding = new StringBinding() {
 		{
@@ -67,9 +68,26 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		}
 	};
 
+	private final StringBinding emailSentOnBinding = new StringBinding() {
+		{
+			super.bind(emailSentOn);
+		}
+
+		@Override
+		protected String computeValue() {
+			if (emailSentOn.get() == null) {
+				return "";
+			} else {
+				return emailSentOn.get().format(dateFormatter);
+			}
+		}
+	};
+
 	private final ReadOnlyStringWrapper lastAction = new ReadOnlyStringWrapper(this, "lastAction");
 	private final ReadOnlyStringWrapper nextAction = new ReadOnlyStringWrapper(this, "nextAction");
 	private final ReadOnlyStringWrapper nextNotice = new ReadOnlyStringWrapper(this, "nextNotice");
+
+	private final ReadOnlyStringWrapper emailSent = new ReadOnlyStringWrapper(this, "emailSent");
 
 	public ReadOnlyStringProperty lastActionProperty() {
 		return lastAction.getReadOnlyProperty();
@@ -81,6 +99,10 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 
 	public ReadOnlyStringProperty nextNoticeProperty() {
 		return nextNotice.getReadOnlyProperty();
+	}
+
+	public ReadOnlyStringProperty emailSentOnProperty() {
+		return emailSent.getReadOnlyProperty();
 	}
 
 	public MonitoredItem(String description, Period periodForNextAction, int noticeEvery, LocalDate lastActioned,
@@ -118,6 +140,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		this.lastActionPerformed.set(that.lastActionPerformed.get());
 		this.timeForNextAction.set(that.timeForNextAction.get());
 		this.timeForNextNotice.set(that.timeForNextNotice.get());
+		this.emailSentOn.set(that.emailSentOn.get());
 		if (that.owner.get() != null) {
 			this.owner.set(new Property(that.owner.get()));
 		} else {
@@ -186,6 +209,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		this.lastAction.bind(lastActionBinding);
 		this.nextAction.bind(nextActionBinding);
 		this.nextNotice.bind(nextNoticeBinding);
+		this.emailSent.bind(emailSentOnBinding);
 	}
 
 	public Property getOwner() {
@@ -283,6 +307,14 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 
 	public ObjectProperty<LocalDate> lastActionPerformedProperty() {
 		return lastActionPerformed;
+	}
+
+	public void setEmailSentOn(LocalDate when) {
+		this.emailSentOn.set(when);
+	}
+
+	public LocalDate getEmailSentOn() {
+		return emailSentOn.get();
 	}
 
 	public boolean overdue() {

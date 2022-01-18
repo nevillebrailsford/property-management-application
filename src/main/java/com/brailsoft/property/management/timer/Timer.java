@@ -21,7 +21,7 @@ public class Timer {
 	}
 
 	private Timer() {
-		timeLine = new Timeline(new KeyFrame(Duration.hours(1), (event) -> {
+		timeLine = new Timeline(new KeyFrame(Duration.minutes(1), (event) -> {
 			tellListeners(event);
 		}));
 		timeLine.setCycleCount(Timeline.INDEFINITE);

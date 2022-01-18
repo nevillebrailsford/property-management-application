@@ -1,4 +1,4 @@
-echo off 
+echo off
 
 rem copy this file to a working directory before running it
 rem once this script executes correctly, replace the jar files
@@ -68,9 +68,16 @@ mkdir classes
 cd classes
 jar xf %ROOT_DIR%\%JARPATH%
 
-rem compile module-imfo.java
+rem compile module-info.java
 
 cd %ROOT_DIR%\work\%MOD%
+
+echo "================================================================"
+echo " You need to add uses javax.mail.Provider to the end of file    "
+echo " module-info.java so notepad being opened to allow this         "
+echo "================================================================"
+notepad module-info.java
+
 javac --module-path %ROOT_DIR%\modules --add-modules activation -d %ROOT_DIR%\classes module-info.java
 
 rem update output jar

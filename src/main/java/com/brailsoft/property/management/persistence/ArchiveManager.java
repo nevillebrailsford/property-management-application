@@ -37,8 +37,10 @@ public class ArchiveManager {
 			throw new InvalidParameterException("ArchiveManager: directory was null");
 		}
 		File activeDirectory = ApplicationPreferences.getInstance(Constants.NODE_NAME).getActiveDirectory(directory);
-		File activeFile = new File(activeDirectory, LocalStorage.FILE_NAME);
+		File modelDirectory = new File(activeDirectory, Constants.MODEL_DIRECTORY);
+		File activeFile = new File(modelDirectory, LocalStorage.FILE_NAME);
 		if (!activeFile.exists()) {
+			LOGGER.fine("File " + activeFile.getAbsolutePath() + " was not found");
 			LOGGER.exiting(CLASS_NAME, "archive");
 			return;
 		}
