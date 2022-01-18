@@ -3,6 +3,7 @@ package com.brailsoft.property.management.model;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
@@ -14,6 +15,7 @@ import com.brailsoft.property.management.audit.AuditType;
 import com.brailsoft.property.management.audit.AuditWriter;
 import com.brailsoft.property.management.constant.Constants;
 import com.brailsoft.property.management.controller.StatusMonitor;
+import com.brailsoft.property.management.mail.EmailSender;
 import com.brailsoft.property.management.persistence.LocalStorage;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
 import com.brailsoft.property.management.timer.Timer;
@@ -593,6 +595,71 @@ public class PropertyMonitor {
 				alert.showAndWait();
 			});
 		}
+		sendEmailIfRequired();
 		LOGGER.exiting(CLASS_NAME, "timerPopped");
+	}
+
+	private void sendEmailIfRequired() {
+		LOGGER.entering(CLASS_NAME, "sendEmailIfRequired");
+		List<MonitoredItem> notifiedItems = new ArrayList<>();
+		List<MonitoredItem> overdueItems = new ArrayList<>();
+		if (applicationPreferences.getEmailNotification()) {
+			for (Property property : getPropertiesWithOverdueNotices()) {
+				for (MonitoredItem item : property.getOverdueNotices()) {
+					if (item.getEmailSentOn() == null) {
+						notifiedItems.add(item);
+					}
+				}
+				for (MonitoredItem item : property.getOverdueItems()) {
+					if (item.getEmailSentOn() == null) {
+						overdueItems.add(item);
+					}
+				}
+			}
+		}
+		if (notifiedItems.size() > 0 || overdueItems.size() > 0) {
+			try {
+				sendEmail(notifiedItems, overdueItems);
+			} catch (Exception e) {
+				LOGGER.warning("Caught exception: " + e.getMessage());
+			}
+		}
+		LOGGER.exiting(CLASS_NAME, "sendEmailIfRequired");
+	}
+
+	private void sendEmail(List<MonitoredItem> notifiedItems, List<MonitoredItem> overdueItems) throws Exception {
+		LOGGER.entering(CLASS_NAME, "sendEmail");
+		StringBuilder message = new StringBuilder();
+		message.append("The following items need attention:\n\n");
+		if (notifiedItems.size() > 0) {
+			message.append("The following items are due soon:\n");
+			for (MonitoredItem item : notifiedItems) {
+				message.append(item.getOwner().toString()).append(" ");
+				message.append(item.toString());
+				message.append("\n");
+			}
+			message.append("\n");
+		}
+		if (overdueItems.size() > 0) {
+			message.append("The following items are overdue:\n");
+			for (MonitoredItem item : overdueItems) {
+				message.append(item.getOwner().toString()).append(" ");
+				message.append(item.toString());
+				message.append("\n");
+			}
+			message.append("\n");
+		}
+		try {
+			StatusMonitor.getInstance().update("Email message being prepared");
+			EmailSender.getInstance().sendMessage(message.toString());
+			StatusMonitor.getInstance().update("Email message was successfully sent");
+		} catch (Exception e) {
+			StatusMonitor.getInstance().update("Email message failed with " + e.getMessage());
+			LOGGER.warning("Caught exception: " + e.getMessage());
+			LOGGER.throwing(CLASS_NAME, "sendMail", e);
+			throw e;
+		} finally {
+			LOGGER.exiting(CLASS_NAME, "sendEmail");
+		}
 	}
 }

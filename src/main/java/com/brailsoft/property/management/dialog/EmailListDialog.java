@@ -65,7 +65,11 @@ public class EmailListDialog extends Dialog<String> {
 							comma = ",";
 						}
 					}
-					return builder.toString();
+					if (builder.isEmpty()) {
+						return " ";
+					} else {
+						return builder.toString();
+					}
 				}
 				return null;
 			}

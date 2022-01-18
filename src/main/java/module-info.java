@@ -13,6 +13,7 @@ module com.brailsoft.property.manager {
 	opens com.brailsoft.property.management.launcher;
 	opens com.brailsoft.property.management.constant;
 	opens com.brailsoft.property.management.controller;
+	opens com.brailsoft.property.management.mail;
 	opens com.brailsoft.property.management.model;
 	opens com.brailsoft.property.management.persistence;
 	opens com.brailsoft.property.management.print;
