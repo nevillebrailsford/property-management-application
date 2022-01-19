@@ -58,6 +58,7 @@ public class LocalStorageTest {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
+		ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
 		try {
 			Platform.startup(() -> {
 			});

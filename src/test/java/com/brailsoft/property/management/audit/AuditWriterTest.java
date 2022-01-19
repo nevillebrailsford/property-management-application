@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileReader;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -27,11 +28,16 @@ class AuditWriterTest {
 	File auditDirectory;
 	File auditFile;
 
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
+		ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
+	}
+
 	@BeforeEach
 	void setUp() throws Exception {
-		applicationPreferences = ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
+		applicationPreferences = ApplicationPreferences.getInstance();
 		applicationPreferences.setDirectory(rootDirectory.getAbsolutePath());
-		rootDirectory = new File(ApplicationPreferences.getInstance(Constants.NODE_NAME).getDirectory());
+		rootDirectory = new File(ApplicationPreferences.getInstance().getDirectory());
 		applicationDirectory = new File(rootDirectory, LocalStorage.DIRECTORY);
 		auditDirectory = new File(applicationDirectory, Constants.AUDIT_DIRECTORY);
 		auditFile = new File(auditDirectory, Constants.AUDIT_FILE);

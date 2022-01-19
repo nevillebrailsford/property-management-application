@@ -15,11 +15,12 @@ import com.brailsoft.property.management.constant.TestConstants;
 
 class ApplicationPreferencesTest {
 
-	private ApplicationPreferences preferences = ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
+	private ApplicationPreferences preferences;
 
 	@BeforeEach
 	void setUp() throws Exception {
 		ApplicationPreferences.getInstance(TestConstants.NODE_NAME).clear();
+		preferences = ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
 	}
 
 	@AfterEach
@@ -72,15 +73,35 @@ class ApplicationPreferencesTest {
 	}
 
 	@Test
-	void testNullNodeName() {
+	void testNullNodeName() throws Exception {
+		ApplicationPreferences.getInstance().clear();
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
-			ApplicationPreferences.getInstance(null);
+			ApplicationPreferences.getInstance(new String[] {});
 		});
 		assertEquals("ApplicationPreferences: nodeName was null", exc.getMessage());
 	}
 
 	@Test
-	void testEmptyNodeName() {
+	void testNullNodeNameEntry() throws Exception {
+		ApplicationPreferences.getInstance().clear();
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			ApplicationPreferences.getInstance(new String[] { null });
+		});
+		assertEquals("ApplicationPreferences: nodeName was null", exc.getMessage());
+	}
+
+	@Test
+	void testTooManyNodeNames() throws Exception {
+		ApplicationPreferences.getInstance().clear();
+		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
+			ApplicationPreferences.getInstance("", "");
+		});
+		assertEquals("ApplicationPreferences: more than 1 nodeName was specified", exc.getMessage());
+	}
+
+	@Test
+	void testEmptyNodeName() throws Exception {
+		ApplicationPreferences.getInstance().clear();
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			ApplicationPreferences.getInstance("");
 		});
@@ -88,7 +109,8 @@ class ApplicationPreferencesTest {
 	}
 
 	@Test
-	void testBlankNodeName() {
+	void testBlankNodeName() throws Exception {
+		ApplicationPreferences.getInstance().clear();
 		Exception exc = assertThrows(IllegalArgumentException.class, () -> {
 			ApplicationPreferences.getInstance("   ");
 		});

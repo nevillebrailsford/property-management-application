@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +19,11 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 
 class ControllerTest {
+
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
+		ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
+	}
 
 	@BeforeEach
 	void setUp() throws Exception {

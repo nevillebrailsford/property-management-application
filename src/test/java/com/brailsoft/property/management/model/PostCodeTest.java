@@ -10,10 +10,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.brailsoft.property.management.constant.TestConstants;
+import com.brailsoft.property.management.preference.ApplicationPreferences;
 
 class PostCodeTest {
 
@@ -25,6 +29,11 @@ class PostCodeTest {
 	PostCode postcodeToBeTested = new PostCode(SAMPLE_POST_CODE);
 
 	Document document;
+
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
+		ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
+	}
 
 	@BeforeEach
 	void setUp() throws Exception {

@@ -60,7 +60,7 @@ public class PropertyManagerController implements Initializable {
 	private static final Logger LOGGER = Logger.getLogger(Constants.LOGGER_NAME);
 
 	private PropertyManager propertyManager;
-	private ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
+	private ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance();
 	private File rootDirectory = new File(applicationPreferences.getDirectory());
 	private LocalStorage localStorage = LocalStorage.getInstance(rootDirectory);
 	private PropertyMonitor propertyMonitor = PropertyMonitor.getInstance();
@@ -367,7 +367,6 @@ public class PropertyManagerController implements Initializable {
 			boolean notification = result.get().getEmailNotification();
 			String emails = result.get().getEmailList();
 			try {
-				ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
 				if (!applicationPreferences.getLevel().equals(loggingLevel)) {
 					applicationPreferences.setLevel(loggingLevel);
 					PropertyManagerLogConfigurer.changeLevel(loggingLevel);

@@ -26,7 +26,7 @@ import javafx.util.Callback;
 public class PreferencesDialog extends Dialog<PreferencesData> {
 	private static final String CLASS_NAME = PreferencesDialog.class.getName();
 	private static final Logger LOGGER = Logger.getLogger(Constants.LOGGER_NAME);
-	private static final ApplicationPreferences preferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
+	private static final ApplicationPreferences preferences = ApplicationPreferences.getInstance();
 
 	private BooleanExpression invalidInput;
 
@@ -76,7 +76,7 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 		selectDirectory.setOnAction((event) -> {
 			LOGGER.entering(CLASS_NAME, "onAction", event);
 			DirectoryChooser directoryChooser = new DirectoryChooser();
-			String currentDirectory = ApplicationPreferences.getInstance(Constants.NODE_NAME).getDirectory();
+			String currentDirectory = preferences.getDirectory();
 			LOGGER.fine("currentDirectory=" + currentDirectory);
 			if (!(currentDirectory == null || currentDirectory.isBlank() || currentDirectory.isEmpty())) {
 				directoryChooser.setInitialDirectory(new File(currentDirectory));
@@ -101,21 +101,20 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 		});
 
 		editEMail.setOnAction((event) -> {
-			Optional<String> result = new EmailListDialog(
-					ApplicationPreferences.getInstance(Constants.NODE_NAME).getEMailList()).showAndWait();
+			Optional<String> result = new EmailListDialog(preferences.getEMailList()).showAndWait();
 			if (result.isPresent()) {
 				emails.setText(result.get());
 			}
 		});
 
-		String currentDirectory = ApplicationPreferences.getInstance(Constants.NODE_NAME).getDirectory();
+		String currentDirectory = preferences.getDirectory();
 		if (!(currentDirectory == null || currentDirectory.isBlank() || currentDirectory.isEmpty())) {
 			directory.textProperty().set(currentDirectory);
 		} else {
 			directory.textProperty().set(System.getProperty("user.home"));
 		}
 
-		emails.setText(ApplicationPreferences.getInstance(Constants.NODE_NAME).getEMailList());
+		emails.setText(preferences.getEMailList());
 
 		ButtonType buttonTypeOk = new ButtonType("Set Preferences", ButtonData.OK_DONE);
 		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.NO);
@@ -124,7 +123,7 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 		emails.disableProperty().bind(emailNotification.selectedProperty().not());
 		editEMail.disableProperty().bind(emailNotification.selectedProperty().not());
 
-		emailNotification.setSelected(ApplicationPreferences.getInstance(Constants.NODE_NAME).getEmailNotification());
+		emailNotification.setSelected(preferences.getEmailNotification());
 
 		setResultConverter(new Callback<ButtonType, PreferencesData>() {
 

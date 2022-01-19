@@ -33,7 +33,7 @@ public class PropertyManager extends Application {
 	private static final Logger LOGGER = Logger.getLogger(PropertyManager.class.getName());
 	private static boolean started = false;
 
-	private ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
+	private ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance();
 
 	private static PropertyManagerController mainController;
 	private static ExecutorService executor = Executors.newFixedThreadPool(5);
@@ -135,6 +135,7 @@ public class PropertyManager extends Application {
 	}
 
 	public static void main(String[] args) {
+		ApplicationPreferences.getInstance(Constants.NODE_NAME);
 		configureLogging();
 		launch(args);
 	}

@@ -34,7 +34,7 @@ public class PropertyMonitor {
 
 	private static PropertyMonitor instance = null;
 
-	private ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
+	private ApplicationPreferences applicationPreferences = ApplicationPreferences.getInstance();
 
 	private Timer timer;
 

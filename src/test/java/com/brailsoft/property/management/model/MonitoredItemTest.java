@@ -22,6 +22,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.brailsoft.property.management.constant.Constants;
+import com.brailsoft.property.management.constant.TestConstants;
+import com.brailsoft.property.management.preference.ApplicationPreferences;
 
 class MonitoredItemTest {
 
@@ -35,6 +37,7 @@ class MonitoredItemTest {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
+		ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
 	}
 
 	@AfterAll
