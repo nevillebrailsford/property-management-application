@@ -17,12 +17,17 @@ public class ApplicationPreferences {
 
 	private Preferences applicationPreferences = null;
 
-	public synchronized static ApplicationPreferences getInstance(String nodeName) {
-		if (nodeName == null || nodeName.isBlank() || nodeName.isEmpty()) {
-			throw new IllegalArgumentException("ApplicationPreferences: nodeName was null");
-		}
+	public synchronized static ApplicationPreferences getInstance(String... nodeName) {
 		if (instance == null) {
-			instance = new ApplicationPreferences(nodeName);
+			if (nodeName.length == 0) {
+				throw new IllegalArgumentException("ApplicationPreferences: nodeName was null");
+			} else if (nodeName.length > 1) {
+				throw new IllegalArgumentException("ApplicationPreferences: more than 1 nodeName was specified");
+			}
+			if (nodeName[0] == null || nodeName[0].isBlank() || nodeName[0].isEmpty()) {
+				throw new IllegalArgumentException("ApplicationPreferences: nodeName was null");
+			}
+			instance = new ApplicationPreferences(nodeName[0]);
 		}
 		return instance;
 	}
@@ -70,6 +75,7 @@ public class ApplicationPreferences {
 	public void clear() throws BackingStoreException {
 		applicationPreferences.clear();
 		applicationPreferences.flush();
+		instance = null;
 	}
 
 	public String getDirectory() {

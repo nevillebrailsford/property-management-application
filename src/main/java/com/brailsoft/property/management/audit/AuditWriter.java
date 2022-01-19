@@ -10,7 +10,7 @@ import com.brailsoft.property.management.preference.ApplicationPreferences;
 public class AuditWriter {
 
 	public static void write(AuditRecord record) {
-		File auditDirectory = ApplicationPreferences.getInstance(Constants.NODE_NAME).getAuditDirectory();
+		File auditDirectory = ApplicationPreferences.getInstance().getAuditDirectory();
 		File auditFile = new File(auditDirectory, Constants.AUDIT_FILE);
 		try (PrintStream writer = new PrintStream(new FileOutputStream(auditFile, true))) {
 			writer.println(record);

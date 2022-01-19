@@ -76,6 +76,9 @@ echo "================================================================"
 echo " You need to add uses javax.mail.Provider to the end of file    "
 echo " module-info.java so notepad being opened to allow this         "
 echo "================================================================"
+
+pause
+
 notepad module-info.java
 
 javac --module-path %ROOT_DIR%\modules --add-modules activation -d %ROOT_DIR%\classes module-info.java
@@ -92,3 +95,5 @@ rmdir /S /Q classes
 echo module jars are in %ROOT_DIR%\module
 
 echo ready
+
+pause

@@ -6,10 +6,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.brailsoft.property.management.constant.TestConstants;
+import com.brailsoft.property.management.preference.ApplicationPreferences;
+
 class EmailSenderTest {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
+		ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
 	}
 
 	@AfterAll

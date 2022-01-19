@@ -58,6 +58,7 @@ class PropertyMonitorTest {
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
+		ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
 		try {
 			Platform.startup(() -> {
 			});

@@ -22,7 +22,7 @@ public class EmailSender {
 	private static final Logger LOGGER = Logger.getLogger(Constants.LOGGER_NAME);
 
 	private static EmailSender instance = null;
-	private static ApplicationPreferences preferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
+	private static ApplicationPreferences preferences = ApplicationPreferences.getInstance();
 
 	private Properties prop = new Properties();
 	private Session session;

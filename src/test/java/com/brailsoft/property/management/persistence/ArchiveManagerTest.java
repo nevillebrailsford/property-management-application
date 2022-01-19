@@ -13,16 +13,23 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.brailsoft.property.management.constant.Constants;
 import com.brailsoft.property.management.constant.TestConstants;
+import com.brailsoft.property.management.preference.ApplicationPreferences;
 
 class ArchiveManagerTest {
 	private final String FILE_NAME = "property.dat";
 	private final File rootDir = new File(TestConstants.TEST_DIRECTORY);
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd-HH-mm-ss");
+
+	@BeforeAll
+	static void setUpBeforeClass() throws Exception {
+		ApplicationPreferences.getInstance(TestConstants.NODE_NAME);
+	}
 
 	@AfterEach
 	@BeforeEach

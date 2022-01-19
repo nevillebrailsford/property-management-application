@@ -14,7 +14,7 @@ import com.brailsoft.property.management.preference.ApplicationPreferences;
 
 public class PropertyManagerLogConfigurer {
 	private static final Logger LOGGER = Logger.getLogger(Constants.LOGGER_NAME);
-	private static ApplicationPreferences preferences = ApplicationPreferences.getInstance(Constants.NODE_NAME);
+	private static ApplicationPreferences preferences = ApplicationPreferences.getInstance();
 	private static FileHandler fileHandler;
 
 	public static void setUp() {
