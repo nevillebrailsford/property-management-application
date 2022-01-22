@@ -1,6 +1,7 @@
 package com.brailsoft.property.management.preference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -70,6 +71,21 @@ class ApplicationPreferencesTest {
 		assertEquals(Level.WARNING, preferences.getLevel());
 		preferences.setLevel(Level.SEVERE);
 		assertEquals(Level.SEVERE, preferences.getLevel());
+	}
+
+	@Test
+	void testUserName() throws Exception {
+		assertFalse(preferences.isEmailNotification());
+		preferences.setEmailNotification(true);
+		assertTrue(preferences.isEmailNotification());
+	}
+
+	@Test
+	void testGetEmail() throws Exception {
+		assertTrue(preferences.getEMailList().isEmpty());
+		preferences.setEMailList("neville@neville, bill@bill");
+		assertFalse(preferences.getEMailList().isEmpty());
+		assertEquals("neville@neville, bill@bill", preferences.getEMailList());
 	}
 
 	@Test

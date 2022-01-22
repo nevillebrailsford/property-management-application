@@ -1,5 +1,9 @@
 package com.brailsoft.property.management.mail;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.Base64;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,13 +33,10 @@ class EmailSenderTest {
 	}
 
 	@Test
-	void testGetInstance() throws Exception {
-		// TODO build tests with mail.property file etc
-	}
-
-	@Test
-	void testLoadProperties() {
-
+	void testEncodeDecode() {
+		byte[] encodedBytes = Base64.getEncoder().encode("Test@".getBytes());
+		byte[] decodedBytes = Base64.getDecoder().decode(encodedBytes);
+		assertEquals("Test@", new String(decodedBytes));
 	}
 
 }
