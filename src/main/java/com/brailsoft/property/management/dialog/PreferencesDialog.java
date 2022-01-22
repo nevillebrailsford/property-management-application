@@ -6,11 +6,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.brailsoft.property.management.constant.Constants;
+import com.brailsoft.property.management.mail.EmailConfigurer;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
 import com.brailsoft.property.management.preference.PreferencesData;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanExpression;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
@@ -98,6 +101,10 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 		});
 
 		emailNotification.setOnAction((event) -> {
+			if (!EmailConfigurer.getInstance().isValidConfiguration()) {
+				emailNotification.setSelected(false);
+				new Alert(AlertType.INFORMATION, "Email configuration not valie", ButtonType.OK).showAndWait();
+			}
 		});
 
 		editEMail.setOnAction((event) -> {
@@ -123,7 +130,7 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 		emails.disableProperty().bind(emailNotification.selectedProperty().not());
 		editEMail.disableProperty().bind(emailNotification.selectedProperty().not());
 
-		emailNotification.setSelected(preferences.getEmailNotification());
+		emailNotification.setSelected(preferences.isEmailNotification());
 
 		setResultConverter(new Callback<ButtonType, PreferencesData>() {
 
@@ -134,7 +141,12 @@ public class PreferencesDialog extends Dialog<PreferencesData> {
 					PreferencesData data = new PreferencesData();
 					data.setDirectory(directory.textProperty().get());
 					data.setLevel(Level.parse(loggingChoice.getSelectionModel().selectedItemProperty().get()));
-					data.setEmailNotification(emailNotification.isSelected());
+					if (emailNotification.isSelected() && isEmpty(emails)) {
+						data.setEmailNotification(false);
+						new Alert(AlertType.INFORMATION, "No recipients entered", ButtonType.OK).showAndWait();
+					} else {
+						data.setEmailNotification(emailNotification.isSelected());
+					}
 					data.setEmailList(emails.getText());
 					LOGGER.exiting(CLASS_NAME, "call", data);
 					return data;

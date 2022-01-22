@@ -15,6 +15,7 @@ import com.brailsoft.property.management.audit.AuditType;
 import com.brailsoft.property.management.audit.AuditWriter;
 import com.brailsoft.property.management.constant.Constants;
 import com.brailsoft.property.management.controller.StatusMonitor;
+import com.brailsoft.property.management.launcher.PropertyManager;
 import com.brailsoft.property.management.mail.EmailSender;
 import com.brailsoft.property.management.persistence.LocalStorage;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
@@ -603,7 +604,7 @@ public class PropertyMonitor {
 		LOGGER.entering(CLASS_NAME, "sendEmailIfRequired");
 		List<MonitoredItem> notifiedItems = new ArrayList<>();
 		List<MonitoredItem> overdueItems = new ArrayList<>();
-		if (applicationPreferences.getEmailNotification()) {
+		if (applicationPreferences.isEmailNotification()) {
 			for (Property property : getPropertiesWithOverdueNotices()) {
 				for (MonitoredItem item : property.getOverdueNotices()) {
 					if (item.getEmailSentOn() == null) {
@@ -649,17 +650,9 @@ public class PropertyMonitor {
 			}
 			message.append("\n");
 		}
-		try {
-			StatusMonitor.getInstance().update("Email message being prepared");
-			EmailSender.getInstance().sendMessage(message.toString());
-			StatusMonitor.getInstance().update("Email message was successfully sent");
-		} catch (Exception e) {
-			StatusMonitor.getInstance().update("Email message failed with " + e.getMessage());
-			LOGGER.warning("Caught exception: " + e.getMessage());
-			LOGGER.throwing(CLASS_NAME, "sendMail", e);
-			throw e;
-		} finally {
-			LOGGER.exiting(CLASS_NAME, "sendEmail");
-		}
+		StatusMonitor.getInstance().update("Email message being prepared");
+		EmailSender worker = new EmailSender(message.toString());
+		PropertyManager.executor().execute(worker);
+		LOGGER.exiting(CLASS_NAME, "sendEmail");
 	}
 }

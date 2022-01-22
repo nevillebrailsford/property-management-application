@@ -169,7 +169,7 @@ public class PropertyManagerController implements Initializable {
 	void about(ActionEvent event) {
 		LOGGER.entering(CLASS_NAME, "about");
 		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setContentText("Property Management \nVersion 1.0.0\nBuild date: 10/01/2022");
+		alert.setContentText("Property Management \nVersion 1.0.0\nBuild date: 22/01/2022");
 		alert.setTitle("About Property Management");
 		alert.setHeaderText("Property Management");
 		alert.showAndWait();

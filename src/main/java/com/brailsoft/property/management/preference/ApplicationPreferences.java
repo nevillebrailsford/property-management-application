@@ -99,7 +99,7 @@ public class ApplicationPreferences {
 		applicationPreferences.flush();
 	}
 
-	public boolean getEmailNotification() {
+	public boolean isEmailNotification() {
 		String notification = applicationPreferences.get(EMAIL_NOTOFCATIONS, "false");
 		return Boolean.valueOf(notification).booleanValue();
 	}
