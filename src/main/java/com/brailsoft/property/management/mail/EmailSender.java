@@ -10,11 +10,10 @@ import javax.mail.internet.MimeMessage;
 
 import com.brailsoft.property.management.constant.Constants;
 import com.brailsoft.property.management.controller.StatusMonitor;
-import com.brailsoft.property.management.model.PropertyMonitor;
 import com.brailsoft.property.management.preference.ApplicationPreferences;
 
 public class EmailSender implements Runnable {
-	private static final String CLASS_NAME = PropertyMonitor.class.getName();
+	private static final String CLASS_NAME = EmailSender.class.getName();
 	private static final Logger LOGGER = Logger.getLogger(Constants.LOGGER_NAME);
 
 	private String text;
@@ -39,7 +38,7 @@ public class EmailSender implements Runnable {
 				Transport.send(message);
 				StatusMonitor.getInstance().update("Notification email sent successfully");
 			} catch (Exception e) {
-				LOGGER.warning("Caught xeception: " + e.getMessage());
+				LOGGER.warning("Caught exception: " + e.getMessage());
 				StatusMonitor.getInstance().update("Attempt to send notification email failed");
 			}
 		} else {
