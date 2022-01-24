@@ -125,7 +125,8 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		if (periodForNextNotice == null) {
 			throw new IllegalArgumentException("MonitoredItem: periodForNextNotice was null");
 		}
-		initialize(description, lastActioned, periodForNextAction, noticeEvery, advanceNotice, periodForNextNotice);
+		initialize(description, lastActioned, periodForNextAction, noticeEvery, advanceNotice, periodForNextNotice,
+				null);
 	}
 
 	public MonitoredItem(MonitoredItem that) {
@@ -161,14 +162,23 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		String sadvanceNotice = itemElement.getElementsByTagName(Constants.ADVANCE_NOTICE).item(0).getTextContent();
 		String speriodForNextNotice = itemElement.getElementsByTagName(Constants.PERIOD_FOR_NEXT_NOTICE).item(0)
 				.getTextContent();
+		String sEmailSentOn = null;
+		if (itemElement.getElementsByTagName(Constants.EMAIL_SENT_ON).getLength() > 0) {
+			sEmailSentOn = itemElement.getElementsByTagName(Constants.EMAIL_SENT_ON).item(0).getTextContent();
+		}
 
 		LocalDate lastActioned = LocalDate.parse(slastActioned);
 		Period periodForNextAction = Period.valueOf(speriodForNextAction);
 		int noticeEvery = Integer.parseInt(snoticeEvery);
 		int advanceNotice = Integer.parseInt(sadvanceNotice);
 		Period periodForNextNotice = Period.valueOf(speriodForNextNotice);
+		LocalDate emailSentOn = null;
+		if (sEmailSentOn != null) {
+			emailSentOn = LocalDate.parse(sEmailSentOn);
+		}
 
-		initialize(description, lastActioned, periodForNextAction, noticeEvery, advanceNotice, periodForNextNotice);
+		initialize(description, lastActioned, periodForNextAction, noticeEvery, advanceNotice, periodForNextNotice,
+				emailSentOn);
 	}
 
 	public Element buildElement(Document document) {
@@ -186,12 +196,15 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 				ElementBuilder.build(Constants.ADVANCE_NOTICE, Integer.toString(getAdvanceNotice()), document));
 		result.appendChild(
 				ElementBuilder.build(Constants.PERIOD_FOR_NEXT_NOTICE, getPeriodForNextNotice().toString(), document));
+		if (getEmailSentOn() != null) {
+			result.appendChild(ElementBuilder.build(Constants.EMAIL_SENT_ON, getEmailSentOn().toString(), document));
+		}
 		return result;
 
 	}
 
 	private void initialize(String description, LocalDate lastActioned, Period periodForNextAction, int noticeEvery,
-			int advanceNotice, Period periodForNextNotice) {
+			int advanceNotice, Period periodForNextNotice, LocalDate emailSentOn) {
 		this.description.set(description);
 		this.periodForNextAction.set(periodForNextAction);
 		this.noticeEvery.set(noticeEvery);
@@ -202,6 +215,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 		this.timeForNextNotice
 				.set(calculateTimeForNextNotice(periodForNextNotice, advanceNotice, this.timeForNextAction.get()));
 		this.owner.set(null);
+		this.emailSentOn.set(emailSentOn);
 		initializeBindings();
 	}
 

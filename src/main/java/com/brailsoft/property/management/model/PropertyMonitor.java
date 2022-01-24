@@ -3,6 +3,7 @@ package com.brailsoft.property.management.model;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -405,7 +406,8 @@ public class PropertyMonitor {
 
 	public synchronized List<Property> getPropertiesWithOverdueNotices() {
 		LOGGER.entering(CLASS_NAME, "getPropertiesWithOverdueNotices");
-		List<Property> copyList = getProperties().stream().filter(property -> property.areNoticesOverdue())
+		List<Property> copyList = getProperties().stream()
+				.filter(property -> property.areNoticesOverdue() && !property.areItemsOverdue())
 				.collect(Collectors.toList());
 		Collections.sort(copyList);
 		LOGGER.exiting(CLASS_NAME, "getPropertiesWithOverdueNotices", copyList);
@@ -568,35 +570,46 @@ public class PropertyMonitor {
 
 	private void timerPopped(ActionEvent event) {
 		LOGGER.entering(CLASS_NAME, "timerPoppped", "timer popped at " + LocalDate.now());
-		if (getPropertiesWithOverdueNotices().size() > 0) {
-			final Alert alert = new Alert(AlertType.INFORMATION);
-			alert.setTitle("Notified Items");
-			alert.setHeaderText("Notified items have been found");
-			StringBuilder context = new StringBuilder();
-			context.append("The Following properties have overdue items").append("\n");
-			for (Property property : getPropertiesWithOverdueNotices()) {
-				context.append(property.getAddress().toString()).append("\n");
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime lastTimer = applicationPreferences.lastTimer();
+		if (lastTimer == null || lastTimer.plusWeeks(1).isBefore(now)) {
+			if (getPropertiesWithOverdueNotices().size() > 0) {
+				final Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Notified Items");
+				alert.setHeaderText("Notified items have been found");
+				StringBuilder context = new StringBuilder();
+				context.append("The Following properties have overdue items").append("\n");
+				for (Property property : getPropertiesWithOverdueNotices()) {
+					context.append(property.getAddress().toString()).append("\n");
+				}
+				alert.setContentText(context.toString());
+				Platform.runLater(() -> {
+					alert.showAndWait();
+				});
 			}
-			alert.setContentText(context.toString());
-			Platform.runLater(() -> {
-				alert.showAndWait();
-			});
-		}
-		if (getPropertiesWithOverdueItems().size() > 0) {
-			final Alert alert = new Alert(AlertType.WARNING);
-			alert.setTitle("Overdue Items");
-			alert.setHeaderText("Overdue items have been found");
-			StringBuilder context = new StringBuilder();
-			context.append("The Following properties have overdue items").append("\n");
-			for (Property property : getPropertiesWithOverdueItems()) {
-				context.append(property.getAddress().toString()).append("\n");
+			if (getPropertiesWithOverdueItems().size() > 0) {
+				final Alert alert = new Alert(AlertType.WARNING);
+				alert.setTitle("Overdue Items");
+				alert.setHeaderText("Overdue items have been found");
+				StringBuilder context = new StringBuilder();
+				context.append("The Following properties have overdue items").append("\n");
+				for (Property property : getPropertiesWithOverdueItems()) {
+					context.append(property.getAddress().toString()).append("\n");
+				}
+				alert.setContentText(context.toString());
+				Platform.runLater(() -> {
+					alert.showAndWait();
+				});
 			}
-			alert.setContentText(context.toString());
-			Platform.runLater(() -> {
-				alert.showAndWait();
-			});
+			sendEmailIfRequired();
+			try {
+				applicationPreferences.setLastTimer(now);
+			} catch (Exception e) {
+				LOGGER.warning("Caught exception: " + e.getMessage());
+			}
+		} else {
+			LOGGER.fine("Time now = " + now + ", lastTimer = " + lastTimer);
 		}
-		sendEmailIfRequired();
 		LOGGER.exiting(CLASS_NAME, "timerPopped");
 	}
 
@@ -609,11 +622,23 @@ public class PropertyMonitor {
 				for (MonitoredItem item : property.getOverdueNotices()) {
 					if (item.getEmailSentOn() == null) {
 						notifiedItems.add(item);
+						updateEmailSentOn(item);
+					} else {
+						if (LocalDate.now().isAfter(item.getEmailSentOn().plusWeeks(1))) {
+							notifiedItems.add(item);
+							updateEmailSentOn(item);
+						}
 					}
 				}
 				for (MonitoredItem item : property.getOverdueItems()) {
 					if (item.getEmailSentOn() == null) {
 						overdueItems.add(item);
+						updateEmailSentOn(item);
+					} else {
+						if (LocalDate.now().isAfter(item.getEmailSentOn().plusWeeks(1))) {
+							overdueItems.add(item);
+							updateEmailSentOn(item);
+						}
 					}
 				}
 			}
@@ -635,7 +660,7 @@ public class PropertyMonitor {
 		if (notifiedItems.size() > 0) {
 			message.append("The following items are due soon:\n");
 			for (MonitoredItem item : notifiedItems) {
-				message.append(item.getOwner().toString()).append(" ");
+				message.append(item.getOwner().toString()).append(" - ");
 				message.append(item.toString());
 				message.append("\n");
 			}
@@ -654,5 +679,14 @@ public class PropertyMonitor {
 		EmailSender worker = new EmailSender(message.toString());
 		PropertyManager.executor().execute(worker);
 		LOGGER.exiting(CLASS_NAME, "sendEmail");
+	}
+
+	private void updateEmailSentOn(MonitoredItem item) {
+		LOGGER.entering(CLASS_NAME, "updateEmailSentOn", item);
+		LocalDate now = LocalDate.now();
+		MonitoredItem updatedItem = new MonitoredItem(item);
+		updatedItem.setEmailSentOn(now);
+		replaceItem(updatedItem);
+		LOGGER.exiting(CLASS_NAME, "updateEmailSentOn", item);
 	}
 }

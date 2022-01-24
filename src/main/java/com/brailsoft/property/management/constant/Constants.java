@@ -21,6 +21,7 @@ public class Constants {
 	public static final String PERIOD_FOR_NEXT_NOTICE = "periodForNextNotice";
 	public static final String POSTCODE = "postcode";
 	public static final String LINE = "line";
+	public static final String EMAIL_SENT_ON = "emailSentOn";
 
 	public static final String INVENTORY = "inventory";
 	public static final String MANUFACTURER = "manufacturer";

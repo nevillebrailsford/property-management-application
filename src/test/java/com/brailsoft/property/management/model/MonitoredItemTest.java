@@ -3,6 +3,7 @@ package com.brailsoft.property.management.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,6 +33,7 @@ class MonitoredItemTest {
 	private LocalDate lastAction;
 	private LocalDate nextAction;
 	private LocalDate nextNotice;
+	private LocalDate emailSentOn;
 	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd");
 	Document document;
 
@@ -191,6 +193,44 @@ class MonitoredItemTest {
 		assertFalse(testItem.noticeDue(startTest));
 		assertFalse(testItem.noticeDue(startTest.plusYears(1).minusWeeks(1)));
 		assertTrue(testItem.noticeDue(startTest.plusYears(1).minusWeeks(1).plusDays(1)));
+	}
+
+	@Test
+	void testSetEmailSentOn() {
+		assertNull(testItem.getEmailSentOn());
+		testItem.setEmailSentOn(LocalDate.now());
+		assertNotNull(testItem.getEmailSentOn());
+		assertEquals(LocalDate.now(), testItem.getEmailSentOn());
+	}
+
+	@Test
+	void testMonitoredItemElementWithEmailSentOnSet() {
+		testItem.setEmailSentOn(LocalDate.now());
+		Element testElement = testItem.buildElement(document);
+		assertNotNull(testElement);
+		MonitoredItem item = new MonitoredItem(testElement);
+		assertNotNull(item);
+		assertEquals(testItem, item);
+		assertNotNull(item.getEmailSentOn());
+	}
+
+	@Test
+	void testBuildElementWithEmailSentOnNull() {
+		Element testElement = testItem.buildElement(document);
+		assertNotNull(testElement);
+		assertEquals(Constants.ITEM, testElement.getNodeName());
+		assertTrue(Node.ELEMENT_NODE == testElement.getNodeType());
+		assertEquals(6, testElement.getChildNodes().getLength());
+	}
+
+	@Test
+	void testBuildElementWithEmailSentOnSet() {
+		testItem.setEmailSentOn(LocalDate.now());
+		Element testElement = testItem.buildElement(document);
+		assertNotNull(testElement);
+		assertEquals(Constants.ITEM, testElement.getNodeName());
+		assertTrue(Node.ELEMENT_NODE == testElement.getNodeType());
+		assertEquals(7, testElement.getChildNodes().getLength());
 	}
 
 	@Test

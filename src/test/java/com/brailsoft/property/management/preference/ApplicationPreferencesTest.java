@@ -3,9 +3,11 @@ package com.brailsoft.property.management.preference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDateTime;
 import java.util.logging.Level;
 
 import org.junit.jupiter.api.AfterEach;
@@ -86,6 +88,26 @@ class ApplicationPreferencesTest {
 		preferences.setEMailList("neville@neville, bill@bill");
 		assertFalse(preferences.getEMailList().isEmpty());
 		assertEquals("neville@neville, bill@bill", preferences.getEMailList());
+	}
+
+	@Test
+	void testGetLastLastTimer() throws Exception {
+		LocalDateTime when = LocalDateTime.now();
+		preferences.setLastTimer(when);
+		assertNotNull(preferences.lastTimer());
+		assertEquals(when, preferences.lastTimer());
+	}
+
+	@Test
+	void testSetLastTimer() throws Exception {
+		assertNull(preferences.lastTimer());
+		preferences.setLastTimer(LocalDateTime.now());
+		assertNotNull(preferences.lastTimer());
+	}
+
+	@Test
+	void testGetLastTimerNull() {
+		assertNull(preferences.lastTimer());
 	}
 
 	@Test
