@@ -1,6 +1,7 @@
 package com.brailsoft.property.management.preference;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -13,6 +14,7 @@ public class ApplicationPreferences {
 	private static final String LOGGING_LEVEL = "logging.level";
 	private static final String EMAIL_NOTOFCATIONS = "email.notifications";
 	private static final String EMAIL_LIST = "email.list";
+	private static final String LAST_TIMER = "last.timer";
 	private static ApplicationPreferences instance = null;
 
 	private Preferences applicationPreferences = null;
@@ -115,6 +117,20 @@ public class ApplicationPreferences {
 
 	public void setEMailList(String list) throws BackingStoreException {
 		applicationPreferences.put(EMAIL_LIST, list);
+		applicationPreferences.flush();
+	}
+
+	public LocalDateTime lastTimer() {
+		String s = applicationPreferences.get(LAST_TIMER, "");
+		if (s.isBlank()) {
+			return null;
+		}
+		return LocalDateTime.parse(s);
+	}
+
+	public void setLastTimer(LocalDateTime when) throws BackingStoreException {
+		String s = when.toString();
+		applicationPreferences.put(LAST_TIMER, s);
 		applicationPreferences.flush();
 	}
 
