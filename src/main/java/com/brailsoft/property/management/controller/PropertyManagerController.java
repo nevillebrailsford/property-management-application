@@ -135,6 +135,7 @@ public class PropertyManagerController implements Initializable {
 			Platform.exit();
 		}
 		propertyMonitor.addListener(listener);
+		propertyMonitor.startTimer();
 		try {
 			localStorage.loadStoredData();
 		} catch (IOException e) {

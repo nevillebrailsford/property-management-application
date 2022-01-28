@@ -21,6 +21,9 @@ public class Timer {
 	}
 
 	private Timer() {
+	}
+
+	public void start() {
 		timeLine = new Timeline(new KeyFrame(Duration.minutes(1), (event) -> {
 			tellListeners(event);
 		}));
