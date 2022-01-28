@@ -88,7 +88,9 @@
                         <!-- Usage: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
+                            <commandlineArgs>user.test.preferences.name</commandlineArgs>
                             <mainClass>com.brailsoft.property.manager/com.brailsoft.property.management.launcher.PropertyManager</mainClass>
+
                         </configuration>
                     </execution>
                 </executions>

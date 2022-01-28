@@ -117,6 +117,7 @@ public class PropertyManager extends Application {
 		LOGGER.entering(CLASS_NAME, "performShutdown");
 		if (timer != null) {
 			timer.stop();
+			timer = null;
 		}
 		executor.shutdown();
 		LOGGER.exiting(CLASS_NAME, "performShutdown");
@@ -135,7 +136,11 @@ public class PropertyManager extends Application {
 	}
 
 	public static void main(String[] args) {
-		ApplicationPreferences.getInstance(Constants.NODE_NAME);
+		String preferencesName = Constants.NODE_NAME;
+		if (args.length != 0) {
+			preferencesName = args[0];
+		}
+		ApplicationPreferences.getInstance(preferencesName);
 		configureLogging();
 		launch(args);
 	}

@@ -101,6 +101,12 @@ public class PropertyMonitor {
 		findProperty(property).removeInventoryListener(inventoryListener);
 	}
 
+	public void startTimer() {
+		LOGGER.entering(CLASS_NAME, "startTimer");
+		timer.start();
+		LOGGER.exiting(CLASS_NAME, "startTimer");
+	}
+
 	public synchronized void clear() {
 		LOGGER.entering(CLASS_NAME, "clear");
 		auditBeforeClearing();
