@@ -54,6 +54,15 @@ public class ApplicationPreferences {
 		return traceDirectory;
 	}
 
+	public File getReportDirectory() {
+		File rootDirectory = new File(System.getProperty("user.home"));
+		File reportDirectory = new File(rootDirectory, Constants.REPORT_DIRECTORY);
+		if (!reportDirectory.exists()) {
+			reportDirectory.mkdirs();
+		}
+		return reportDirectory;
+	}
+
 	public File getActiveDirectory(String directory) {
 		File rootDirectory = new File(directory);
 		File activeDirectory = new File(rootDirectory, LocalStorage.DIRECTORY);

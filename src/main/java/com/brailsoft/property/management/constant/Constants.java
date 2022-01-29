@@ -38,4 +38,5 @@ public class Constants {
 	public static final String TRACE_DIRECTORY = "trace";
 	public static final String ARCHIVE_DIRECTORY = "archive";
 	public static final String MODEL_DIRECTORY = "model";
+	public static final String REPORT_DIRECTORY = "property.manager.report";
 }
