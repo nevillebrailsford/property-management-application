@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -33,6 +35,7 @@ import javafx.event.ActionEvent;
 public class LoadData extends DataHandler implements Runnable {
 	private static final String CLASS_NAME = LoadData.class.getName();
 	private static final Logger LOGGER = Logger.getLogger(Constants.LOGGER_NAME);
+	private List<LoadListener> loadListeners = new ArrayList<>();
 
 	public LoadData(File archiveFile) {
 		super(archiveFile);
@@ -55,8 +58,13 @@ public class LoadData extends DataHandler implements Runnable {
 			StorageLock.readLock().unlock();
 			tellListeners(new ActionEvent());
 			StatusMonitor.getInstance().update("Initial load of data has completed");
+			tellLoadListeners(new ActionEvent());
 			LOGGER.exiting(CLASS_NAME, "run");
 		}
+	}
+
+	public void addListeners(List<LoadListener> listeners) {
+		listeners.stream().forEach(l -> loadListeners.add(l));
 	}
 
 	Document loadStoredData() throws IOException {
@@ -152,6 +160,10 @@ public class LoadData extends DataHandler implements Runnable {
 				PropertyMonitor.getInstance().addItem(inventoryItem);
 			}
 		}
+	}
+
+	private void tellLoadListeners(ActionEvent event) {
+		loadListeners.stream().forEach(listener -> listener.loadComplete(event));
 	}
 
 }

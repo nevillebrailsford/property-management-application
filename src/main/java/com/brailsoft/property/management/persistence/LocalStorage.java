@@ -2,6 +2,8 @@ package com.brailsoft.property.management.persistence;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Logger;
 
@@ -19,6 +21,7 @@ public class LocalStorage {
 
 	private File directory = null;
 	private ExecutorService executor = PropertyManager.executor();
+	private List<LoadListener> loadListeners = new ArrayList<>();
 
 	public synchronized static LocalStorage getInstance(File rootDirectory) {
 		if (rootDirectory == null) {
@@ -31,6 +34,10 @@ public class LocalStorage {
 			instance.updateDirectory(new File(rootDirectory, DIRECTORY));
 		}
 		return instance;
+	}
+
+	public void addListener(LoadListener listener) {
+		loadListeners.add(listener);
 	}
 
 	private LocalStorage() {
@@ -56,6 +63,7 @@ public class LocalStorage {
 			throw exc;
 		}
 		LoadData worker = new LoadData(archiveFile);
+		worker.addListeners(loadListeners);
 		executor.execute(worker);
 		LOGGER.exiting(CLASS_NAME, "loadArchivedData");
 	}
