@@ -10,16 +10,20 @@ public abstract class MonitoredItemsTableBase extends TableView<MonitoredItem> {
 
 	public void addItem(MonitoredItem item) {
 		LocalDate itemTime = item.getTimeForNextAction();
+		if (getItems().size() == 0) {
+			getItems().add(item);
+			return;
+		}
 		int positionToInsert = -1;
 		for (int i = getItems().size() - 1; i >= 0; i--) {
 			LocalDate listTime = getItems().get(i).getTimeForNextAction();
-			if (itemTime.isBefore(listTime)) {
-				positionToInsert = i;
+			if (itemTime.isAfter(listTime)) {
+				positionToInsert = i + 1;
 				break;
 			}
 		}
 		if (positionToInsert == -1) {
-			getItems().add(item);
+			getItems().add(0, item);
 		} else {
 			getItems().add(positionToInsert, item);
 		}
