@@ -415,7 +415,7 @@ public class MonitoredItem implements Comparable<MonitoredItem> {
 
 	@Override
 	public int compareTo(MonitoredItem that) {
-		return this.description.get().compareTo(that.description.get());
+		return this.getTimeForNextAction().compareTo(that.getTimeForNextAction());
 	}
 
 	@Override
