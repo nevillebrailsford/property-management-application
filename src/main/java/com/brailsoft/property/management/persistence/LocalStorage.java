@@ -65,7 +65,7 @@ public class LocalStorage {
 		LoadData worker = new LoadData(archiveFile);
 		worker.addListeners(loadListeners);
 		executor.execute(worker);
-		LOGGER.exiting(CLASS_NAME, "loadArchivedData");
+		LOGGER.exiting(CLASS_NAME, "loadStoredData");
 	}
 
 	public void storeData() throws IOException {
