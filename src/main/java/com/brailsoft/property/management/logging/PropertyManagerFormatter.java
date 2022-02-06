@@ -15,7 +15,7 @@ import com.brailsoft.property.management.constant.DateFormats;
 public class PropertyManagerFormatter extends Formatter {
 
 	private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DateFormats.dateFormatForLogRecord);
-	private final static String lineEnd = System.lineSeparator();
+	private final static char lineEnd = 10;
 	private final static String ENTRY = ">";
 	private final static String EXIT = "<";
 	private final static String EXCEPTION = "x";
@@ -126,7 +126,7 @@ public class PropertyManagerFormatter extends Formatter {
 
 	private String processParameters(LogRecord record) {
 		StringBuilder builder = new StringBuilder();
-		String newLine = "";
+		char newLine = ' ';
 		if (record.getParameters() != null) {
 			for (Object obj : record.getParameters()) {
 				if (obj == null) {
