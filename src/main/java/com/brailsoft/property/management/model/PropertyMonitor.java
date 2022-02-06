@@ -575,10 +575,10 @@ public class PropertyMonitor {
 	}
 
 	private void timerPopped(ActionEvent event) {
-		LOGGER.entering(CLASS_NAME, "timerPoppped", "timer popped at " + LocalDate.now());
+		LOGGER.entering(CLASS_NAME, "timerPopped", "timer popped at " + LocalDate.now());
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime lastTimer = applicationPreferences.lastTimer();
-		if (lastTimer == null || lastTimer.plusWeeks(1).isBefore(now)) {
+		if (lastTimer == null || lastTimer.plusDays(1).isBefore(now)) {
 			if (getPropertiesWithOverdueNotices().size() > 0) {
 				final Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Notified Items");
@@ -636,6 +636,8 @@ public class PropertyMonitor {
 						}
 					}
 				}
+			}
+			for (Property property : getPropertiesWithOverdueItems()) {
 				for (MonitoredItem item : property.getOverdueItems()) {
 					if (item.getEmailSentOn() == null) {
 						overdueItems.add(item);
