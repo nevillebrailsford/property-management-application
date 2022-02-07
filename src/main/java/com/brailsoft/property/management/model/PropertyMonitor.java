@@ -412,8 +412,7 @@ public class PropertyMonitor {
 
 	public synchronized List<Property> getPropertiesWithOverdueNotices() {
 		LOGGER.entering(CLASS_NAME, "getPropertiesWithOverdueNotices");
-		List<Property> copyList = getProperties().stream()
-				.filter(property -> property.areNoticesOverdue() && !property.areItemsOverdue())
+		List<Property> copyList = getProperties().stream().filter(property -> property.areNoticesOverdue())
 				.collect(Collectors.toList());
 		Collections.sort(copyList);
 		LOGGER.exiting(CLASS_NAME, "getPropertiesWithOverdueNotices", copyList);

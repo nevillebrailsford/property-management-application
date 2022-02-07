@@ -218,7 +218,7 @@ class PropertyTest {
 		testProperty.addItem(new MonitoredItem("item1", Period.YEARLY, 1, LocalDate.now(), 1, Period.WEEKLY));
 		assertFalse(testProperty.areNoticesOverdue());
 		testProperty.addItem(new MonitoredItem("item2", Period.YEARLY, 1,
-				LocalDate.now().minusYears(1).minusWeeks(1).minusDays(1), 1, Period.WEEKLY));
+				LocalDate.now().minusYears(1).plusWeeks(1).minusDays(1), 1, Period.WEEKLY));
 		assertTrue(testProperty.areNoticesOverdue());
 	}
 
@@ -228,7 +228,7 @@ class PropertyTest {
 		testProperty.addItem(new MonitoredItem("item1", Period.YEARLY, 1, LocalDate.now(), 1, Period.WEEKLY));
 		assertEquals(0, testProperty.getOverdueNotices().size());
 		testProperty.addItem(new MonitoredItem("item2", Period.YEARLY, 1,
-				LocalDate.now().minusYears(1).minusWeeks(1).minusDays(1), 1, Period.WEEKLY));
+				LocalDate.now().minusYears(1).plusWeeks(1).minusDays(1), 1, Period.WEEKLY));
 		assertEquals(1, testProperty.getOverdueNotices().size());
 		assertEquals("item2", testProperty.getOverdueNotices().get(0).getDescription());
 	}
