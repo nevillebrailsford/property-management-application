@@ -204,14 +204,15 @@ public class Property implements Comparable<Property> {
 	}
 
 	public boolean areNoticesOverdue() {
-		List<MonitoredItem> list = items.stream().filter(item -> item.noticeDue()).collect(Collectors.toList());
+		List<MonitoredItem> list = items.stream().filter(item -> item.noticeDue() && !item.overdue())
+				.collect(Collectors.toList());
 		return list.size() > 0;
 	}
 
 	public List<MonitoredItem> getOverdueNotices() {
 		List<MonitoredItem> copyList = new ArrayList<>();
 		items.stream().forEach(item -> {
-			if (item.noticeDue()) {
+			if (item.noticeDue() && !item.overdue()) {
 				copyList.add(new MonitoredItem(item));
 			}
 		});
